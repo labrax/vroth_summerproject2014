@@ -1,0 +1,14 @@
+/* author: Victor Roth Cardoso - vroth
+ * student sponsored by CNPq
+ * 
+ * in summer project at Aberystwyth University
+ * 
+ * 
+ * supervisors: Robert Hoehndorf and Georgios Gkoutos
+ */
+ 
+ USING
+	1. compile and run this source code with the phenotypes file
+	2. download spmf at http://www.philippe-fournier-viger.com/spmf/
+	3. run spmf with the output of the program (1)
+	
