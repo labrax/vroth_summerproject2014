@@ -3,14 +3,6 @@
 
 using std::pair;
 
-ItemSet::ItemSet() {
-	
-}
-
-ItemSet::~ItemSet() {
-	
-}
- 
 bool ItemSet::insert(string elem) {
 	if(itemset.find(elem) == itemset.end()) {
 		itemset.insert(pair<string, bool>(elem, true));
