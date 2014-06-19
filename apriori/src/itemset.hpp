@@ -6,6 +6,9 @@
  * 
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
+
+/** a general class for storing one itemset
+ */
  
 #pragma once
 

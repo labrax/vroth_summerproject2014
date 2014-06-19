@@ -6,7 +6,10 @@
  * 
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
- 
+
+/** a general class for storing a set of k-itemsets with the support count
+ */
+
 #pragma once
 
 #include "itemset.hpp"

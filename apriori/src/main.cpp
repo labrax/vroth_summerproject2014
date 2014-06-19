@@ -24,7 +24,7 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-	if(argc < 4) {
+	if(argc < 4) { //check the parameters
 		cerr << "Not enough parameters." << endl <<
 		"Run with transactions file to open." << endl <<
 		"./apriori <file> <support> <confidence>" << endl <<
@@ -33,13 +33,14 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	
-	char command[512];
+	char command[512]; //sort and remove duplicates for a file
 	sprintf(command, "sort %s | uniq > .temp_%s", argv[1], argv[1]);
 	system(command);
 	
 	sprintf(command, ".temp_%s", argv[1]);
 	DatabaseNormalized a(command);
-	sprintf(command, "rm .temp_%s", argv[1]);
+	
+	sprintf(command, "rm .temp_%s", argv[1]); //remove temporary file
 	system(command);
 	
 	double support = atof(argv[2]), confidence = atof(argv[3]);
@@ -47,28 +48,20 @@ int main(int argc, char *argv[]) {
 	
 	cout << "support: " << support << endl
 		 << "confidence: " << confidence << endl;
-	/*
-	for(auto i : transactions) {
-		cout << i.first << ": ";
-		for(auto j : i.second) {
-			cout << j.first << " ";
-		}
-		cout << endl;
-	}
-	*/
 	
-	/*a.processTransactions();
+	/*a.processTransactions(); //to store then in a map with difference transactions
 	cout << a.getTransactions().size() << " transactions have been stored." << endl; */
-	
-	a.processNormalizedTransactions();
+		
+	a.processNormalizedTransactions(); //to store in a <TID, item> manner
 	cout << a.getNormalizedTransactions().size() << " normalized transactions have been obtained." << endl;
 	
-	std::sort(a.getNormalizedTransactions().begin(), a.getNormalizedTransactions().end(), normalizedCompare);
+	std::sort(a.getNormalizedTransactions().begin(), a.getNormalizedTransactions().end(), normalizedCompare); //probably it will already be sorted, just in case this function is still here
 	cout << "sorted!" << endl;
-	//a.removeDuplicates(); //TOO SLOW, USING uniq IN CONSOLE
-	cout << "removed duplicates!" << endl;
 	
-	//!OBTAINING 1-ITEMSETS
+	//a.removeDuplicates(); //TOO SLOW, USING uniq IN CONSOLE
+	//cout << "removed duplicates!" << endl;
+	
+	//OBTAINING 1-ITEMSETS
 	std::unordered_map<string, unsigned int> itemset_1;
 	for(auto &i : a.getNormalizedTransactions()) {
 		std::unordered_map<string, unsigned int>::iterator it = itemset_1.find(i.second);
@@ -82,15 +75,9 @@ int main(int argc, char *argv[]) {
 	
 	//this will print the count of each item
 	for(auto &i : itemset_1) {
-		cout << "(" << i.first << "," << i.second << ")" << endl;
+		cout << i.first << " #SUP:" << i.second << endl;
 	}
 	//!OBTAINING 1-ITEMSETS
-	
-	
-	
-	for(auto i : a.getNormalizedTransactions()) { //debug
-		//cout << "(" << i.first << "," << i.second << ")" << endl;	
-	}
 	
 	return 0;
 }

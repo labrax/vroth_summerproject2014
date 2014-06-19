@@ -1,3 +1,6 @@
 *.o
 
-files/
+*.txt
+*.arff
+
+output_files/

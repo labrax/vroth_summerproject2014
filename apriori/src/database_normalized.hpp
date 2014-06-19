@@ -6,6 +6,9 @@
  * 
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
+
+/** a general class for loading a file with separated values for phenotypes
+ */
  
 #pragma once
 
@@ -30,12 +33,16 @@ class DatabaseNormalized {
 		DatabaseNormalized(char * filename);
 		~DatabaseNormalized();
 		
+		void removeDuplicates(); //remove in normalized_transactions duplicates //TOO SLOW!
+		
 		void processTransactions();
 		void processNormalizedTransactions();
-		void removeDuplicates(); //TOO SLOW!
 		
 		map <string, map<string, bool>> & getTransactions() { return transactions; }; //function for debug purpouses
 		vector <pair <string, string>> & getNormalizedTransactions() { return normalized_transactions; };
+		
+		void printTransactions(); //print data in a proper manner
+		void printNormalizedTransactions();
 };
 
-bool normalizedCompare(const pair<string, string>& firstElem, const pair<string, string>& secondElem);
+bool normalizedCompare(const pair<string, string>& firstElem, const pair<string, string>& secondElem); //function to compare pairs with string type

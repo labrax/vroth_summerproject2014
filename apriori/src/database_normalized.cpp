@@ -12,6 +12,7 @@
 #include <iostream>
 #include <cstring>
 
+using std::cout;
 using std::cerr;
 using std::endl;
 using std::pair;
@@ -67,7 +68,6 @@ void DatabaseNormalized::processNormalizedTransactions() {
 			if(line.find('\t') != string::npos) {
 				sscanf(line.c_str(), "%s %s", first, second);
 			}
-			//cout << "F: <" << first << "> S: <" << second << ">" << endl;
 			
 			normalized_transactions.insert(normalized_transactions.end(), pair<string, string> (string(first), string(second)));
 		}
@@ -77,6 +77,9 @@ void DatabaseNormalized::processNormalizedTransactions() {
 	}
 }
 
+/**this function is VERY slow, probably because of a massive number of /delete/s in map
+ * another solution is used, involving the use of sort and uniq before accessing the file
+*/
 void DatabaseNormalized::removeDuplicates() {
 	string previous("");
 	for(unsigned int i=0; i<normalized_transactions.size(); i++) {
@@ -95,4 +98,20 @@ bool normalizedCompare(const pair<string, string>& firstElem, const pair<string,
 	}
 	else
 		return firstElem.first < secondElem.first;
+}
+
+void DatabaseNormalized::printTransactions() {
+	for(auto i : transactions) {
+		cout << i.first << ": ";
+		for(auto j : i.second) {
+			cout << j.first << " ";
+		}
+		cout << endl;
+	}
+}
+
+void DatabaseNormalized::printNormalizedTransactions() {
+	for(auto i : normalized_transactions) {
+		cout << "(" << i.first << "," << i.second << ")" << endl;	
+	}
 }
