@@ -1,0 +1,5 @@
+getattr:
+	this program will extract the attributes from a phenotype file, so there will be a numbering for the creation of the arff file
+
+createarff:
+	this program will use the output from the file above and the phenotypes file to generate an arff file

@@ -1,0 +1,17 @@
+
+Preparing file:
+    sort phenotype_file | uniq > uniq_file
+
+    getattr uniq_file <id> <id2> | sort | uniq > attr_file
+
+    createarff uniq_file attr_file arff_file <id> <id2>
+
+Running on Weka:
+    export CLASSPATH = $(pwd)/weka.jar
+    java -Xmx4G weka.associations.Apriori -t ratphenotypes.arff
+
+
+
+Checking ids:
+    Open uniq_file, check which identifiers are for each collumn.
+    For example, rat_phenotypes.txt has RGD: and MP:

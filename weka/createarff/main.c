@@ -1,8 +1,18 @@
+/* author: Victor Roth Cardoso - vroth
+ * student sponsored by CNPq
+ * 
+ * in summer project at Aberystwyth University
+ * 
+ * 
+ * supervisors: Robert Hoehndorf and Georgios Gkoutos
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TRANS_THRESHOLD 6
+#define TRANS_THRESHOLD 1 //threshold for minimum amount of itens in a transaction to consider it - USE 1 to avoid prunning
+
 typedef struct _value { //store relation between item and index
     unsigned int index;
     unsigned int value;
@@ -47,7 +57,7 @@ run as:\n\
     trans_id = argv[4];
     item_id = argv[5];
 
-    unsigned int lines = 0; //count amount of lines
+    unsigned int lines = 0; //count amount of lines for allocation
     while (EOF != (fscanf(attr_input, "%*[^\n]"), fscanf(attr_input, "%*c")))
         ++lines;
 
@@ -91,7 +101,7 @@ void print_values(value * data) {
 void create_arff(FILE * input, FILE * output, value * data) {
     fprintf(output, "%%file generated using createarff\n\
 %%create by Victor R. Cardoso - CNPq\n\
-%%on summer project with Robert Hoehndorf\n\
+%%on summer project supervisioned by Robert Hoehndorf and Georgios Gkoutos\n\
 %%at Aberystwyth University\n\n");
     fprintf(output, "@relation relation_transaction_item\n\n");
 

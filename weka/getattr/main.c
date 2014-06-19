@@ -1,3 +1,12 @@
+/* author: Victor Roth Cardoso - vroth
+ * student sponsored by CNPq
+ * 
+ * in summer project at Aberystwyth University
+ * 
+ * 
+ * supervisors: Robert Hoehndorf and Georgios Gkoutos
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
