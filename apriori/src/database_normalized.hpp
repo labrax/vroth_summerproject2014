@@ -29,6 +29,8 @@ class DatabaseNormalized {
 		ifstream file;
 		map <string, map<string, bool>> transactions;
 		vector <pair <string, string>> normalized_transactions;
+		unsigned int amount_transactions;
+		
 	public:
 		DatabaseNormalized(char * filename);
 		~DatabaseNormalized();
@@ -40,6 +42,8 @@ class DatabaseNormalized {
 		
 		map <string, map<string, bool>> & getTransactions() { return transactions; }; //function for debug purpouses
 		vector <pair <string, string>> & getNormalizedTransactions() { return normalized_transactions; };
+		
+		unsigned int getAmountTransactions(void) { return amount_transactions; };
 		
 		void printTransactions(); //print data in a proper manner
 		void printNormalizedTransactions();

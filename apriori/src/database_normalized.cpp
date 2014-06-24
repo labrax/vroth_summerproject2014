@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <unordered_map>
 
 using std::cout;
 using std::cerr;
@@ -22,6 +23,7 @@ DatabaseNormalized::DatabaseNormalized(char * filename) : filename(filename) {
 	if(!file.is_open()) {
 		cerr << "Error opening \"" << filename << "\"" << endl;
 	}
+	amount_transactions = 0;
 }
 
 DatabaseNormalized::~DatabaseNormalized() {
@@ -60,6 +62,8 @@ void DatabaseNormalized::processTransactions() {
 }
 
 void DatabaseNormalized::processNormalizedTransactions() {
+	std::unordered_map <string, bool> transactions_counting; //this will be used to count the amount of transactions
+	
 	if(file.is_open()) {
 		string line;
 		char first[32], second[32];
@@ -70,6 +74,15 @@ void DatabaseNormalized::processNormalizedTransactions() {
 			}
 			
 			normalized_transactions.insert(normalized_transactions.end(), pair<string, string> (string(first), string(second)));
+			
+			//!count the amount of transactions
+			std::unordered_map <string, bool>::iterator it = transactions_counting.find(first);
+			
+			if(it == transactions_counting.end()) { //it didnt exist in the counting
+				transactions_counting.insert(pair<string, bool>(first, true));
+				amount_transactions++;
+			}
+			//!count the amount of transactions
 		}
 	}
 	else {
