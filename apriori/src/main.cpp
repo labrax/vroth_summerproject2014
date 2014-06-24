@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 	//a.removeDuplicates(); //TOO SLOW, USING uniq IN CONSOLE
 	//cout << "removed duplicates!" << endl;
 	
-	//OBTAINING 1-ITEMSETS
+	//!OBTAINING 1-ITEMSETS
 	std::unordered_map<string, unsigned int> itemset_1;
 	for(auto &i : a.getNormalizedTransactions()) {
 		std::unordered_map<string, unsigned int>::iterator it = itemset_1.find(i.second);
@@ -73,9 +73,23 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	//this will print the count of each item
+	//this part will remove the elements without the support
+	cout << "amount of transactions is " << a.getAmountTransactions() << endl;
+	for(auto it = itemset_1.begin(); it != itemset_1.end();) {
+		if((*it).second/(double) a.getAmountTransactions() < support) {
+			//cout << "eliminating " << (*it).first << ", " << (*it).second << " because support is " <<  (*it).second/(double) a.getAmountTransactions() <<  endl;
+			
+			it = itemset_1.erase(it); //prunning of the 1 itemsets
+		}
+		else {
+			++it; //when its not eliminated may follow the list
+		}
+	}
+	
+	//this will print the count of each item that /survived/
+	cout << "the following items are still running" << endl;
 	for(auto &i : itemset_1) {
-		cout << i.first << " #SUP:" << i.second << endl;
+		cout << i.first << " #SUP:" << i.second << " " << i.second/(double) a.getAmountTransactions() << endl;
 	}
 	//!OBTAINING 1-ITEMSETS
 	
