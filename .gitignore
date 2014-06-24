@@ -1,4 +1,5 @@
 *.o
+apriori/apriori
 
 *.txt
 *.arff
