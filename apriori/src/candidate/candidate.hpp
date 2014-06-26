@@ -16,11 +16,10 @@ class CandidateItemSet {
 	private:
 		Node * root;
 		
-		LargeItemSet * generateCandidates(LargeItemSet *); //TODO: modify to use the tree
-		LargeItemSet * pruneCandidates(LargeItemSet *);
 	public:
 		CandidateItemSet();
 		~CandidateItemSet();
 		
-		LargeItemSet * newCandidate(LargeItemSet *);
+		LargeItemSet * apriori-gen(LargeItemSet *);
+		LargeItemSet * subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions);
 };
