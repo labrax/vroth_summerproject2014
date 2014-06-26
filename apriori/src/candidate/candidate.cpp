@@ -25,8 +25,9 @@ CandidateItemSet::~CandidateItemSet() {
 	delete(root);
 }
 
-LargeItemSet * CandidateItemSet::apriori-gen(LargeItemSet * a) {
-	LargeItemSet * new_large = new LargeItemSet(a->getIteration()+1); //TODO: pass to the internal structure!
+LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
+	LargeItemSet * new_candidate = new LargeItemSet(a->getIteration()+1);
+	
 	vector<ItemSet *> last_large = a->getItemSets();
 
 	for(unsigned int i=0; i<last_large.size(); i++) {
@@ -53,11 +54,22 @@ LargeItemSet * CandidateItemSet::apriori-gen(LargeItemSet * a) {
 				ItemSet * new_itemset = new ItemSet(first);
 				new_itemset->insert(it2->first);
 				
-				//TODO: prune candidates
+				bool ok = true; //!this block will prune candidates
 				vector<ItemSet *> subsets = new_itemset->subItemSets();
-				//TODO: finish function
 				
-				new_large->insertSet(new_itemset);
+				for(auto &i : subsets) {
+					if(i->getAmounElements() > 1) {
+						if(a->contains(i) == false) {
+							ok = false;
+							break;
+						}
+					}
+				}
+				
+				//cout << "prune results were " << ok << endl;
+				
+				if(ok) //!this block will prune candidates
+					new_candidate->insertSet(new_itemset);
 			}
 		}
 	}
@@ -66,9 +78,10 @@ LargeItemSet * CandidateItemSet::apriori-gen(LargeItemSet * a) {
 	
 	//}
 	
-	return new_large;
+	return new_candidate;
 }
 
-LargeItemSet * CandidateItemSet::subsetFunction(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions) {
+LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions) {
 	//root->insertItemSet(new_itemset); //TODO:create function
+	return NULL;
 }

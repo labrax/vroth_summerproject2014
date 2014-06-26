@@ -9,8 +9,15 @@
  
 #pragma once
 
+#include <vector>
+#include <string>
+
 #include "node.hpp"
 #include "../large.hpp"
+
+using std::vector;
+using std::pair;
+using std::string;
 
 class CandidateItemSet {
 	private:
@@ -20,6 +27,6 @@ class CandidateItemSet {
 		CandidateItemSet();
 		~CandidateItemSet();
 		
-		LargeItemSet * apriori-gen(LargeItemSet *);
+		LargeItemSet * apriori_gen(LargeItemSet *);
 		LargeItemSet * subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions);
 };
