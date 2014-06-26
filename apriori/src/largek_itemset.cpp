@@ -7,9 +7,13 @@
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
  
-#include "k_itemset.hpp"
+#include "largek_itemset.hpp"
 
-void KItemSet::insertSet(ItemSet set, unsigned int support_count) {
+LargeKItemSet::LargeKItemSet(unsigned int k) : k(k) {
+	
+}
+
+void LargeKItemSet::insertSet(ItemSet set, unsigned int support_count) {
 	itemset.insert(itemset.end(), set);
 	support_counts.insert(support_counts.end(), support_count);
 }

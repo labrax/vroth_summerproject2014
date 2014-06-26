@@ -7,7 +7,7 @@
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
 
-/** a general class for storing a set of k-itemsets with the support count
+/** a general class for storing a set of k-itemsets
  */
 
 #pragma once
@@ -18,13 +18,16 @@
 
 using std::vector;
 
-class KItemSet {
+class LargeKItemSet {
 	private:
 		vector<ItemSet> itemset;
 		vector<unsigned int> support_counts;
+		unsigned int k; //to identify the iteration
 	public:
+		LargeKItemSet(unsigned int);
 		void insertSet(ItemSet set, unsigned int support_count);
 		
 		vector<ItemSet> & getItemSets() { return itemset; };
+		vector<unsigned int> & getSupportCount() { return support_counts; };
 		
 };
