@@ -32,7 +32,7 @@ vector<ItemSet *> & LargeItemSet::getItemSets() {
 	return itemset;
 }
 
-unsigned int LargeItemSet::getInteration() {
+unsigned int LargeItemSet::getIteration() {
 	return k;
 }
 
@@ -47,5 +47,5 @@ void LargeItemSet::print() {
 }
 
 void LargeItemSet::printinfo() {
-	cout << "iteraction number: " << this->getInteration() << " has " << this->getItemSets().size() << " itemsets" << endl;
+	cout << "iteraction number: " << this->getIteration() << " has " << this->getItemSets().size() << " itemsets" << endl;
 }

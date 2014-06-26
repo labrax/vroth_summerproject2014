@@ -29,7 +29,7 @@ class LargeItemSet {
 		void insertSet(ItemSet * set);
 		
 		vector<ItemSet *> & getItemSets();
-		unsigned int getInteration();
+		unsigned int getIteration();
 		void print();
 		void printinfo();
 };
