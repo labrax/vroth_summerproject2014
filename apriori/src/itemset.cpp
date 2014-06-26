@@ -20,7 +20,7 @@ bool ItemSet::insert(string elem) {
 		return false;
 }
 
-bool ItemSet::remove(string elem) {
+/* bool ItemSet::remove(string elem) {
 	map <string, bool>::iterator it = itemset.find(elem);
 	if(it != itemset.end()) {
 		itemset.erase(it);
@@ -35,4 +35,4 @@ bool ItemSet::contains(string elem) {
 		return true;
 	else
 		return false;
-}
+} */
