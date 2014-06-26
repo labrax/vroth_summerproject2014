@@ -30,6 +30,9 @@ class LargeItemSet {
 		
 		vector<ItemSet *> & getItemSets();
 		unsigned int getIteration();
+		
+		bool contains(ItemSet *);
+		
 		void print();
 		void printinfo();
 };

@@ -36,6 +36,16 @@ unsigned int LargeItemSet::getIteration() {
 	return k;
 }
 
+bool LargeItemSet::contains(ItemSet * a) {
+	for(auto &i : itemset) {
+		for(auto &j : a->getItemSet()) {
+			if(i->contains(j.first) == false)
+				return false;
+		}
+	}
+	return true;
+}
+
 void LargeItemSet::print() {
 	for(auto &i : itemset) {
 		cout << "With support " << i->getSupportCount() << ": ";
