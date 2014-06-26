@@ -30,6 +30,7 @@ class ItemSet {
 		bool insert(string);
 		
 		map <string, bool> & getItemSet();
+		unsigned int getAmounElements();
 		
 		void setSupportCount(unsigned int);
 		unsigned int getSupportCount();

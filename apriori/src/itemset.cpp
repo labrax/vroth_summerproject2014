@@ -11,8 +11,8 @@
 #include <iostream>
 
 using std::pair;
-using std::cerr;
-using std::endl;
+//using std::cerr;
+//using std::endl;
 
 ItemSet::ItemSet() {
 	support_count = 0;
@@ -36,6 +36,10 @@ bool ItemSet::insert(string elem) {
 
 map <string, bool> & ItemSet::getItemSet() {
 	return itemset;
+}
+
+unsigned int ItemSet::getAmounElements() {
+	return itemset.size();
 }
 
 void ItemSet::setSupportCount(unsigned int support_count) {
@@ -106,7 +110,10 @@ vector<ItemSet *> ItemSet::subItemSets() {
 	
 	delete(subsets[0]); //was needed in the beginning, now deleting
 	subsets.erase(subsets.begin());
+	
+	delete(subsets[subsets.size()]); //this is not in a needed size (contains the whole original ItemSet)
+	subsets.erase(--subsets.end());
 
-	cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
+	//cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
 	return subsets;
 }
