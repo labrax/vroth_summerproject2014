@@ -4,4 +4,6 @@ apriori/apriori
 *.txt
 *.arff
 
+*.bkp
+
 output_files/
