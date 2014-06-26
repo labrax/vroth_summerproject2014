@@ -113,6 +113,18 @@ bool normalizedCompare(const pair<string, string>& firstElem, const pair<string,
 		return firstElem.first < secondElem.first;
 }
 
+map <string, map<string, bool>> & DatabaseNormalized::getTransactions() {
+	return transactions;
+}
+
+vector <pair <string, string>> & DatabaseNormalized::getNormalizedTransactions() {
+	return normalized_transactions;
+}
+		
+unsigned int DatabaseNormalized::getAmountTransactions(void) {
+	return amount_transactions;
+}
+
 void DatabaseNormalized::printTransactions() {
 	for(auto i : transactions) {
 		cout << i.first << ": ";

@@ -40,12 +40,12 @@ class DatabaseNormalized {
 		void processTransactions();
 		void processNormalizedTransactions();
 		
-		map <string, map<string, bool>> & getTransactions() { return transactions; }; //function for debug purpouses
-		vector <pair <string, string>> & getNormalizedTransactions() { return normalized_transactions; };
+		map <string, map<string, bool>> & getTransactions(); //function for debug purpouses
+		vector <pair <string, string>> & getNormalizedTransactions();
 		
-		unsigned int getAmountTransactions(void) { return amount_transactions; }; //TODO: migrate the operations to here
+		unsigned int getAmountTransactions(void);
 		
-		void printTransactions(); //print data in a proper manner
+		void printTransactions(); //print data in a proper manner for debug
 		void printNormalizedTransactions();
 };
 
