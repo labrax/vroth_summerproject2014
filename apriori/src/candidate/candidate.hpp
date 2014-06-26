@@ -10,11 +10,14 @@
 #pragma once
 
 #include "node.hpp"
+#include "../large.hpp"
 
-class CandidateItemSets {
+class CandidateItemSet {
 	private:
 		Node * root;
 	public:
-		CandidateItemSets();
-		~CandidateItemSets();
+		CandidateItemSet();
+		~CandidateItemSet();
+		
+		LargeItemSet * generateCandidates(LargeItemSet *);
 };
