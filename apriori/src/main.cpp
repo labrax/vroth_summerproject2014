@@ -8,7 +8,8 @@
  */
  
 #include "database_normalized.hpp"
-#include "k_itemset.hpp"
+#include "itemset.hpp"
+#include "largek_itemset.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -62,9 +63,9 @@ int main(int argc, char *argv[]) {
 	//cout << "removed duplicates!" << endl;
 	
 	//!OBTAINING 1-ITEMSETS
-	std::unordered_map<string, unsigned int> itemset_1;
+	std::map<string, unsigned int> itemset_1;
 	for(auto &i : a.getNormalizedTransactions()) {
-		std::unordered_map<string, unsigned int>::iterator it = itemset_1.find(i.second);
+		std::map<string, unsigned int>::iterator it = itemset_1.find(i.second);
 		if(it != itemset_1.end()) {
 			itemset_1.find(i.second)->second++;
 		}
@@ -86,10 +87,24 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	//this will print the count of each item that /survived/
-	cout << "the following items are still running" << endl;
+	LargeKItemSet large_1(1);
+	//this will print the count and transfer each item that /survived/
+	cout << "the following items are valid" << endl;
 	for(auto &i : itemset_1) {
 		cout << i.first << " #SUP:" << i.second << " " << i.second/(double) a.getAmountTransactions() << endl;
+		
+		ItemSet a;
+		a.insert(i.first);
+		
+		large_1.insertSet(a, i.second);
+	}
+	
+	for(auto &i : large_1.getItemSets()) {
+		cout << "With support " << "TODO" << ": "; //TODO: add support information
+		for(auto &j: i.getItemSet()) {
+			cout << j.first << " ";
+		}
+		cout << endl;
 	}
 	//!OBTAINING 1-ITEMSETS
 	
