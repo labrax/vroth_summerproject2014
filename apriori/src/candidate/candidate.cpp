@@ -26,7 +26,7 @@ CandidateItemSet::~CandidateItemSet() {
 }
 
 LargeItemSet * CandidateItemSet::generateCandidates(LargeItemSet * a) {
-	LargeItemSet * new_large = new LargeItemSet(a->getInteration()+1); //TODO: pass to the internal structure!
+	LargeItemSet * new_large = new LargeItemSet(a->getIteration()+1); //TODO: pass to the internal structure!
 	vector<ItemSet *> last_large = a->getItemSets();
 
 	for(unsigned int i=0; i<last_large.size(); i++) {
@@ -63,8 +63,22 @@ LargeItemSet * CandidateItemSet::generateCandidates(LargeItemSet * a) {
 	
 	//}
 	
-	new_large->printinfo();
-	new_large->print();
+	return new_large;
+}
+
+LargeItemSet *  CandidateItemSet::pruneCandidates(LargeItemSet * a) {
+	LargeItemSet * new_large = new LargeItemSet(a->getIteration()); //TODO: pass to the internal structure!
+	
+	if(a->getIteration() > 2) { //TODO: implement
+	}
+	
+	return new_large;
+}
+
+LargeItemSet * CandidateItemSet::newCandidate(LargeItemSet * a) {
+	LargeItemSet * new_large;
+	new_large = generateCandidates(a);
+	new_large = pruningCandidates(new_large);
 	
 	return new_large;
 }

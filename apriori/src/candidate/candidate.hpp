@@ -15,9 +15,12 @@
 class CandidateItemSet {
 	private:
 		Node * root;
+		
+		LargeItemSet * generateCandidates(LargeItemSet *); //TODO: modify to use the tree
+		LargeItemSet * pruneCandidates(LargeItemSet *);
 	public:
 		CandidateItemSet();
 		~CandidateItemSet();
 		
-		LargeItemSet * generateCandidates(LargeItemSet *);
+		LargeItemSet * newCandidate(LargeItemSet *);
 };
