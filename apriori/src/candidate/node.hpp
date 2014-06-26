@@ -10,28 +10,39 @@
 #pragma once
 
 #include "../itemset.hpp"
+
 #include <string>
+#include <unordered_map>
+#include <vector>
 
-#include <iostream>
-
-using std::cerr;
-using std::endl;
+#define BUCKET_THRESHOLD 5
 
 using std::string;
+using std::unordered_map;
+using std::vector;
 
 typedef enum { node, bucket_node, itemset_node } type;
 
 class Node {
 	private:
-		static const type tp = node;
+		type tp;
 		unsigned int depth;
-		string identifier;
-	public:
-		Node(unsigned int depth, string identifier) : depth(depth), identifier(identifier) {};
-		~Node() {};
-		virtual type getType() { return tp; };
-		virtual void insertItemSet(ItemSet) { cerr << "error: inserting on Node class " << __FILE__ << ":" << __LINE__ << endl; };
 		
-		unsigned int getDepth() { return depth; };
-		string & getIdentifier() { return identifier; };
+		string identifier;
+		
+		Node * father;
+		
+		unordered_map<string, Node *> children; //will be used in the bucket_node mode
+		vector<ItemSet *> itemsets; //will be used for the itemset_node mode
+		
+	public:
+		Node(unsigned int, string, Node *);
+		~Node();
+		
+		type getType();
+		
+		void insertItemSet(ItemSet *);
+		
+		unsigned int getDepth();
+		string & getIdentifier();
 };
