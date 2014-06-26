@@ -9,10 +9,6 @@
 
 #include "node.hpp"
 
-#include <iostream>
-
-using std::cerr;
-using std::endl;
 using std::pair;
 
 Node::Node(unsigned int depth, string identifier, Node * father) {
@@ -23,7 +19,15 @@ Node::Node(unsigned int depth, string identifier, Node * father) {
 }
 
 Node::~Node() {
-	
+	/*if(tp == bucket_node) {
+		for(auto &i : children)
+			delete(i.second);
+	}
+	else {
+		for(auto &i : itemsets) {
+			delete(i);
+		}
+	}*/
 }
 
 type Node::getType() {
@@ -41,8 +45,7 @@ void Node::insertItemSet(ItemSet * a) {
 		else { //transform into bucket_node!
 			tp = bucket_node;
 			for(auto &i : itemsets) {
-				//will hash on i.getItemSet()[depth].first
-				tp = bucket_node;
+				//will hash on the nth item
 				unordered_map<string, Node*>::iterator try_existing = children.find(i->getNthString(depth));
 				if(try_existing != children.end()) {
 					try_existing->second->insertItemSet(a);
@@ -53,7 +56,8 @@ void Node::insertItemSet(ItemSet * a) {
 					child->insertItemSet(a);
 				}
 			}
-			this->insertItemSet(a);
+			itemsets.clear(); //TODO: test if bug
+			this->insertItemSet(a); //will hit the next block
 		}
 	}
 	else { //bucket_node mode
