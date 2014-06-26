@@ -11,6 +11,17 @@
 
 using std::pair;
 
+ItemSet::ItemSet() {
+	support_count = 0;
+}
+
+ItemSet::ItemSet(ItemSet * copy) {
+	support_count = 0;
+	for(auto &i : copy->getItemSet()) {
+		itemset.insert(pair<string, bool>(i.first, true));
+	}
+}
+
 bool ItemSet::insert(string elem) {
 	if(itemset.find(elem) == itemset.end()) {
 		itemset.insert(pair<string, bool>(elem, true));

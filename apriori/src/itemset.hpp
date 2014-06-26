@@ -23,6 +23,8 @@ class ItemSet {
 		map <string, bool> itemset;
 		unsigned int support_count;
 	public:
+		ItemSet();
+		ItemSet(ItemSet *);
 		bool insert(string);
 		
 		map <string, bool> & getItemSet();
