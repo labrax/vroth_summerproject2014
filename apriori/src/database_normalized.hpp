@@ -43,7 +43,7 @@ class DatabaseNormalized {
 		map <string, map<string, bool>> & getTransactions() { return transactions; }; //function for debug purpouses
 		vector <pair <string, string>> & getNormalizedTransactions() { return normalized_transactions; };
 		
-		unsigned int getAmountTransactions(void) { return amount_transactions; };
+		unsigned int getAmountTransactions(void) { return amount_transactions; }; //TODO: migrate the operations to here
 		
 		void printTransactions(); //print data in a proper manner
 		void printNormalizedTransactions();
