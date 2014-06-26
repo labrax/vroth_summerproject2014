@@ -25,8 +25,10 @@ class ItemSet {
 	public:
 		bool insert(string);
 		
-		map <string, bool> & getItemSet() { return itemset; };
+		map <string, bool> & getItemSet();
 		
-		void setSupportCount(unsigned int support_count) { this->support_count = support_count; };
-		unsigned int getSupportCount() { return support_count; };
+		void setSupportCount(unsigned int);
+		unsigned int getSupportCount();
+		
+		string getNthString(unsigned int);
 };
