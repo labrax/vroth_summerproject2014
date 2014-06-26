@@ -9,7 +9,8 @@
  
 #include "database_normalized.hpp"
 #include "itemset.hpp"
-#include "largek_itemset.hpp"
+#include "large.hpp"
+#include "candidate/candidate.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -87,26 +88,21 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	LargeKItemSet large_1(1);
+	LargeItemSet * large_1 = new LargeItemSet(1);
 	//this will print the count and transfer each item that /survived/
-	cout << "the following items are valid" << endl;
 	for(auto &i : itemset_1) {
-		cout << i.first << " #SUP:" << i.second << " " << i.second/(double) a.getAmountTransactions() << endl;
+		//cout << i.first << " #SUP:" << i.second << " " << i.second/(double) a.getAmountTransactions() << endl;
+		ItemSet * a = new ItemSet();
+		a->insert(i.first);
+		a->setSupportCount(i.second);
 		
-		ItemSet a;
-		a.insert(i.first);
-		
-		large_1.insertSet(a, i.second);
+		large_1->insertSet(a);
 	}
-	
-	for(auto &i : large_1.getItemSets()) {
-		cout << "With support " << "TODO" << ": "; //TODO: add support information
-		for(auto &j: i.getItemSet()) {
-			cout << j.first << " ";
-		}
-		cout << endl;
-	}
+	large_1->printinfo();
 	//!OBTAINING 1-ITEMSETS
+	
+	CandidateItemSet cis;
+	cis.generateCandidates(large_1);
 	
 	return 0;
 }
