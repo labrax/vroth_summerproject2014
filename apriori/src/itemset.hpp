@@ -14,9 +14,11 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 using std::map;
 using std::string;
+using std::vector;
 
 class ItemSet {
 	private:
@@ -33,4 +35,7 @@ class ItemSet {
 		unsigned int getSupportCount();
 		
 		string getNthString(unsigned int);
+		bool contains(string);
+		
+		vector<ItemSet *> subItemSets();
 };
