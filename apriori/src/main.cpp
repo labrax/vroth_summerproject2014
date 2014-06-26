@@ -98,11 +98,13 @@ int main(int argc, char *argv[]) {
 		
 		large_1->insertSet(a);
 	}
-	large_1->printinfo();
 	//!OBTAINING 1-ITEMSETS
 	
 	CandidateItemSet cis;
-	cis.generateCandidates(large_1);
+	LargeItemSet * large_2 = cis.apriori_gen(large_1);
+	
+	large_1->printinfo();
+	large_2->printinfo();
 	
 	return 0;
 }
