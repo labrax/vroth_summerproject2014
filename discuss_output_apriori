@@ -1,0 +1,176 @@
+support: 0.01
+confidence: 1
+489876 normalized transactions have been obtained.
+Transactions sorted!
+amount of transactions is 46390
+the minimum support will be reach with 463 transactions
+iteraction number: 1 has 126 itemsets
+With support 588: MP:0000063 
+With support 585: MP:0000111 
+With support 608: MP:0000160 
+With support 555: MP:0000208 
+With support 492: MP:0000218 
+With support 468: MP:0000219 
+With support 643: MP:0000266 
+With support 502: MP:0000267 
+With support 505: MP:0000274 
+With support 688: MP:0000352 
+With support 481: MP:0000371 
+With support 548: MP:0000414 
+With support 567: MP:0000585 
+With support 472: MP:0000592 
+With support 684: MP:0000598 
+With support 530: MP:0000689 
+With support 1263: MP:0000691 
+With support 510: MP:0000702 
+With support 484: MP:0000715 
+With support 1034: MP:0000745 
+With support 587: MP:0000788 
+With support 722: MP:0000914 
+With support 468: MP:0000929 
+With support 695: MP:0001147 
+With support 564: MP:0001156 
+With support 583: MP:0001258 
+With support 914: MP:0001260 
+With support 3954: MP:0001262 
+With support 891: MP:0001263 
+With support 3279: MP:0001265 
+With support 636: MP:0001297 
+With support 487: MP:0001304 
+With support 514: MP:0001325 
+With support 1024: MP:0001393 
+With support 1114: MP:0001399 
+With support 1212: MP:0001402 
+With support 1294: MP:0001405 
+With support 1218: MP:0001406 
+With support 635: MP:0001463 
+With support 699: MP:0001513 
+With support 477: MP:0001544 
+With support 482: MP:0001552 
+With support 486: MP:0001559 
+With support 564: MP:0001575 
+With support 905: MP:0001577 
+With support 540: MP:0001614 
+With support 473: MP:0001672 
+With support 1465: MP:0001698 
+With support 679: MP:0001730 
+With support 2187: MP:0001732 
+With support 624: MP:0001785 
+With support 596: MP:0001823 
+With support 493: MP:0001861 
+With support 782: MP:0001914 
+With support 624: MP:0001922 
+With support 707: MP:0001923 
+With support 1561: MP:0001925 
+With support 853: MP:0001926 
+With support 808: MP:0001935 
+With support 661: MP:0001954 
+With support 668: MP:0002020 
+With support 498: MP:0002064 
+With support 508: MP:0002066 
+With support 554: MP:0002075 
+With support 643: MP:0002078 
+With support 610: MP:0002079 
+With support 770: MP:0002082 
+With support 4851: MP:0002083 
+With support 557: MP:0002135 
+With support 475: MP:0002144 
+With support 557: MP:0002145 
+With support 547: MP:0002151 
+With support 601: MP:0002152 
+With support 5341: MP:0002169 
+With support 691: MP:0002412 
+With support 565: MP:0002451 
+With support 531: MP:0002628 
+With support 564: MP:0002687 
+With support 607: MP:0002727 
+With support 498: MP:0002833 
+With support 472: MP:0002874 
+With support 537: MP:0002875 
+With support 503: MP:0002882 
+With support 478: MP:0003009 
+With support 470: MP:0003354 
+With support 473: MP:0003717 
+With support 1286: MP:0003984 
+With support 633: MP:0004852 
+With support 841: MP:0005017 
+With support 615: MP:0005018 
+With support 599: MP:0005092 
+With support 555: MP:0005095 
+With support 558: MP:0005178 
+With support 705: MP:0005293 
+With support 593: MP:0005559 
+With support 567: MP:0005560 
+With support 735: MP:0005621 
+With support 864: MP:0006042 
+With support 713: MP:0008075 
+With support 621: MP:0008079 
+With support 478: MP:0008489 
+With support 668: MP:0008770 
+With support 485: MP:0008874 
+With support 578: MP:0009763 
+With support 507: MP:0009937 
+With support 612: MP:0010025 
+With support 552: MP:0010053 
+With support 570: MP:0010402 
+With support 932: MP:0010770 
+With support 1815: MP:0011085 
+With support 2020: MP:0011086 
+With support 1916: MP:0011087 
+With support 913: MP:0011088 
+With support 877: MP:0011089 
+With support 815: MP:0011090 
+With support 1203: MP:0011091 
+With support 945: MP:0011092 
+With support 714: MP:0011096 
+With support 2184: MP:0011098 
+With support 816: MP:0011099 
+With support 497: MP:0011100 
+With support 1022: MP:0011101 
+With support 776: MP:0011108 
+With support 579: MP:0011109 
+With support 607: MP:0011967 
+With support 546: MP:0012431 
+large_temp->size() = 7875
+normalized_transactions->size() = 489876
+transactions tested = 46390
+iteraction number: 2 has 27 itemsets
+With support 625: MP:0000691 MP:0002083 
+With support 469: MP:0000745 MP:0002083 
+With support 1149: MP:0001262 MP:0001265 
+With support 1058: MP:0001262 MP:0001732 
+With support 1335: MP:0001262 MP:0002083 
+With support 571: MP:0001262 MP:0002169 
+With support 589: MP:0001262 MP:0011085 
+With support 775: MP:0001262 MP:0011086 
+With support 559: MP:0001263 MP:0002083 
+With support 768: MP:0001265 MP:0001732 
+With support 1160: MP:0001265 MP:0002083 
+With support 509: MP:0001265 MP:0002169 
+With support 620: MP:0001265 MP:0011085 
+With support 796: MP:0001265 MP:0011086 
+With support 478: MP:0001393 MP:0002083 
+With support 469: MP:0001402 MP:0002083 
+With support 489: MP:0001406 MP:0002083 
+With support 517: MP:0001698 MP:0003984 
+With support 805: MP:0001698 MP:0011098 
+With support 928: MP:0001732 MP:0002083 
+With support 568: MP:0001732 MP:0011085 
+With support 607: MP:0001732 MP:0011086 
+With support 800: MP:0002083 MP:0002169 
+With support 531: MP:0002083 MP:0011085 
+With support 741: MP:0002083 MP:0011086 
+With support 529: MP:0002169 MP:0011098 
+With support 748: MP:0003984 MP:0011098 
+large_temp->size() = 20
+normalized_transactions->size() = 489876
+transactions tested = 46390
+iteraction number: 3 has 3 itemsets
+With support 489: MP:0001262 MP:0001265 MP:0001732 
+With support 584: MP:0001262 MP:0001265 MP:0002083 
+With support 528: MP:0001262 MP:0001732 MP:0002083 
+large_temp->size() = 0
+normalized_transactions->size() = 489876
+transactions tested = 46390
+iteraction number: 4 has 0 itemsets
+	size 0 :(
