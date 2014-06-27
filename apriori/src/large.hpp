@@ -35,4 +35,6 @@ class LargeItemSet {
 		
 		void print();
 		void printinfo();
+		
+		void sort();
 };

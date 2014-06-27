@@ -10,12 +10,14 @@
 #include "large.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
 
 LargeItemSet::LargeItemSet(unsigned int iteration) {
 	this->k = iteration;
+	itemset.clear();
 }
 
 LargeItemSet::~LargeItemSet() {
@@ -38,12 +40,17 @@ unsigned int LargeItemSet::getIteration() {
 
 bool LargeItemSet::contains(ItemSet * a) {
 	for(auto &i : itemset) {
+		bool cool = true;
 		for(auto &j : a->getItemSet()) {
-			if(i->contains(j.first) == false)
-				return false;
+			if(i->contains(j.first) == false) {
+				cool = false;
+				break;
+			}
 		}
+		if(cool == true)
+			return true;
 	}
-	return true;
+	return false;
 }
 
 void LargeItemSet::print() {
@@ -58,4 +65,11 @@ void LargeItemSet::print() {
 
 void LargeItemSet::printinfo() {
 	cout << "iteraction number: " << this->getIteration() << " has " << this->getItemSets().size() << " itemsets" << endl;
+	if(this->getItemSets().size() == 0) {
+		cout << "\tsize 0 :(" << endl;
+	}
+}
+
+void LargeItemSet::sort() {
+	std::sort(itemset.begin(), itemset.end(), ItemSetSort);
 }
