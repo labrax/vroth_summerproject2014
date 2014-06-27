@@ -28,5 +28,5 @@ class CandidateItemSet {
 		~CandidateItemSet();
 		
 		LargeItemSet * apriori_gen(LargeItemSet *);
-		LargeItemSet * subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions);
+		LargeItemSet * subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int);
 };
