@@ -9,8 +9,8 @@ CANDIDATE_FOLDER := obj/candidate/
 
 .PHONY: directories
 
-LD_FLAGS := -Wall -std=c++11 -O4
-CC_FLAGS := -Wall -std=c++11 -O4
+LD_FLAGS := -Wall -std=c++11 -g
+CC_FLAGS := -Wall -std=c++11 -g
 
 all: directories apriori
 
