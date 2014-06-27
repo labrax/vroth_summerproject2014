@@ -62,7 +62,8 @@ void DatabaseNormalized::processTransactions() {
 }
 
 void DatabaseNormalized::processNormalizedTransactions() {
-	std::unordered_map <string, bool> transactions_counting; //this will be used to count the amount of transactions
+	string str_count=""; //this will be used to count the amount of transactions
+	amount_transactions=1;
 	
 	if(file.is_open()) {
 		string line;
@@ -76,10 +77,11 @@ void DatabaseNormalized::processNormalizedTransactions() {
 			normalized_transactions.insert(normalized_transactions.end(), pair<string, string> (string(first), string(second)));
 			
 			//!count the amount of transactions
-			std::unordered_map <string, bool>::iterator it = transactions_counting.find(first);
-			
-			if(it == transactions_counting.end()) { //it didnt exist in the counting
-				transactions_counting.insert(pair<string, bool>(first, true));
+			if(str_count == "") {
+				str_count = first;
+			}
+			else if(str_count != first){
+				str_count = first;
 				amount_transactions++;
 			}
 			//!count the amount of transactions
