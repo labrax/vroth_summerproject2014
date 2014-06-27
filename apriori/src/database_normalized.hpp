@@ -37,7 +37,7 @@ class DatabaseNormalized {
 		
 		void removeDuplicates(); //remove in normalized_transactions duplicates //TOO SLOW!
 		
-		void processTransactions();
+		void processTransactions(); //not used!
 		void processNormalizedTransactions();
 		
 		map <string, map<string, bool>> & getTransactions(); //function for debug purpouses

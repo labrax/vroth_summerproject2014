@@ -35,10 +35,10 @@ class ItemSet {
 		void setSupportCount(unsigned int);
 		unsigned int getSupportCount();
 		
-		string getNthString(unsigned int);
+		string getNthString(unsigned int); //to get the identifier for the node
 		bool contains(string);
 		
 		vector<ItemSet *> subItemSets();
 };
 
-bool ItemSetSort(ItemSet * c0, ItemSet * c1);
+bool ItemSetSort(ItemSet *, ItemSet *);
