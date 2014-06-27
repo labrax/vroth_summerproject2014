@@ -33,7 +33,7 @@ Node::Node(unsigned int depth, string identifier, Node * father) {
 }
 
 Node::~Node() {
-	/*if(tp == bucket_node) {
+	if(tp == bucket_node) {
 		for(auto &i : children)
 			delete(i.second);
 	}
@@ -41,7 +41,7 @@ Node::~Node() {
 		for(auto &i : itemsets) {
 			delete(i);
 		}
-	}*/
+	}
 }
 
 type Node::getType() {
@@ -166,7 +166,8 @@ void Node::grabMinimumSupport(LargeItemSet * dest, unsigned int support) {
 	if(tp == itemset_node) {
 		for(auto &i : itemsets) {
 			if(i->getSupportCount() > support) {
-				dest->insertSet(i);
+				ItemSet * e  = new ItemSet(i); //to avoid memory leak
+				dest->insertSet(e);
 				//cout << "found one good!" << endl;
 			}
 		}

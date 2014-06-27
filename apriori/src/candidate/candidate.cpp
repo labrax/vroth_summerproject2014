@@ -67,11 +67,16 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 						}
 					}
 				}
+				for(auto &s: subsets)
+					delete(s); //after verifying the subsets delete it
+					
 				
 				//cout << "prune results were " << ok << endl;
 				
 				if(ok) 
 					new_candidate->insertSet(new_itemset); //!this block will prune candidates
+				else
+					delete(new_itemset); //if the candidate itemset is not used delete the memory allocated
 			}
 		}
 	}
@@ -85,7 +90,8 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 
 LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int support) {
 	for(auto &i: a->getItemSets()) {
-		root->insertItemSet(i);
+		ItemSet * e = new ItemSet(i);
+		root->insertItemSet(e);
 	}
 	LargeItemSet * new_large = new LargeItemSet(a->getIteration());
 

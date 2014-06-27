@@ -111,15 +111,21 @@ int main(int argc, char *argv[]) {
 	do {
 		CandidateItemSet cis;
 		LargeItemSet * large_temp = cis.apriori_gen(large_obtained);
+		
+		delete(large_obtained);
 		cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
 
 		large_obtained = cis.subset(large_temp, &a.getNormalizedTransactions(), minimum_transactions);
+		
+		delete(large_temp);
 		
 		large_obtained->sort();
 		
 		large_obtained->printinfo();
 		large_obtained->print();
 	} while(large_obtained->getItemSets().size() > 0);
+	
+	delete(large_obtained);
 	
 	return 0;
 }
