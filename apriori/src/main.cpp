@@ -22,6 +22,7 @@
 #include <algorithm>
 
 #include <cstdio>
+#include <cstdlib>
 
 using namespace std;
 
@@ -35,18 +36,20 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	
+	char tempDir[32] = "apriori.XXXXXX";
+	char * new_dir = mkdtemp(tempDir);
+	
 	char command[512]; //sort and remove duplicates for a file
-	sprintf(command, "sort %s | uniq > .temp_%s", argv[1], argv[1]);
+	sprintf(command, "sort %s | uniq > %s/%s", argv[1], new_dir, argv[1]);
 	system(command);
 	
-	sprintf(command, ".temp_%s", argv[1]);
+	sprintf(command, "%s/%s", new_dir, argv[1]);
 	DatabaseNormalized a(command);
 	
-	sprintf(command, "rm .temp_%s", argv[1]); //remove temporary file
+	sprintf(command, "rm -rf %s", new_dir); //remove temporary folder and files
 	system(command);
 	
 	double support = atof(argv[2]), confidence = atof(argv[3]);
-	
 	
 	cout << "support: " << support << endl
 		 << "confidence: " << confidence << endl;
