@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 	cout << a.getNormalizedTransactions().size() << " normalized transactions have been obtained." << endl;
 	
 	std::sort(a.getNormalizedTransactions().begin(), a.getNormalizedTransactions().end(), normalizedCompare); //probably it will already be sorted, just in case this function is still here
-	cout << "sorted!" << endl;
+	cout << "Transactions sorted!" << endl;
 	
 	//a.removeDuplicates(); //TOO SLOW, USING uniq IN CONSOLE
 	//cout << "removed duplicates!" << endl;
@@ -77,6 +77,10 @@ int main(int argc, char *argv[]) {
 	
 	//this part will remove the elements without the support
 	cout << "amount of transactions is " << a.getAmountTransactions() << endl;
+	unsigned int minimum_transactions = a.getAmountTransactions()*support;
+	cout << "the minimum support will be reach with " << minimum_transactions  << " transactions" << endl;
+	
+	
 	for(auto it = itemset_1.begin(); it != itemset_1.end();) {
 		if((*it).second/(double) a.getAmountTransactions() < support) {
 			//cout << "eliminating " << (*it).first << ", " << (*it).second << " because support is " <<  (*it).second/(double) a.getAmountTransactions() <<  endl;
@@ -99,12 +103,23 @@ int main(int argc, char *argv[]) {
 		large_1->insertSet(a);
 	}
 	//!OBTAINING 1-ITEMSETS
-	
-	CandidateItemSet cis;
-	LargeItemSet * large_2 = cis.apriori_gen(large_1);
-	
+
 	large_1->printinfo();
-	large_2->printinfo();
+	large_1->print();
+	
+	LargeItemSet * large_obtained = large_1;
+	do {
+		CandidateItemSet cis;
+		LargeItemSet * large_temp = cis.apriori_gen(large_obtained);
+		cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
+
+		large_obtained = cis.subset(large_temp, &a.getNormalizedTransactions(), minimum_transactions);
+		
+		large_obtained->sort();
+		
+		large_obtained->printinfo();
+		large_obtained->print();
+	} while(large_obtained->getItemSets().size() > 0);
 	
 	return 0;
 }
