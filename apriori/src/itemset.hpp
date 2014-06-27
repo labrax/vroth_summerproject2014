@@ -30,7 +30,7 @@ class ItemSet {
 		bool insert(string);
 		
 		map <string, bool> & getItemSet();
-		unsigned int getAmounElements();
+		unsigned int getAmountElements();
 		
 		void setSupportCount(unsigned int);
 		unsigned int getSupportCount();
@@ -40,3 +40,5 @@ class ItemSet {
 		
 		vector<ItemSet *> subItemSets();
 };
+
+bool ItemSetSort(ItemSet * c0, ItemSet * c1);

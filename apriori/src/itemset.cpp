@@ -38,7 +38,7 @@ map <string, bool> & ItemSet::getItemSet() {
 	return itemset;
 }
 
-unsigned int ItemSet::getAmounElements() {
+unsigned int ItemSet::getAmountElements() {
 	return itemset.size();
 }
 
@@ -116,4 +116,13 @@ vector<ItemSet *> ItemSet::subItemSets() {
 
 	//cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
 	return subsets;
+}
+
+bool ItemSetSort(ItemSet * c0, ItemSet * c1) {
+	map<string, bool>::iterator i0, i1;
+	for(i0 = c0->getItemSet().begin(), i1 = c1->getItemSet().begin(); i0 != c0->getItemSet().end() && i1 != c1->getItemSet().end(); i0++, i1++) {
+		if(i0->first != i1->first)
+			return i0->first < i1->first;
+	}
+	return i0->first < i1->first;
 }
