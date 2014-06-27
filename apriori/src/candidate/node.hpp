@@ -10,16 +10,18 @@
 #pragma once
 
 #include "../itemset.hpp"
+#include "../large.hpp"
 
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-#define BUCKET_THRESHOLD 5
+#define BUCKET_THRESHOLD 15
 
 using std::string;
 using std::unordered_map;
 using std::vector;
+using std::pair;
 
 typedef enum { node, bucket_node, itemset_node } type;
 
@@ -45,4 +47,9 @@ class Node {
 		
 		unsigned int getDepth();
 		string & getIdentifier();
+		
+		bool contains(ItemSet *); //recursive without using the tree properties
+		void transactionScan(vector <pair <string, string>> *);
+		
+		void grabMinimumSupport(LargeItemSet *, unsigned int);
 };
