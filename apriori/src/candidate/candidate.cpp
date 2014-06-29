@@ -147,7 +147,7 @@ vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <st
 		return thread_blocks;
 		
 	unsigned concurentThreadsSupported = thread::hardware_concurrency();
-	cout << concurentThreadsSupported << " concurrent threads will be used" << endl;
+	cout << "--THREADS INFO--" << endl << concurentThreadsSupported << " concurrent threads will be used" << endl;
 	
 	unsigned int initial=0;
 	while(thread_blocks.size() < concurentThreadsSupported-1) {
@@ -165,6 +165,7 @@ vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <st
 	for(auto & i: thread_blocks) {
 		cout << "thread has range: " << i.first << " to " << i.second << endl;
 	}
+	cout << "--THREADS INFO--" << endl;
 	
 	return thread_blocks;
 }

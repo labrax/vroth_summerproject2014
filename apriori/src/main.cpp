@@ -37,17 +37,6 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 	
-	bool USE_THREAD;
-	
-	if(argv[4] == string("yes")) {
-		USE_THREAD = true;
-	}
-	else
-		USE_THREAD = false;
-		
-	cout << "USE_THREAD: " << USE_THREAD << endl;
-		
-	
 	char tempDir[32] = "apriori.XXXXXX";
 	char * new_dir = mkdtemp(tempDir);
 	
@@ -61,22 +50,42 @@ int main(int argc, char *argv[]) {
 	sprintf(command, "rm -rf %s", new_dir); //remove temporary folder and files
 	system(command);
 	
-	double support = atof(argv[2]), confidence = atof(argv[3]);
+	bool USE_THREAD;
+	if(argv[4] == string("yes")) {
+		USE_THREAD = true;
+	}
+	else
+		USE_THREAD = false;
+
+	if(USE_THREAD)
+		cout << "Using threads!" << endl;
+	else
+		cout << "Not using threads!" << endl;
 	
-	cout << "support: " << support << endl
-		 << "confidence: " << confidence << endl;
+	double support = atof(argv[2]), confidence = atof(argv[3]);
+	cout << "Using support: " << support << endl
+		 << "Using confidence: " << confidence << endl;
 	
 	/*a.processTransactions(); //to store then in a map with difference transactions
 	cout << a.getTransactions().size() << " transactions have been stored." << endl; */
 		
 	a.processNormalizedTransactions(); //to store in a <TID, item> manner
-	cout << a.getNormalizedTransactions().size() << " normalized transactions have been obtained." << endl;
+	cout << a.getNormalizedTransactions().size() << " normalized transactions obtained" << endl;
 	
 	std::sort(a.getNormalizedTransactions().begin(), a.getNormalizedTransactions().end(), normalizedCompare); //probably it will already be sorted, just in case this function is still here
 	cout << "Transactions sorted!" << endl;
 	
 	//a.removeDuplicates(); //TOO SLOW, USING uniq IN CONSOLE
 	//cout << "removed duplicates!" << endl;
+	
+	if(USE_THREAD)
+		startThreadSettings(&a.getNormalizedTransactions()); //setup threads
+		
+	cout << "Amount of transactions is " << a.getAmountTransactions() << endl;
+	unsigned int minimum_transactions = a.getAmountTransactions()*support;
+	cout << "The minimum support is obtained with " << minimum_transactions  << " transactions" << endl;
+
+	cout << "------" << endl;
 	
 	//!OBTAINING 1-ITEMSETS
 	std::map<string, unsigned int> itemset_1;
@@ -91,11 +100,7 @@ int main(int argc, char *argv[]) {
 	}
 	
 	//this part will remove the elements without the support
-	cout << "amount of transactions is " << a.getAmountTransactions() << endl;
-	unsigned int minimum_transactions = a.getAmountTransactions()*support;
-	cout << "the minimum support will be reach with " << minimum_transactions  << " transactions" << endl;
-	
-	
+
 	for(auto it = itemset_1.begin(); it != itemset_1.end();) {
 		if((*it).second/(double) a.getAmountTransactions() < support) {
 			//cout << "eliminating " << (*it).first << ", " << (*it).second << " because support is " <<  (*it).second/(double) a.getAmountTransactions() <<  endl;

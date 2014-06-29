@@ -31,3 +31,6 @@ class CandidateItemSet {
 		LargeItemSet * subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int);
 		LargeItemSet * subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int);
 };
+
+void run_threaded(Node *, vector <pair <string, string>> *, unsigned int, unsigned int);
+vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <string, string>> *);
