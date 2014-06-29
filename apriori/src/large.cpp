@@ -27,11 +27,17 @@ LargeItemSet::~LargeItemSet() {
 }
 
 void LargeItemSet::insertSet(ItemSet * set) {
+	large_lock.lock();
 	itemset.insert(itemset.end(), set);
+	large_lock.unlock();
 }
 
 vector<ItemSet *> & LargeItemSet::getItemSets() {
 	return itemset;
+}
+
+unsigned int LargeItemSet::getAmountTransactions() {
+	return itemset.size();
 }
 
 unsigned int LargeItemSet::getIteration() {
@@ -47,27 +53,28 @@ bool LargeItemSet::contains(ItemSet * a) {
 				break;
 			}
 		}
-		if(cool == true)
+		if(cool == true) {
 			return true;
+		}
 	}
 	return false;
 }
 
 void LargeItemSet::print() {
 	for(auto &i : itemset) {
-		cout << "With support " << i->getSupportCount() << ": ";
 		for(auto &j: i->getItemSet()) {
 			cout << j.first << " ";
 		}
-		cout << endl;
+		cout << "#SUP: " << i->getSupportCount() << endl;
 	}
 }
 
 void LargeItemSet::printinfo() {
-	cout << "iteraction number: " << this->getIteration() << " has " << this->getItemSets().size() << " itemsets" << endl;
-	if(this->getItemSets().size() == 0) {
-		cout << "\tsize 0 :(" << endl;
-	}
+	if(this->getItemSets().size() != 0)
+		cout << "iteraction number: " << this->getIteration() << " results in " << this->getItemSets().size() << " itemsets" << endl;
+	else
+		cout << "no more itemsets" << endl;
+
 }
 
 void LargeItemSet::sort() {

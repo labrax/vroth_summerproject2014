@@ -15,20 +15,26 @@
 #include "itemset.hpp"
 
 #include <vector>
+#include <mutex>
 
 using std::vector;
+
+using std::mutex;
 
 class LargeItemSet {
 	private:
 		vector<ItemSet *> itemset;
 		
 		unsigned int k; //to identify the iteration, also the size
+		
+		mutex large_lock; //to lock insertSet (apriori_genThreaded)
 	public:
 		LargeItemSet(unsigned int);
 		~LargeItemSet();
 		void insertSet(ItemSet * set);
 		
 		vector<ItemSet *> & getItemSets();
+		unsigned int getAmountTransactions();
 		unsigned int getIteration();
 		
 		bool contains(ItemSet *);

@@ -29,7 +29,7 @@ class ItemSet {
 		map <string, bool> itemset;
 		unsigned int support_count;
 		
-		mutex sp_lock;
+		mutex sp_lock; //to lock increases in count (subsetThreaded)
 	public:
 		ItemSet();
 		ItemSet(ItemSet *);
