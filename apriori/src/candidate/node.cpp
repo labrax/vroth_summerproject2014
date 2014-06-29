@@ -140,7 +140,7 @@ void Node::transactionScan(vector <pair <string, string>> * transaction) {
 				}
 			}
 			if(cool == true) {
-				i->setSupportCount(i->getSupportCount() + 1);
+				i->increaseSupportCount();
 				//cout << "updating support to " << i->getSupportCount() << endl;
 			}
 		}
@@ -167,6 +167,7 @@ void Node::grabMinimumSupport(LargeItemSet * dest, unsigned int support) {
 		for(auto &i : itemsets) {
 			if(i->getSupportCount() > support) {
 				ItemSet * e  = new ItemSet(i); //to avoid memory leak
+				e->setSupportCount(i->getSupportCount());
 				dest->insertSet(e);
 				//cout << "found one good!" << endl;
 			}

@@ -16,14 +16,20 @@
 #include <string>
 #include <vector>
 
+#include <mutex>
+
 using std::map;
 using std::string;
 using std::vector;
+
+using std::mutex;
 
 class ItemSet {
 	private:
 		map <string, bool> itemset;
 		unsigned int support_count;
+		
+		mutex sp_lock;
 	public:
 		ItemSet();
 		ItemSet(ItemSet *);
@@ -34,6 +40,7 @@ class ItemSet {
 		
 		void setSupportCount(unsigned int);
 		unsigned int getSupportCount();
+		void increaseSupportCount();
 		
 		string getNthString(unsigned int); //to get the identifier for the node
 		bool contains(string);

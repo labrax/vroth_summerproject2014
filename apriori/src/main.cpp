@@ -30,11 +30,23 @@ int main(int argc, char *argv[]) {
 	if(argc < 4) { //check the parameters
 		cerr << "Not enough parameters." << endl <<
 		"Run with transactions file to open." << endl <<
-		"./apriori <file> <support> <confidence>" << endl <<
-		"support and confidence in a range 0.01 to 1" << endl
+		"./apriori <file> <support> <confidence> <threaded>" << endl <<
+		"support and confidence in a range 0.01 to 1" << endl <<
+		"threaded yes or no" << endl
 		;
 		return -1;
 	}
+	
+	bool USE_THREAD;
+	
+	if(argv[4] == string("yes")) {
+		USE_THREAD = true;
+	}
+	else
+		USE_THREAD = false;
+		
+	cout << "USE_THREAD: " << USE_THREAD << endl;
+		
 	
 	char tempDir[32] = "apriori.XXXXXX";
 	char * new_dir = mkdtemp(tempDir);
@@ -118,7 +130,10 @@ int main(int argc, char *argv[]) {
 		delete(large_obtained);
 		cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
 
-		large_obtained = cis.subset(large_temp, &a.getNormalizedTransactions(), minimum_transactions);
+		if(!USE_THREAD)
+			large_obtained = cis.subset(large_temp, &a.getNormalizedTransactions(), minimum_transactions);
+		else
+			large_obtained = cis.subsetThreaded(large_temp, &a.getNormalizedTransactions(), minimum_transactions);
 		
 		delete(large_temp);
 		

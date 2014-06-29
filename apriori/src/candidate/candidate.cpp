@@ -11,11 +11,14 @@
 
 #include <vector>
 #include <iostream>
+#include <thread>
 
 using std::vector;
 
 using std::cout;
 using std::endl;
+
+using std::thread;
 
 CandidateItemSet::CandidateItemSet() {
 	root = new Node(0, "", NULL);
@@ -118,7 +121,75 @@ LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, 
 	
 	cout << "transactions tested = " << tests << endl;
 	
-	//TODO: get all the transactions with the minimum support!
+	root->grabMinimumSupport(new_large, support);
+	
+	return new_large;
+}
+
+void run_threaded(Node * root, vector <pair <string, string>> * normalized_transactions, unsigned int rangeLow, unsigned int rangeHigh) {
+	unsigned int j=0;
+	for(unsigned int i=rangeLow; i < rangeHigh; i=j) { //will scan transaction by transaction
+		for(j=i; j < normalized_transactions->size() && (*normalized_transactions)[j].first == (*normalized_transactions)[i].first; ++j);
+		
+		vector<pair <string, string>>::const_iterator first = normalized_transactions->begin() + i; //get the first element in transaction
+		vector<pair <string, string>>::const_iterator last = normalized_transactions->begin() + j; //get the last element in transaction
+		
+		vector<pair <string, string>> transaction(first, last);
+		
+		root->transactionScan(&transaction);
+	}
+}
+
+vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <string, string>> * normalized_transactions) {
+	static vector<pair<unsigned int, unsigned int>> thread_blocks;
+	
+	if(thread_blocks.size() > 0)
+		return thread_blocks;
+		
+	unsigned concurentThreadsSupported = thread::hardware_concurrency();
+	cout << concurentThreadsSupported << " concurrent threads will be used" << endl;
+	
+	unsigned int initial=0;
+	while(thread_blocks.size() < concurentThreadsSupported-1) {
+		unsigned int new_initial = normalized_transactions->size()*thread_blocks.size()/concurentThreadsSupported;
+		if(new_initial < initial)
+			new_initial = initial;
+
+		unsigned int new_end = normalized_transactions->size()*(thread_blocks.size()+1)/concurentThreadsSupported;
+		for(initial = new_end; initial < normalized_transactions->size() && (*normalized_transactions)[initial].first == (*normalized_transactions)[new_end].first; ++initial);
+		
+		thread_blocks.insert(thread_blocks.end(), pair<unsigned int, unsigned int>(new_initial, initial));
+	}
+	thread_blocks.insert(thread_blocks.end(), pair<unsigned int, unsigned int>(initial, normalized_transactions->size()));
+	
+	for(auto & i: thread_blocks) {
+		cout << "thread has range: " << i.first << " to " << i.second << endl;
+	}
+	
+	return thread_blocks;
+}
+
+LargeItemSet * CandidateItemSet::subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int support) {
+	for(auto &i: a->getItemSets()) {
+		ItemSet * e = new ItemSet(i);
+		root->insertItemSet(e);
+	}
+	LargeItemSet * new_large = new LargeItemSet(a->getIteration());
+
+	vector<pair <unsigned int, unsigned int>> thread_blocks = startThreadSettings(normalized_transactions);
+	
+	vector<thread *> threads;
+	
+	for(unsigned int i=0; i<thread_blocks.size(); i++) {
+		threads.insert(threads.end(), new thread(run_threaded, root, normalized_transactions, thread_blocks[i].first, thread_blocks[i].second));
+	}
+	
+	for(auto & t: threads)
+		t->join();
+
+	for(auto & t: threads)
+		delete(t);
+	
 	root->grabMinimumSupport(new_large, support);
 	
 	return new_large;

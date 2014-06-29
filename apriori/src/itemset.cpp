@@ -14,6 +14,8 @@ using std::pair;
 //using std::cerr;
 //using std::endl;
 
+using std::lock;
+
 ItemSet::ItemSet() {
 	support_count = 0;
 }
@@ -48,6 +50,12 @@ void ItemSet::setSupportCount(unsigned int support_count) {
 
 unsigned int ItemSet::getSupportCount() {
 	return support_count;
+}
+
+void ItemSet::increaseSupportCount() {
+	sp_lock.lock();
+	support_count++;
+	sp_lock.unlock();
 }
 
 string ItemSet::getNthString(unsigned int n) {
