@@ -4,6 +4,7 @@ apriori/apriori
 
 *.txt
 *.arff
+*.obo
 
 *.bkp
 
