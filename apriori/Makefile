@@ -4,8 +4,10 @@ OBJ_DIR := obj/
 
 OBJ_FILES := obj/database_normalized.o obj/rules.o obj/itemset.o obj/large.o obj/main.o
 CANDIDATE_FILES := obj/candidate/node.o obj/candidate/candidate.o
+ONTOLOGIE_FILES := obj/ontologies/ontology.o obj/ontologies/node_ontology.o
 
 CANDIDATE_FOLDER := obj/candidate/
+ONTOLOGY_FOLDER := obj/ontologies/
 
 .PHONY: directories
 
@@ -14,8 +16,14 @@ CC_FLAGS := -Wall -std=c++11 -pthread -g
 
 all: directories apriori
 
-apriori: $(OBJ_FILES) $(CANDIDATE_FILES)
+apriori: $(OBJ_FILES) $(CANDIDATE_FILES) $(ONTOLOGIE_FILES)
 	g++ $(LD_FLAGS) -o $@ $^
+
+$(OBJ_DIR)ontologies/ontology.o: $(SRC_DIR)ontologies/ontology.cpp
+	g++ $(CC_FLAGS) -c -o $@ $<
+
+$(OBJ_DIR)ontologies/node_ontology.o: $(SRC_DIR)ontologies/node_ontology.cpp
+	g++ $(CC_FLAGS) -c -o $@ $<
 
 $(OBJ_DIR)candidate/candidate.o: $(SRC_DIR)candidate/candidate.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
@@ -38,9 +46,12 @@ $(OBJ_DIR)large.o: $(SRC_DIR)large.cpp
 $(OBJ_DIR)main.o: $(SRC_DIR)main.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
-directories: $(CANDIDATE_FOLDER)
+directories: $(CANDIDATE_FOLDER) $(ONTOLOGY_FOLDER)
 
 $(CANDIDATE_FOLDER):
+	mkdir -p $@
+	
+$(ONTOLOGY_FOLDER):
 	mkdir -p $@
 
 clean:
