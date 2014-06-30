@@ -21,7 +21,7 @@ using std::pair;
 DatabaseNormalized::DatabaseNormalized(char * filename) : filename(filename) {
 	file.open(filename);
 	if(!file.is_open()) {
-		cerr << "Error opening \"" << filename << "\"" << endl;
+		cerr << "Error opening \"" << filename << "\" transactions file" << endl;
 	}
 	amount_transactions = 0;
 }
@@ -57,7 +57,7 @@ void DatabaseNormalized::processTransactions() {
 		}
 	}
 	else {
-		cerr << "File is not open -- processTransactions()" << endl;
+		cerr << "File is not open -- DatabaseNormalized::processTransactions()" << endl;
 	}
 }
 
@@ -88,7 +88,7 @@ void DatabaseNormalized::processNormalizedTransactions() {
 		}
 	}
 	else {
-		cerr << "File is not open -- processNormalizedTransactions()" << endl;
+		cerr << "File is not open -- DatabaseNormalized::processNormalizedTransactions()" << endl;
 	}
 }
 
