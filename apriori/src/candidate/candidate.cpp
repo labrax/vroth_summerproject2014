@@ -8,6 +8,7 @@
  */
 
 #include "candidate.hpp"
+#include "../main.hpp"
 
 #include <vector>
 #include <iostream>
@@ -157,7 +158,7 @@ LargeItemSet * CandidateItemSet::apriori_genThreaded(LargeItemSet * a) {
 	LargeItemSet * new_candidate = new LargeItemSet(a->getIteration()+1);
 	vector<ItemSet *> last_large = a->getItemSets();
 	
-	unsigned concurentThreadsSupported = thread::hardware_concurrency();
+	unsigned concurentThreadsSupported = Main::thread_number;
 	
 	vector <thread *> threads;
 	/*vector <LargeItemSet *> new_candidate_thread;
@@ -246,7 +247,8 @@ vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <st
 	if(thread_blocks.size() > 0)
 		return thread_blocks;
 		
-	unsigned concurentThreadsSupported = thread::hardware_concurrency();
+	unsigned concurentThreadsSupported = Main::thread_number;
+
 	//cout << "--THREADS INFO--" << endl << concurentThreadsSupported << " concurrent threads will be used" << endl;
 	
 	unsigned int initial=0;
@@ -262,10 +264,11 @@ vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <st
 	}
 	thread_blocks.insert(thread_blocks.end(), pair<unsigned int, unsigned int>(initial, normalized_transactions->size()));
 	
-	for(auto & i: thread_blocks) {
-		//cout << "subset thread has range: " << i.first << " to " << i.second << endl;
+
+	/*for(auto & i: thread_blocks) {
+		cout << "subset thread has range: " << i.first << " to " << i.second << endl;
 	}
-	//cout << "--THREADS INFO--" << endl;
+	cout << "--THREADS INFO--" << endl;*/
 	
 	return thread_blocks;
 }
