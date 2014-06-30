@@ -32,7 +32,8 @@ class ItemSet {
 		mutex sp_lock; //to lock increases in count (subsetThreaded)
 	public:
 		ItemSet();
-		ItemSet(ItemSet *);
+		ItemSet(ItemSet * copy);
+		ItemSet(ItemSet * original, ItemSet * without);
 		bool insert(string);
 		
 		map <string, bool> & getItemSet();
@@ -46,6 +47,8 @@ class ItemSet {
 		bool contains(string);
 		
 		vector<ItemSet *> subItemSets();
+		
+		void print();
 };
 
 bool ItemSetSort(ItemSet *, ItemSet *);

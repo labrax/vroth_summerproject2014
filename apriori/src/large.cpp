@@ -62,9 +62,7 @@ bool LargeItemSet::contains(ItemSet * a) {
 
 void LargeItemSet::print() {
 	for(auto &i : itemset) {
-		for(auto &j: i->getItemSet()) {
-			cout << j.first << " ";
-		}
+		i->print();
 		cout << "#SUP: " << i->getSupportCount() << endl;
 	}
 }

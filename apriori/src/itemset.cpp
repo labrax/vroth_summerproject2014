@@ -8,11 +8,13 @@
  */
  
 #include "itemset.hpp"
+#include "main.hpp"
+
 #include <iostream>
 
 using std::pair;
-//using std::cerr;
-//using std::endl;
+using std::cout;
+using std::endl;
 
 using std::lock;
 
@@ -24,6 +26,15 @@ ItemSet::ItemSet(ItemSet * copy) {
 	support_count = 0;
 	for(auto &i : copy->getItemSet()) {
 		itemset.insert(pair<string, bool>(i.first, true));
+	}
+}
+
+ItemSet::ItemSet(ItemSet * original, ItemSet * without) {
+	support_count = 0;
+	for(auto & j : original->getItemSet()) {
+		if(without->contains(j.first) == false) {
+			itemset.insert(pair<string, bool>(j.first, true));
+		}
 	}
 }
 
@@ -124,6 +135,14 @@ vector<ItemSet *> ItemSet::subItemSets() {
 
 	//cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
 	return subsets;
+}
+
+void ItemSet::print() {
+	for(auto &j: getItemSet()) {
+		cout << j.first << " ";
+	}
+	if(Main::verbose)
+		cout << "(" << support_count << ") ";
 }
 
 bool ItemSetSort(ItemSet * c0, ItemSet * c1) {
