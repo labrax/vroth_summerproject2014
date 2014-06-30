@@ -13,6 +13,7 @@
 #include "itemset.hpp"
 #include "large.hpp"
 #include "candidate/candidate.hpp"
+#include "rules.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -22,6 +23,7 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
+#include <thread>
 
 #include <cstdio>
 #include <cstdlib>
@@ -36,6 +38,9 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
+bool Main::verbose = false;
+unsigned int Main::thread_number = 0;
+
 Main::Main(int argc, char * argv[]) {
 	bool error = false;
 	
@@ -47,9 +52,6 @@ Main::Main(int argc, char * argv[]) {
 	confidence = 0.8;
 	
 	use_thread = false;
-	thread_number = 0;
-	
-	verbose = false;
 	
 	for(int i = 0; i<argc; i++) {
 		if(strcmp(argv[i], "-f") == 0) {
@@ -138,6 +140,15 @@ Main::Main(int argc, char * argv[]) {
 		cerr << "true" << endl;
 	else
 		cerr << "false" << endl;
+	
+	if(use_thread)
+		if(thread_number == 0) {
+			thread_number = std::thread::hardware_concurrency();
+			if(thread_number == 0) {
+				cerr << "Error initializing thread_number, running without threads!" << endl;
+				thread_number = 0;
+			}
+		}
 }
 
 Main::~Main() {
@@ -226,7 +237,8 @@ void Main::run() {
 		large_1->print();
 	}
 	
-	LargeItemSet * large_obtained = large_1;
+	Rules rules(confidence);
+	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
 	do {
 		CandidateItemSet cis;
 		LargeItemSet * large_temp;
@@ -236,7 +248,7 @@ void Main::run() {
 		else
 			large_temp = cis.apriori_genThreaded(large_obtained); //TODO: verify if there is gain in comparison without threads
 		
-		delete(large_obtained); //TODO: <--- work on this
+		rules.addLarge(large_obtained);
 		
 		if(verbose)
 			cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
@@ -258,7 +270,10 @@ void Main::run() {
 		}
 	} while(large_obtained->getItemSets().size() > 0);
 	
-	delete(large_obtained);
+	rules.addLarge(large_obtained);
+	
+	rules.computeRules();
+	rules.print();
 	
 	delete(database);
 }

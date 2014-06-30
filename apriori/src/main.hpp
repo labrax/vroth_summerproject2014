@@ -15,7 +15,6 @@
 class Main {
 	private:
 		bool use_thread;
-		unsigned int thread_number; //TODO: use Main::thread_number
 		
 		bool preprocessed;
 		
@@ -27,7 +26,9 @@ class Main {
 		vector<LargeItemSet *> largesets;
 
 	public:
-		bool verbose;
+		static bool verbose;
+		static unsigned int thread_number;
+		
 		Main(int argc, char * argv[]);
 		~Main();
 		
