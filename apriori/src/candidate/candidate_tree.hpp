@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+#include <cstdint>
+
 using std::string;
 using std::vector;
 using std::pair;
@@ -28,5 +30,5 @@ class CandidateTree : public ItemSetTree{
 		~CandidateTree();
 		
 		void transactionScan(vector <pair <string, string>> *);
-		void grabMinimumSupport(LargeItemSet *, unsigned int);
+		void grabMinimumSupport(LargeItemSet *, uint64_t);
 };

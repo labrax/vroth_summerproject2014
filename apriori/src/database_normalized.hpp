@@ -17,6 +17,8 @@
 #include <map>
 #include <vector>
 
+#include <cstdint>
+
 using std::ifstream;
 using std::map;
 using std::string;
@@ -29,7 +31,7 @@ class DatabaseNormalized {
 		ifstream file;
 		map <string, map<string, bool>> transactions;
 		vector <pair <string, string>> normalized_transactions;
-		unsigned int amount_transactions;
+		uint64_t amount_transactions;
 		
 	public:
 		DatabaseNormalized(char * filename);
@@ -43,7 +45,7 @@ class DatabaseNormalized {
 		map <string, map<string, bool>> & getTransactions(); //function for debug purpouses
 		vector <pair <string, string>> & getNormalizedTransactions();
 		
-		unsigned int getAmountTransactions(void);
+		uint64_t getAmountTransactions(void);
 		
 		void printTransactions(); //print data in a proper manner for debug
 		void printNormalizedTransactions();

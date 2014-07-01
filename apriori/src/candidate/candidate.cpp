@@ -34,9 +34,9 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 	
 	vector<ItemSet *> last_large = a->getItemSets();
 
-	for(unsigned int i=0; i<last_large.size(); i++) {
+	for(uint64_t i=0; i<last_large.size(); i++) {
 		ItemSet * first = last_large[i];
-		for(unsigned int j=i+1; j<last_large.size(); j++) {
+		for(uint64_t j=i+1; j<last_large.size(); j++) {
 			ItemSet * second = last_large[j];
 			
 			//!this will test if they are similar until the last element
@@ -92,10 +92,10 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 	return new_candidate;
 }
 
-void run_apriori_genThreaded(LargeItemSet * new_candidate, LargeItemSet * a, vector<ItemSet *> * last_large, unsigned int rangeLow, unsigned int rangeHigh) {	
-	for(unsigned int i=rangeLow; i<rangeHigh; i++) {
+void run_apriori_genThreaded(LargeItemSet * new_candidate, LargeItemSet * a, vector<ItemSet *> * last_large, uint64_t rangeLow, uint64_t rangeHigh) {	
+	for(uint64_t i=rangeLow; i<rangeHigh; i++) {
 		ItemSet * first = (*last_large)[i];
-		for(unsigned int j=i+1; j<last_large->size(); j++) {
+		for(uint64_t j=i+1; j<last_large->size(); j++) {
 			ItemSet * second = (*last_large)[j];
 			
 			//!this will test if they are similar until the last element
@@ -146,11 +146,11 @@ void run_apriori_genThreaded(LargeItemSet * new_candidate, LargeItemSet * a, vec
 	//cout << "thread exited" << endl;
 }
 
-inline unsigned int amount_op_aux(unsigned int a, unsigned int b) {
+inline uint64_t amount_op_aux(uint64_t a, uint64_t b) {
 	return ((b*b*b-a*a*a) - (b-a))/3;
 }
 
-inline unsigned int amount_op(unsigned int amount_transactions, unsigned int block_init, unsigned int block_end) { //inside is a quadratic function
+inline uint64_t amount_op(uint64_t amount_transactions, uint64_t block_init, uint64_t block_end) { //inside is a quadratic function
 	return amount_op_aux(block_init, amount_transactions) - amount_op_aux(block_end, amount_transactions);
 }
 
@@ -162,15 +162,15 @@ LargeItemSet * CandidateItemSet::apriori_genThreaded(LargeItemSet * a) {
 	
 	vector <thread *> threads;
 	/*vector <LargeItemSet *> new_candidate_thread;
-	for(unsigned int i=0; i < concurentThreadsSupported; i++) {
+	for(uint64_t i=0; i < concurentThreadsSupported; i++) {
 		new_candidate_thread.insert(new_candidate_thread.end(), new LargeItemSet(a->getIteration()+1));
 	}*/
 	
-	unsigned int NUM_EACH_THREAD = amount_op(a->getAmountTransactions(), 0, a->getAmountTransactions())/concurentThreadsSupported;
+	uint64_t NUM_EACH_THREAD = amount_op(a->getAmountTransactions(), 0, a->getAmountTransactions())/concurentThreadsSupported;
 	
 	//cout << "transactions: " << a->getAmountTransactions() << endl;
 	
-	unsigned int block_init = 0, block_end;
+	uint64_t block_init = 0, block_end;
 	while(threads.size() < concurentThreadsSupported-1 && block_init != a->getAmountTransactions()) {
 		block_end = block_init;
 		
@@ -206,18 +206,18 @@ LargeItemSet * CandidateItemSet::apriori_genThreaded(LargeItemSet * a) {
 	return new_candidate;
 }
 
-LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int support) {
+LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t support) {
 	for(auto &i: a->getItemSets()) {
 		ItemSet * e = new ItemSet(i);
 		root->insertItemSet(e);
 	}
 	LargeItemSet * new_large = new LargeItemSet(a->getIteration());
 
-	unsigned int tests = 0;
+	//uint64_t tests = 0;
 	//cout << "normalized_transactions->size() = " << normalized_transactions->size() << endl;
 
-	unsigned int j=0;
-	for(unsigned int i=0; i < normalized_transactions->size(); i=j) { //will scan transaction by transaction
+	uint64_t j=0;
+	for(uint64_t i=0; i < normalized_transactions->size(); i=j) { //will scan transaction by transaction
 		for(j=i; j < normalized_transactions->size() && (*normalized_transactions)[j].first == (*normalized_transactions)[i].first; ++j);
 		
 		vector<pair <string, string>>::const_iterator first = normalized_transactions->begin() + i; //get the first element in transaction
@@ -226,11 +226,11 @@ LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, 
 		vector<pair <string, string>> transaction(first, last);
 		
 		/*cout << endl << transaction[0].first << ": "; //would print all the transactions in blocks
-		for(unsigned int b=0; b<transaction.size(); b++) {
+		for(uint64_t b=0; b<transaction.size(); b++) {
 			cout << transaction[b].second << endl;
 		}*/
 		
-		tests++;
+		//tests++;
 		root->transactionScan(&transaction);
 	}
 	
@@ -241,8 +241,8 @@ LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, 
 	return new_large;
 }
 
-vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <string, string>> * normalized_transactions) {
-	static vector<pair<unsigned int, unsigned int>> thread_blocks;
+vector<pair <uint64_t, uint64_t>> & startThreadSettings(vector <pair <string, string>> * normalized_transactions) {
+	static vector<pair<uint64_t, uint64_t>> thread_blocks;
 	
 	if(thread_blocks.size() > 0)
 		return thread_blocks;
@@ -251,18 +251,18 @@ vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <st
 
 	//cout << "--THREADS INFO--" << endl << concurentThreadsSupported << " concurrent threads will be used" << endl;
 	
-	unsigned int initial=0;
+	uint64_t initial=0;
 	while(thread_blocks.size() < concurentThreadsSupported-1) {
-		unsigned int new_initial = normalized_transactions->size()*thread_blocks.size()/concurentThreadsSupported;
+		uint64_t new_initial = normalized_transactions->size()*thread_blocks.size()/concurentThreadsSupported;
 		if(new_initial < initial)
 			new_initial = initial;
 
-		unsigned int new_end = normalized_transactions->size()*(thread_blocks.size()+1)/concurentThreadsSupported;
+		uint64_t new_end = normalized_transactions->size()*(thread_blocks.size()+1)/concurentThreadsSupported;
 		for(initial = new_end; initial < normalized_transactions->size() && (*normalized_transactions)[initial].first == (*normalized_transactions)[new_end].first; ++initial);
 		
-		thread_blocks.insert(thread_blocks.end(), pair<unsigned int, unsigned int>(new_initial, initial));
+		thread_blocks.insert(thread_blocks.end(), pair<uint64_t, uint64_t>(new_initial, initial));
 	}
-	thread_blocks.insert(thread_blocks.end(), pair<unsigned int, unsigned int>(initial, normalized_transactions->size()));
+	thread_blocks.insert(thread_blocks.end(), pair<uint64_t, uint64_t>(initial, normalized_transactions->size()));
 	
 
 	/*for(auto & i: thread_blocks) {
@@ -273,9 +273,9 @@ vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <st
 	return thread_blocks;
 }
 
-void run_subsetThreaded(CandidateTree * root, vector <pair <string, string>> * normalized_transactions, unsigned int rangeLow, unsigned int rangeHigh) {
-	unsigned int j=0;
-	for(unsigned int i=rangeLow; i < rangeHigh; i=j) { //will scan transaction by transaction
+void run_subsetThreaded(CandidateTree * root, vector <pair <string, string>> * normalized_transactions, uint64_t rangeLow, uint64_t rangeHigh) {
+	uint64_t j=0;
+	for(uint64_t i=rangeLow; i < rangeHigh; i=j) { //will scan transaction by transaction
 		for(j=i; j < normalized_transactions->size() && (*normalized_transactions)[j].first == (*normalized_transactions)[i].first; ++j);
 		
 		vector<pair <string, string>>::const_iterator first = normalized_transactions->begin() + i; //get the first element in transaction
@@ -288,18 +288,18 @@ void run_subsetThreaded(CandidateTree * root, vector <pair <string, string>> * n
 	//cout << "thread exit" << endl;
 }
 
-LargeItemSet * CandidateItemSet::subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int support) {
+LargeItemSet * CandidateItemSet::subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t support) {
 	for(auto &i: a->getItemSets()) {
 		ItemSet * e = new ItemSet(i);
 		root->insertItemSet(e);
 	}
 	LargeItemSet * new_large = new LargeItemSet(a->getIteration());
 
-	vector<pair <unsigned int, unsigned int>> thread_blocks = startThreadSettings(normalized_transactions);
+	vector<pair <uint64_t, uint64_t>> thread_blocks = startThreadSettings(normalized_transactions);
 	
 	vector<thread *> threads;
 	
-	for(unsigned int i=0; i<thread_blocks.size(); i++) {
+	for(uint64_t i=0; i<thread_blocks.size(); i++) {
 		//cout << "thread : " << thread_blocks[i].first << " " << thread_blocks[i].second << endl;
 		threads.insert(threads.end(), new thread(run_subsetThreaded, root, normalized_transactions, thread_blocks[i].first, thread_blocks[i].second));
 	}

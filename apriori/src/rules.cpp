@@ -12,6 +12,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include <cstdint>
+
 using std::cout;
 using std::endl;
 
@@ -75,7 +77,7 @@ void Rules::computeRules() {
 	//!get the data for the confidence
 	
 	//!remove the ones without the support
-	for(unsigned int r = 0; r < rules.size(); r++) {
+	for(uint64_t r = 0; r < rules.size(); r++) {
 		auto & i = rules.at(r);
 		if((double)i.second->getSupportCount()/(double)i.first->getSupportCount() < confidence) {
 			delete(i.first);

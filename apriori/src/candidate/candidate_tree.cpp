@@ -34,7 +34,7 @@ void CandidateTree::transactionScan(vector <pair <string, string>> * transaction
 			bool cool = true; //for the itemset
 			for(auto &e : i->getItemSet()) {
 				bool found = false; //for each element
-				for(unsigned int t=0; t<transaction->size(); t++) {
+				for(uint64_t t=0; t<transaction->size(); t++) {
 					if((*transaction)[t].second == e.first) { //element is in transaction
 						found = true;
 						break;
@@ -58,7 +58,7 @@ void CandidateTree::transactionScan(vector <pair <string, string>> * transaction
 		}
 		*/
 		
-		for(unsigned int i=0; i<transaction->size(); i++) { //use the tree!
+		for(uint64_t i=0; i<transaction->size(); i++) { //use the tree!
 			unordered_map<string, ItemSetTree*>::iterator find = children.find((*transaction)[i].second);
 			
 			if(find != children.end()) { //if there is something on the hash destination
@@ -68,7 +68,7 @@ void CandidateTree::transactionScan(vector <pair <string, string>> * transaction
 	}
 }
 
-void CandidateTree::grabMinimumSupport(LargeItemSet * dest, unsigned int support) {
+void CandidateTree::grabMinimumSupport(LargeItemSet * dest, uint64_t support) {
 	if(tp == itemset_node) {
 		for(auto &i : itemsets) {
 			if(i->getSupportCount() > support) {

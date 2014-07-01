@@ -25,6 +25,7 @@
 #include <vector>
 #include <algorithm>
 #include <thread>
+#include <cstdint>
 
 #include <cstdio>
 #include <cstdlib>
@@ -225,19 +226,19 @@ void Main::run() {
 	if(verbose)	
 		cout << "Amount of transactions is " << database->getAmountTransactions() << endl;
 	
-	unsigned int minimum_transactions = database->getAmountTransactions()*support;
+	uint64_t minimum_transactions = database->getAmountTransactions()*support;
 	if(verbose)
 		cout << "The minimum support is obtained with " << minimum_transactions  << " transactions" << endl;
 		
 	//!OBTAINING 1-ITEMSETS
-	std::map<string, unsigned int> itemset_1;
+	std::map<string, uint64_t> itemset_1;
 	for(auto &i : database->getNormalizedTransactions()) {
-		std::map<string, unsigned int>::iterator it = itemset_1.find(i.second);
+		std::map<string, uint64_t>::iterator it = itemset_1.find(i.second);
 		if(it != itemset_1.end()) {
 			itemset_1.find(i.second)->second++;
 		}
 		else {
-			itemset_1.insert(pair<string, unsigned int> (i.second, 1));
+			itemset_1.insert(pair<string, uint64_t> (i.second, 1));
 		}
 	}
 	

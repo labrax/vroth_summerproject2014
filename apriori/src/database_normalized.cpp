@@ -97,7 +97,7 @@ void DatabaseNormalized::processNormalizedTransactions() {
 */
 void DatabaseNormalized::removeDuplicates() {
 	string previous("");
-	for(unsigned int i=0; i<normalized_transactions.size(); i++) {
+	for(uint64_t i=0; i<normalized_transactions.size(); i++) {
 		string current = normalized_transactions.at(i).second;
 		if(strcmp(previous.c_str(), current.c_str()) == 0) {
 			normalized_transactions.erase(normalized_transactions.begin() + i);
@@ -123,7 +123,7 @@ vector <pair <string, string>> & DatabaseNormalized::getNormalizedTransactions()
 	return normalized_transactions;
 }
 		
-unsigned int DatabaseNormalized::getAmountTransactions(void) {
+uint64_t DatabaseNormalized::getAmountTransactions(void) {
 	return amount_transactions;
 }
 

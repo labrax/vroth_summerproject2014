@@ -15,7 +15,7 @@
 using std::cout;
 using std::endl;
 
-LargeItemSet::LargeItemSet(unsigned int iteration) {
+LargeItemSet::LargeItemSet(uint64_t iteration) {
 	this->k = iteration;
 	itemset.clear();
 
@@ -45,11 +45,11 @@ vector<ItemSet *> & LargeItemSet::getItemSets() {
 	return itemset;
 }
 
-unsigned int LargeItemSet::getAmountTransactions() {
+uint64_t LargeItemSet::getAmountTransactions() {
 	return itemset.size();
 }
 
-unsigned int LargeItemSet::getIteration() {
+uint64_t LargeItemSet::getIteration() {
 	return k;
 }
 

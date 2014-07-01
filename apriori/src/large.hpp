@@ -18,6 +18,8 @@
 #include <vector>
 #include <mutex>
 
+#include <cstdint>
+
 using std::vector;
 
 using std::mutex;
@@ -28,17 +30,17 @@ class LargeItemSet {
 		vector<ItemSet *> itemset;
 		ItemSetTree * root; //new approach to solve the problem with the function bool contains(ItemSet *);
 		
-		unsigned int k; //to identify the iteration, also the size
+		uint64_t k; //to identify the iteration, also the size
 		
 		mutex large_lock; //to lock insertSet (apriori_genThreaded)
 	public:
-		LargeItemSet(unsigned int);
+		LargeItemSet(uint64_t);
 		~LargeItemSet();
 		void insertSet(ItemSet * set);
 		
 		vector<ItemSet *> & getItemSets();
-		unsigned int getAmountTransactions();
-		unsigned int getIteration();
+		uint64_t getAmountTransactions();
+		uint64_t getIteration();
 		
 		bool contains(ItemSet *);
 		

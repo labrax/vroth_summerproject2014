@@ -11,6 +11,7 @@
 #include "node_ontology.hpp"
 
 #include <iostream>
+#include <cstdint>
 
 using std::cerr;
 using std::cout;
@@ -100,9 +101,9 @@ bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
 }
 
 void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transactions) {
-	unsigned int end=0, increased_size=0; //begin and end indicate the range of a transaction; increased_size the amount of new values inserted into normalized_transactions
-	unsigned int initial_size = normalized_transactions->size();
-	for(unsigned int begin=0; begin < initial_size; begin=end/*+increased_size*/) { //will scan transaction by transaction
+	uint64_t end=0, increased_size=0; //begin and end indicate the range of a transaction; increased_size the amount of new values inserted into normalized_transactions
+	uint64_t initial_size = normalized_transactions->size();
+	for(uint64_t begin=0; begin < initial_size; begin=end/*+increased_size*/) { //will scan transaction by transaction
 		for(end=begin; end < normalized_transactions->size() && (*normalized_transactions)[end].first == (*normalized_transactions)[begin].first; ++end);
 		
 		vector<pair <string, string>>::const_iterator first = normalized_transactions->begin() + begin; //get the first element in a transaction

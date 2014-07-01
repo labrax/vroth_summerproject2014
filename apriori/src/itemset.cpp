@@ -55,11 +55,11 @@ unsigned int ItemSet::getAmountElements() {
 	return itemset.size();
 }
 
-void ItemSet::setSupportCount(unsigned int support_count) {
+void ItemSet::setSupportCount(uint64_t support_count) {
 	this->support_count = support_count;
 }
 
-unsigned int ItemSet::getSupportCount() {
+uint64_t ItemSet::getSupportCount() {
 	return support_count;
 }
 

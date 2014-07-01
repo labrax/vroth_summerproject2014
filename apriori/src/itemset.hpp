@@ -18,6 +18,8 @@
 
 #include <mutex>
 
+#include <cstdint>
+
 using std::map;
 using std::string;
 using std::vector;
@@ -27,7 +29,7 @@ using std::mutex;
 class ItemSet {
 	private:
 		map <string, bool> itemset;
-		unsigned int support_count;
+		uint64_t support_count;
 		
 		mutex sp_lock; //to lock increases in count (subsetThreaded)
 	public:
@@ -39,8 +41,8 @@ class ItemSet {
 		map <string, bool> & getItemSet();
 		unsigned int getAmountElements();
 		
-		void setSupportCount(unsigned int);
-		unsigned int getSupportCount();
+		void setSupportCount(uint64_t);
+		uint64_t getSupportCount();
 		void increaseSupportCount();
 		
 		string getNthString(unsigned int); //to get the identifier for the node

@@ -12,6 +12,8 @@
 #include <vector>
 #include <string>
 
+#include <cstdint>
+
 #include "candidate_tree.hpp"
 #include "../large.hpp"
 
@@ -29,11 +31,11 @@ class CandidateItemSet {
 		
 		LargeItemSet * apriori_gen(LargeItemSet *);
 		LargeItemSet * apriori_genThreaded(LargeItemSet *);
-		LargeItemSet * subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int);
-		LargeItemSet * subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, unsigned int);
+		LargeItemSet * subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t);
+		LargeItemSet * subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t);
 };
 
-void run_apriori_genThreaded(LargeItemSet *, LargeItemSet *, vector<ItemSet *> *, unsigned int, unsigned int);
+void run_apriori_genThreaded(LargeItemSet *, LargeItemSet *, vector<ItemSet *> *, uint64_t, uint64_t);
 
-vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <string, string>> *);
-void run_subsetThreaded(CandidateTree *, vector <pair <string, string>> *, unsigned int, unsigned int);
+vector<pair <uint64_t, uint64_t>> & startThreadSettings(vector <pair <string, string>> *);
+void run_subsetThreaded(CandidateTree *, vector <pair <string, string>> *, uint64_t, uint64_t);
