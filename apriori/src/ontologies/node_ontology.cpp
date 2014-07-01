@@ -14,6 +14,8 @@
 using std::cout;
 using std::endl;
 
+using std::pair;
+
 NodeOntology::NodeOntology(string identifier, string name) : identifier(identifier), name(name) {
 	parents.clear();
 }
@@ -35,6 +37,9 @@ void NodeOntology::insertParent(NodeOntology * parent) {
 }
 
 bool NodeOntology::isSon(string & identifier) {
+	if(identifier == this->identifier)
+		return true;
+
 	for(auto & i: parents) {
 		if(i->isSon(identifier))
 			return true;
@@ -48,4 +53,22 @@ void NodeOntology::print() {
 		cout << p->identifier << " ";
 	}
 	cout << endl;
+}
+
+map <string, bool> * NodeOntology::returnOntologies() {
+	map <string, bool> * retOntol = new map<string, bool>();
+	retOntol->insert(pair<string, bool> (identifier, true));
+	
+	if(parents.size() != 0) {	
+		for(auto & p : parents) {
+			map <string, bool> * newRetOntol = p->returnOntologies();
+			for(auto & e : *newRetOntol) {
+				if(retOntol->find(e.first) == retOntol->end()) {
+					retOntol->insert(pair <string, bool>(e.first, true));
+				}
+			}
+			delete(newRetOntol);
+		}
+	}
+	return retOntol;
 }

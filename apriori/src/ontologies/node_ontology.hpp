@@ -11,9 +11,12 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 using std::string;
 using std::vector;
+
+using std::map;
 
 class NodeOntology {
 	private:
@@ -28,7 +31,9 @@ class NodeOntology {
 		string & getName();
 		
 		void insertParent(NodeOntology *);
-		bool isSon(string &);
+		bool isSon(string &); //will return true for a check of the same value!
 		
 		void print();
+		
+		map <string, bool> * returnOntologies();
 };
