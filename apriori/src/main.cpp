@@ -188,7 +188,7 @@ void Main::run() {
 	if(use_thread)
 		startThreadSettings(&database->getNormalizedTransactions()); //setup threads
 	
-	//if(verbose)	
+	if(verbose)	
 		cout << "Amount of transactions is " << database->getAmountTransactions() << endl;
 	
 	unsigned int minimum_transactions = database->getAmountTransactions()*support;
