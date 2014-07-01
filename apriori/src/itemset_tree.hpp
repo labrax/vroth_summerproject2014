@@ -9,8 +9,7 @@
 
 #pragma once
 
-#include "../itemset.hpp"
-#include "../large.hpp"
+#include "itemset.hpp"
 
 #include <string>
 #include <unordered_map>
@@ -21,25 +20,23 @@
 using std::string;
 using std::unordered_map;
 using std::vector;
-using std::pair;
 
 typedef enum { node, bucket_node, itemset_node } type;
 
-class Node {
+class ItemSetTree {
 	private:
-		type tp;
 		unsigned int depth;
-		
 		string identifier;
+		ItemSetTree * father;
 		
-		Node * father;
-		
-		unordered_map<string, Node *> children; //will be used in the bucket_node mode
+	protected:
+		type tp;
+		unordered_map<string, ItemSetTree *> children; //will be used in the bucket_node mode
 		vector<ItemSet *> itemsets; //will be used for the itemset_node mode
 		
 	public:
-		Node(unsigned int, string, Node *);
-		~Node();
+		ItemSetTree(unsigned int depth, string identifier, ItemSetTree * father);
+		~ItemSetTree();
 		
 		type getType();
 		
@@ -49,7 +46,4 @@ class Node {
 		string & getIdentifier();
 		
 		bool contains(ItemSet *); //recursive without using the tree properties
-		void transactionScan(vector <pair <string, string>> *);
-		
-		void grabMinimumSupport(LargeItemSet *, unsigned int);
 };
