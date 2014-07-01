@@ -14,10 +14,14 @@
 #include <fstream>
 #include <map>
 #include <string>
+#include <vector>
 
 using std::ifstream;
 using std::map;
 using std::string;
+
+using std::vector;
+using std::pair;
 
 class Ontology {
 	private:
@@ -29,5 +33,10 @@ class Ontology {
 		~Ontology();
 		
 		void processOntologies();
+		bool checkAncestorOneAnother(string ontologyA, string ontologyB);
+
 		void print();
+		
+		vector <pair <string, string>> * getNewOntologies(vector <pair <string, string>> & transaction); //this function will return the new block of the transaction
+		
 };

@@ -41,7 +41,7 @@ void Ontology::processOntologies() {
 		while (getline(file, line)) {
 			unsigned int twopoints_pos = line.find_first_of(':');
 			
-			if(line == "[Term]") {
+			if(line == "[Term]") { //TODO: bug with [Typedef] in the end of file read (need to ignore that value)
 				id = "";
 				name = "";
 			}
@@ -83,8 +83,61 @@ void Ontology::processOntologies() {
 	}
 }
 
+bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
+	map<string, NodeOntology *>::iterator itA = ontologies.find(ontologyA);
+	map<string, NodeOntology *>::iterator itB = ontologies.find(ontologyB);
+	
+	if(itA == ontologies.end() || itB == ontologies.end()) { //both doesn't exist on the relations
+		return false;
+	}
+	else {
+		if(itA->second->isSon(ontologyB))
+			return true;
+		else if(itB->second->isSon(ontologyA))
+			return true;
+		return false;
+	}
+}
+
 void Ontology::print() {
 	for(auto & o : ontologies) {
 		o.second->print();
 	}
+}
+
+vector <pair <string, string>> * Ontology::getNewOntologies(vector <pair <string, string>> & transaction) {
+	map<string, bool> * newOntologies = new map <string, bool>();
+	
+	for(auto &t : transaction) {
+		map<string, bool> * newOntologiesElement;
+		
+		map<string, NodeOntology *>::iterator it = ontologies.find(t.second);
+		if(it != ontologies.end()) {
+			newOntologiesElement = it->second->returnOntologies();
+			
+			for(auto & ne : *newOntologiesElement) { //go through the new "list" of elements
+				if(newOntologies->find(ne.first) == newOntologies->end()) { //if it is not on the list known, insert
+					newOntologies->insert(ne);
+				}
+			}
+			
+			delete(newOntologiesElement);
+		}
+	}
+	
+	vector <pair <string, string>> * newTransactions = new vector<pair <string, string>>();
+	for(auto & no : *newOntologies) {
+		bool ok = true;
+		for(auto & tra : transaction) {
+			if(tra.second == no.first) {
+				ok = false;
+				break;
+			}
+		}
+		if(ok == true)
+			newTransactions->insert(newTransactions->end(), pair<string, string>(transaction[0].first, no.first));
+	}
+	delete(newOntologies);
+	
+	return newTransactions;
 }
