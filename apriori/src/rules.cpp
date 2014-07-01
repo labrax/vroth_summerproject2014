@@ -55,7 +55,7 @@ void Rules::computeRules() {
 	//!create the rules from the LargeItemSets
 	
 	
-	//TODO ? parallel
+	//TODO ? parallel: small amount of data, maybe not needed
 	//!get the data for the confidence
 	for(auto & r : rules) {
 		for(auto & p : larges[r.first->getAmountElements()-1]->getItemSets()) {
