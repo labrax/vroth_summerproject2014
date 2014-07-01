@@ -18,17 +18,26 @@ using std::endl;
 LargeItemSet::LargeItemSet(unsigned int iteration) {
 	this->k = iteration;
 	itemset.clear();
+
+	root = new ItemSetTree(0, "", NULL);
 }
 
 LargeItemSet::~LargeItemSet() {
 	for(auto &i : itemset) {
 		delete(i);
 	}
+
+	delete(root);
 }
 
 void LargeItemSet::insertSet(ItemSet * set) {
 	large_lock.lock();
+	
 	itemset.insert(itemset.end(), set);
+	
+	ItemSet * e = new ItemSet(set);
+	root->insertItemSet(e);
+	
 	large_lock.unlock();
 }
 
@@ -45,7 +54,9 @@ unsigned int LargeItemSet::getIteration() {
 }
 
 bool LargeItemSet::contains(ItemSet * a) {
-	for(auto &i : itemset) {
+	return root->contains(a); //TODO: test approach
+	
+	/*for(auto &i : itemset) {
 		bool cool = true;
 		for(auto &j : a->getItemSet()) {
 			if(i->contains(j.first) == false) {
@@ -57,7 +68,7 @@ bool LargeItemSet::contains(ItemSet * a) {
 			return true;
 		}
 	}
-	return false;
+	return false;*/
 }
 
 void LargeItemSet::print() {

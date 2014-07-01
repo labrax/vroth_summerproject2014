@@ -13,6 +13,7 @@
 #pragma once
 
 #include "itemset.hpp"
+#include "itemset_tree.hpp"
 
 #include <vector>
 #include <mutex>
@@ -21,9 +22,11 @@ using std::vector;
 
 using std::mutex;
 
+
 class LargeItemSet {
 	private:
 		vector<ItemSet *> itemset;
+		ItemSetTree * root; //new approach to solve the problem with the function bool contains(ItemSet *);
 		
 		unsigned int k; //to identify the iteration, also the size
 		
