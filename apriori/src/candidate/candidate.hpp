@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 
-#include "node.hpp"
+#include "candidate_tree.hpp"
 #include "../large.hpp"
 
 using std::vector;
@@ -21,7 +21,7 @@ using std::string;
 
 class CandidateItemSet {
 	private:
-		Node * root;
+		CandidateTree * root;
 		
 	public:
 		CandidateItemSet();
@@ -36,4 +36,4 @@ class CandidateItemSet {
 void run_apriori_genThreaded(LargeItemSet *, LargeItemSet *, vector<ItemSet *> *, unsigned int, unsigned int);
 
 vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <string, string>> *);
-void run_subsetThreaded(Node *, vector <pair <string, string>> *, unsigned int, unsigned int);
+void run_subsetThreaded(CandidateTree *, vector <pair <string, string>> *, unsigned int, unsigned int);

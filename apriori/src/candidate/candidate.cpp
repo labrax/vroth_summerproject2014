@@ -22,7 +22,7 @@ using std::endl;
 using std::thread;
 
 CandidateItemSet::CandidateItemSet() {
-	root = new Node(0, "", NULL);
+	root = new CandidateTree(0, "", NULL);
 }
 
 CandidateItemSet::~CandidateItemSet() {
@@ -273,7 +273,7 @@ vector<pair <unsigned int, unsigned int>> & startThreadSettings(vector <pair <st
 	return thread_blocks;
 }
 
-void run_subsetThreaded(Node * root, vector <pair <string, string>> * normalized_transactions, unsigned int rangeLow, unsigned int rangeHigh) {
+void run_subsetThreaded(CandidateTree * root, vector <pair <string, string>> * normalized_transactions, unsigned int rangeLow, unsigned int rangeHigh) {
 	unsigned int j=0;
 	for(unsigned int i=rangeLow; i < rangeHigh; i=j) { //will scan transaction by transaction
 		for(j=i; j < normalized_transactions->size() && (*normalized_transactions)[j].first == (*normalized_transactions)[i].first; ++j);
