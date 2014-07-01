@@ -264,10 +264,10 @@ void Main::run() {
 			cout << "sorting results" << endl;
 		large_obtained->sort();
 		
-		if(verbose) {
+		//if(verbose) {
 			large_obtained->printinfo();
 			large_obtained->print();
-		}
+		//}
 	} while(large_obtained->getItemSets().size() > 0);
 	
 	rules.addLarge(large_obtained);
