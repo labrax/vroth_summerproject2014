@@ -2,8 +2,8 @@
 SRC_DIR := src/
 OBJ_DIR := obj/
 
-OBJ_FILES := obj/database_normalized.o obj/rules.o obj/itemset.o obj/large.o obj/main.o
-CANDIDATE_FILES := obj/candidate/node.o obj/candidate/candidate.o
+OBJ_FILES := obj/database_normalized.o obj/rules.o obj/itemset.o obj/large.o obj/itemset_tree.o obj/main.o
+CANDIDATE_FILES := obj/candidate/candidate_tree.o obj/candidate/candidate.o
 ONTOLOGIE_FILES := obj/ontologies/ontology.o obj/ontologies/node_ontology.o
 
 CANDIDATE_FOLDER := obj/candidate/
@@ -28,7 +28,7 @@ $(OBJ_DIR)ontologies/node_ontology.o: $(SRC_DIR)ontologies/node_ontology.cpp
 $(OBJ_DIR)candidate/candidate.o: $(SRC_DIR)candidate/candidate.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
-$(OBJ_DIR)candidate/node.o: $(SRC_DIR)candidate/node.cpp
+$(OBJ_DIR)candidate/candidate_tree.o: $(SRC_DIR)candidate/candidate_tree.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 $(OBJ_DIR)rules.o: $(SRC_DIR)rules.cpp
@@ -41,6 +41,9 @@ $(OBJ_DIR)itemset.o: $(SRC_DIR)itemset.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 $(OBJ_DIR)large.o: $(SRC_DIR)large.cpp
+	g++ $(CC_FLAGS) -c -o $@ $<
+
+$(OBJ_DIR)itemset_tree.o: $(SRC_DIR)itemset_tree.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 $(OBJ_DIR)main.o: $(SRC_DIR)main.cpp
