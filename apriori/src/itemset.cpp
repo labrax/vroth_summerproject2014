@@ -141,7 +141,7 @@ void ItemSet::print() {
 	for(auto &j: getItemSet()) {
 		cout << j.first << " ";
 	}
-	if(Main::verbose)
+	//if(Main::verbose)
 		cout << "(" << support_count << ") ";
 }
 
