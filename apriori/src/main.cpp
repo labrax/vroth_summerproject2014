@@ -208,6 +208,10 @@ void Main::run() {
 			cout << "ontologies inserted into transactions" << endl;
 	}
 	
+	if(use_ontology)
+		if(verbose)
+			cout << database->getNormalizedTransactions().size() << " normalized transactions obtained with ontologies added" << endl;
+	
 	std::sort(database->getNormalizedTransactions().begin(), database->getNormalizedTransactions().end(), normalizedCompare); //probably it will already be sorted, just in case this function is still here
 	if(verbose)
 		cout << "transactions sorted" << endl;
