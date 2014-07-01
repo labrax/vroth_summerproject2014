@@ -99,6 +99,52 @@ bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
 	}
 }
 
+void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transactions) {
+	unsigned int end=0, increased_size=0; //begin and end indicate the range of a transaction; increased_size the amount of new values inserted into normalized_transactions
+	unsigned int initial_size = normalized_transactions->size();
+	for(unsigned int begin=0; begin < initial_size; begin=end/*+increased_size*/) { //will scan transaction by transaction
+		for(end=begin; end < normalized_transactions->size() && (*normalized_transactions)[end].first == (*normalized_transactions)[begin].first; ++end);
+		
+		vector<pair <string, string>>::const_iterator first = normalized_transactions->begin() + begin; //get the first element in a transaction
+		vector<pair <string, string>>::const_iterator last = normalized_transactions->begin() + end; //get the last element in a transaction
+		
+		vector<pair <string, string>> transaction(first, last); //new sub-transaction
+	
+		vector<pair<string, string>> * newtra = getNewOntologies(transaction); //get new ontologies
+	
+		/*cout << "initial:" << transaction.size() << endl; //print the initial transaction
+		for(auto & i : transaction) {
+			cout << i.first << " " << i.second << endl;
+		}
+		
+		cout << "additional: " << newtra->size() << endl; //print the new ontologies information
+		for(auto & i : *newtra) {
+			cout << i.first << " " << i.second << endl;
+		} */
+		
+		/*//!merge the initial with the additional
+		unsigned int i, j;
+		increased_size = newtra->size();
+		for(i=begin, j=0; j<increased_size; ) { //this will pass through normalized_transactions
+			if(i < end && (*normalized_transactions)[i].second < (*newtra)[j].second) {
+				i++;
+			}
+			else {
+				(*normalized_transactions).insert((*normalized_transactions).begin() + i, (*newtra)[j]);
+				j++;
+			}
+		}
+		//!merge the initial with the additional*/
+		
+		increased_size = newtra->size();
+		for(auto & i: *newtra) {
+			normalized_transactions->insert(normalized_transactions->end(), i);
+		}
+		
+		delete(newtra);
+	}
+}
+
 void Ontology::print() {
 	for(auto & o : ontologies) {
 		o.second->print();

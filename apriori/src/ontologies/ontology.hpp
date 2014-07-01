@@ -34,6 +34,8 @@ class Ontology {
 		
 		void processOntologies();
 		bool checkAncestorOneAnother(string ontologyA, string ontologyB);
+		
+		void appendOntologies(vector<pair<string, string>> * normalized_transactions); //way too slow!
 
 		void print();
 		
