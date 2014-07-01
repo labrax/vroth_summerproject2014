@@ -19,6 +19,7 @@ class Main {
 		bool preprocessed;
 		
 		char * file;
+		char * ontologies_file;
 		double support, confidence;
 
 
@@ -26,6 +27,7 @@ class Main {
 		vector<LargeItemSet *> largesets;
 
 	public:
+		static bool use_ontology;
 		static bool verbose;
 		static unsigned int thread_number;
 		

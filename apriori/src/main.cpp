@@ -14,6 +14,7 @@
 #include "large.hpp"
 #include "candidate/candidate.hpp"
 #include "rules.hpp"
+#include "ontologies/ontology.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -38,6 +39,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
+bool Main::use_ontology = false;
 bool Main::verbose = false;
 unsigned int Main::thread_number = 0;
 
@@ -61,6 +63,16 @@ Main::Main(int argc, char * argv[]) {
 			}
 			else {
 				file = argv[i+1];
+			}
+		}
+		else if(strcmp(argv[i], "-o") == 0) {
+			use_ontology = true;
+			if(i+1 >= argc) {
+				error = true;
+				break;
+			}
+			else {
+				ontologies_file = argv[i+1];
 			}
 		}
 		else if(strcmp(argv[i], "-s") == 0) {
@@ -108,6 +120,7 @@ Main::Main(int argc, char * argv[]) {
 	if(error) {
 		cerr << "use format:" << endl
 			 << "-f <file>\t to select the phenotypes file (default phenotypes.txt)" << endl
+			 << "-o <file>\t to select and use ontologies file" << endl
 			 << "-p\t\t to indicate that the file is preprocessed" << endl
 			 << "-s <support>\t to select the support (default 0.5)" << endl
 			 << "-c <confidence>\t to select the confidence (default 0.8)" << endl
@@ -138,6 +151,12 @@ Main::Main(int argc, char * argv[]) {
 	cerr << "verbose: ";
 	if(verbose)
 		cerr << "true" << endl;
+	else
+		cerr << "false" << endl;
+		
+	cerr << "ontologies: ";
+	if(use_ontology)
+		cerr << ontologies_file << endl;
 	else
 		cerr << "false" << endl;
 	
@@ -177,6 +196,17 @@ void Main::run() {
 	database->processNormalizedTransactions(); //to store in a <TID, item> manner
 	if(verbose)
 		cout << database->getNormalizedTransactions().size() << " normalized transactions obtained" << endl;
+	
+	Ontology * ontologies = NULL;
+	if(use_ontology) {
+		ontologies = new Ontology(ontologies_file);
+		ontologies->processOntologies();
+		if(verbose)
+			cout << "ontologies loaded" << endl;
+		ontologies->appendOntologies(&database->getNormalizedTransactions());
+		if(verbose)
+			cout << "ontologies inserted into transactions" << endl;
+	}
 	
 	std::sort(database->getNormalizedTransactions().begin(), database->getNormalizedTransactions().end(), normalizedCompare); //probably it will already be sorted, just in case this function is still here
 	if(verbose)
@@ -244,9 +274,9 @@ void Main::run() {
 		LargeItemSet * large_temp;
 		
 		if(!use_thread)
-			large_temp = cis.apriori_gen(large_obtained); //TODO: verify with the threaded
+			large_temp = cis.apriori_gen(large_obtained); //TODO: verify with the threaded || TODO: add ontologies
 		else
-			large_temp = cis.apriori_genThreaded(large_obtained); //TODO: verify if there is gain in comparison without threads
+			large_temp = cis.apriori_genThreaded(large_obtained); //TODO: verify if there is gain in comparison without threads || TODO: add ontologies
 		
 		rules.addLarge(large_obtained);
 		
@@ -274,6 +304,9 @@ void Main::run() {
 	
 	rules.computeRules();
 	rules.print();
+	
+	if(ontologies)
+		delete(ontologies);
 	
 	delete(database);
 }
