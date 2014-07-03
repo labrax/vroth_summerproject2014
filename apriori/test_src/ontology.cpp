@@ -1,3 +1,4 @@
+//g++ -Wall -g -std=c++11 ontology.cpp ../src/ontologies/ontology.cpp ../s    rc/ontologies/node_ontology.cpp
 
 #include "../src/ontologies/ontology.hpp"
 
