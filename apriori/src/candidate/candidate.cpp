@@ -53,7 +53,7 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 				}
 				
 				//!test for the ontologies
-				if(ontologies.checkAncestorOneAnother(it->first, it2->first) == true) {
+				if(ontologies.checkAncestorOneAnother(it->first, last_first) == true) {
 					nice = false;
 					break;
 				}
@@ -122,7 +122,7 @@ void run_apriori_genThreaded(Ontology * ontologies, LargeItemSet * new_candidate
 				it2++;
 				
 				//!test for the ontologies
-				if(ontologies->checkAncestorOneAnother(it->first, it2->first) == true) {
+				if(ontologies->checkAncestorOneAnother(it->first, last_first) == true) {
 					nice = false;
 					break;
 				}
