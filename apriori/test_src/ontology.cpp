@@ -1,4 +1,4 @@
-//g++ -Wall -g -std=c++11 ontology.cpp ../src/ontologies/ontology.cpp ../s    rc/ontologies/node_ontology.cpp
+//g++ -Wall -g -std=c++11 ontology.cpp ../src/ontologies/ontology.cpp ../src/ontologies/node_ontology.cpp
 
 /** this test is to make sure of the expansion of every pair of the transaction in the whole transaction (without generating duplicates), and the obtaining of MP:0000001 in each of them
  */
@@ -41,7 +41,7 @@ int main(int argc, char * argv[]) {
 	}
 	
 	
-	/*for(auto & i : tra) {
+	for(auto & i : tra) {
 		for(auto & j: tra) {
 			cout << i.second << ".checkAncestorOneAnother(" << j.second << ") = ";
 			if(a.checkAncestorOneAnother(i.second, j.second))
@@ -49,7 +49,7 @@ int main(int argc, char * argv[]) {
 			else
 				cout << "false" << endl;
 		}
-	}*/
+	}
 	
 	return 0;
 }
