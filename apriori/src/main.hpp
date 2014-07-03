@@ -9,30 +9,29 @@
  
 #pragma once
 
+#include <cstdint>
+
 #include "database_normalized.hpp"
 #include "large.hpp"
+#include "parameters.hpp"
+
+#include "ontologies/ontology.hpp"
 
 class Main {
 	private:
-		bool use_thread;
-		
-		bool preprocessed;
-		
-		char * file;
-		char * ontologies_file;
-		double support, confidence;
-
+		Parameters * parameters;
 
 		DatabaseNormalized * database;
 		vector<LargeItemSet *> largesets;
-
-	public:
-		static bool use_ontology;
-		static bool verbose;
-		static unsigned int thread_number;
 		
+		Ontology * ontologies;
+
+		uint64_t minimum_transactions;
+
+	public:		
 		Main(int argc, char * argv[]);
 		~Main();
 		
+		void setup();
 		void run();
 };
