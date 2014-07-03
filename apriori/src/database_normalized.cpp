@@ -8,17 +8,20 @@
  */
  
 #include "database_normalized.hpp"
+#include "parameters.hpp"
 
 #include <iostream>
 #include <cstring>
 #include <unordered_map>
+
+#include <cstdint>
 
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::pair;
 
-DatabaseNormalized::DatabaseNormalized(char * filename) : filename(filename) {
+DatabaseNormalized::DatabaseNormalized(const char * filename) : filename(filename) {
 	file.open(filename);
 	if(!file.is_open()) {
 		cerr << "Error opening \"" << filename << "\" transactions file" << endl;
@@ -63,22 +66,34 @@ void DatabaseNormalized::processTransactions() {
 
 void DatabaseNormalized::processNormalizedTransactions() {
 	string str_count=""; //this will be used to count the amount of transactions
-	amount_transactions=1;
+	amount_transactions=0;
+	
+	static uint64_t buggy_line=0; //count the amount of "buggy lines"
 	
 	if(file.is_open()) {
 		string line;
 		char first[32], second[32];
 		
 		while (getline(file, line)) {
+			first[0] = '\0';
+			second[0] = '\0'; //this will avoid some errors
+			
 			if(line.find('\t') != string::npos) {
 				sscanf(line.c_str(), "%s %s", first, second);
 			}
 			
-			normalized_transactions.insert(normalized_transactions.end(), pair<string, string> (string(first), string(second)));
+			if(strlen(first) > 0 && strlen(second) > 0)
+				normalized_transactions.insert(normalized_transactions.end(), pair<string, string> (string(first), string(second)));
+			else {
+				//cerr << "buggy line not inserted: (" << first << "," << second << ")" << endl;
+				buggy_line++;
+				continue; //so don't count it or anything
+			}
 			
 			//!count the amount of transactions
 			if(str_count == "") {
 				str_count = first;
+				amount_transactions++;
 			}
 			else if(str_count != first){
 				str_count = first;
@@ -86,6 +101,9 @@ void DatabaseNormalized::processNormalizedTransactions() {
 			}
 			//!count the amount of transactions
 		}
+		
+		if(Parameters::verbose)
+			cout << buggy_line << " buggy lines ignored" << endl;
 	}
 	else {
 		cerr << "File is not open -- DatabaseNormalized::processNormalizedTransactions()" << endl;
