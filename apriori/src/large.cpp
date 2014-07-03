@@ -54,7 +54,7 @@ uint64_t LargeItemSet::getIteration() {
 }
 
 bool LargeItemSet::contains(ItemSet * a) {
-	return root->contains(a); //TODO: test approach
+	return root->contains(a); //TODO: test approach (seems fine)
 	
 	/*for(auto &i : itemset) {
 		bool cool = true;

@@ -71,7 +71,7 @@ void ItemSetTree::insertItemSet(ItemSet * a) {
 					child->insertItemSet(i);
 				}
 			}
-			itemsets.clear(); //TODO: test if bug -- probably not, as it will only remove the pointers, not delete(it)!
+			itemsets.clear(); //this remove the pointers, as they were already transfered
 			this->insertItemSet(a); //will hit the next block
 		}
 	}
