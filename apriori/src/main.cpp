@@ -152,7 +152,7 @@ void Main::run() {
 	Rules rules(parameters->getConfidence());
 	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
 	do {
-		CandidateItemSet cis;
+		CandidateItemSet cis(*ontologies);
 		LargeItemSet * large_temp;
 		
 		if(!parameters->useThread())

@@ -21,7 +21,7 @@ using std::endl;
 
 using std::thread;
 
-CandidateItemSet::CandidateItemSet() {
+CandidateItemSet::CandidateItemSet(Ontology & ontologies) : ontologies(ontologies) {
 	root = new CandidateTree(0, "", NULL);
 }
 
@@ -47,10 +47,18 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 			map<string, bool>::iterator it2 = second->getItemSet().begin();
 			
 			while(it->first != last_first) { //while is not the last
-				if(it->first != it2->first) {//its differente, we are not cool
+				if(it->first != it2->first) {//its different in the middle: we are not cool
 					nice = false;
 					break;
 				}
+				
+				//!test for the ontologies
+				if(ontologies.checkAncestorOneAnother(it->first, it2->first) == true) {
+					nice = false;
+					break;
+				}
+				//!test for the ontologies
+				
 				it++; //increment both iterators
 				it2++;
 			}

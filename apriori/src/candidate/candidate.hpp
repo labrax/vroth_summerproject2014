@@ -16,6 +16,7 @@
 
 #include "candidate_tree.hpp"
 #include "../large.hpp"
+#include "../ontologies/ontology.hpp"
 
 using std::vector;
 using std::pair;
@@ -25,8 +26,10 @@ class CandidateItemSet {
 	private:
 		CandidateTree * root;
 		
+		Ontology & ontologies;
+		
 	public:
-		CandidateItemSet();
+		CandidateItemSet(Ontology & ontologies);
 		~CandidateItemSet();
 		
 		LargeItemSet * apriori_gen(LargeItemSet *);
