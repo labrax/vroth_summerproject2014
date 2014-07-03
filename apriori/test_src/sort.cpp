@@ -1,5 +1,8 @@
 //g++ -std=c++11 -Wall -g sort.cpp ../src/database_normalized.cpp ../src/ontologies/ontology.cpp ../src/ontologies/node_ontology.cpp ../src/parameters.cpp
 
+/** the objective of this test is to make sure of the expansion of the itemsets, and the correct sorting of it, without ignoring any pair of transactions
+ */
+
 #include "../src/database_normalized.hpp"
 #include "../src/ontologies/ontology.hpp"
 
@@ -32,7 +35,7 @@ int main(int argc, char * argv[]) {
 	o.appendOntologies(&tra);
 	cout << "appended size: " << tra.size() << endl;
 	
-	std::sort(tra.begin(), tra.end(), normalizedCompare); //TODO: test sort
+	std::sort(tra.begin(), tra.end(), normalizedCompare); //is working, as printed below
 	
 	cout << "---" << endl;
 	

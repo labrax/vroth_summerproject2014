@@ -2,6 +2,9 @@
 #include <iostream>
 #include <thread>
 
+/** this is just a test for simple threads
+ */
+
 using namespace std;
 
 void task(string msg) {

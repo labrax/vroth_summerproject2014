@@ -16,7 +16,9 @@ using std::pair;
 using std::cout;
 using std::endl;
 
-//OBJECTIVE: of this test: try to get all the transactions without the MP:0000001, as there are 2 that are supposed not to have (as in the normal execution)
+/** try to get all the transactions without the MP:0000001, as there were a counting of 2 that are supposed not to have (as in the normal execution)
+ * it was fixed with a proper counting in the database_normalized.cpp file
+ */
 
 void printTransaction(vector<pair<string, string>> & transaction) {
 	cout << transaction[0].first << ": ";

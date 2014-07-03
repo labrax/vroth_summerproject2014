@@ -1,5 +1,8 @@
 //g++ -Wall -g -std=c++11 ontology.cpp ../src/ontologies/ontology.cpp ../s    rc/ontologies/node_ontology.cpp
 
+/** this test is to make sure of the expansion of every pair of the transaction in the whole transaction (without generating duplicates), and the obtaining of MP:0000001 in each of them
+ */
+
 #include "../src/ontologies/ontology.hpp"
 
 #include <iostream>

@@ -1,4 +1,7 @@
 
+/** the objective of this test is to make sure of the mkdtemp function
+ */
+
 #include <iostream>
 #include <cstdlib>
 

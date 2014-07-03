@@ -1,7 +1,6 @@
 //g++ -std=c++11 itemset.cpp ../src/itemset.cpp
 
-/** testing code
- * 
+/** this test is to check if contains() in an itemset work properly
  */
 
 #include "../src/itemset.hpp"
