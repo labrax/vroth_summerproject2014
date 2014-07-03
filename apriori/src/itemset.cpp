@@ -8,7 +8,7 @@
  */
  
 #include "itemset.hpp"
-#include "main.hpp"
+#include "parameters.hpp"
 
 #include <iostream>
 
@@ -141,7 +141,7 @@ void ItemSet::print() {
 	for(auto &j: getItemSet()) {
 		cout << j.first << " ";
 	}
-	if(Main::verbose)
+	if(Parameters::verbose)
 		cout << "(" << support_count << ") ";
 }
 

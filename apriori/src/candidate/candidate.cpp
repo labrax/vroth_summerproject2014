@@ -8,7 +8,7 @@
  */
 
 #include "candidate.hpp"
-#include "../main.hpp"
+#include "../parameters.hpp"
 
 #include <vector>
 #include <iostream>
@@ -158,7 +158,7 @@ LargeItemSet * CandidateItemSet::apriori_genThreaded(LargeItemSet * a) {
 	LargeItemSet * new_candidate = new LargeItemSet(a->getIteration()+1);
 	vector<ItemSet *> last_large = a->getItemSets();
 	
-	unsigned concurentThreadsSupported = Main::thread_number;
+	unsigned concurentThreadsSupported = Parameters::thread_number;
 	
 	vector <thread *> threads;
 	/*vector <LargeItemSet *> new_candidate_thread;
@@ -247,7 +247,7 @@ vector<pair <uint64_t, uint64_t>> & startThreadSettings(vector <pair <string, st
 	if(thread_blocks.size() > 0)
 		return thread_blocks;
 		
-	unsigned concurentThreadsSupported = Main::thread_number;
+	unsigned concurentThreadsSupported = Parameters::thread_number;
 
 	//cout << "--THREADS INFO--" << endl << concurentThreadsSupported << " concurrent threads will be used" << endl;
 	
