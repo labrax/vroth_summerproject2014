@@ -100,7 +100,7 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 	return new_candidate;
 }
 
-void run_apriori_genThreaded(LargeItemSet * new_candidate, LargeItemSet * a, vector<ItemSet *> * last_large, uint64_t rangeLow, uint64_t rangeHigh) {	
+void run_apriori_genThreaded(Ontology * ontologies, LargeItemSet * new_candidate, LargeItemSet * a, vector<ItemSet *> * last_large, uint64_t rangeLow, uint64_t rangeHigh) {	
 	for(uint64_t i=rangeLow; i<rangeHigh; i++) {
 		ItemSet * first = (*last_large)[i];
 		for(uint64_t j=i+1; j<last_large->size(); j++) {
@@ -122,7 +122,7 @@ void run_apriori_genThreaded(LargeItemSet * new_candidate, LargeItemSet * a, vec
 				it2++;
 				
 				//!test for the ontologies
-				if(ontologies.checkAncestorOneAnother(it->first, it2->first) == true) {
+				if(ontologies->checkAncestorOneAnother(it->first, it2->first) == true) {
 					nice = false;
 					break;
 				}
@@ -197,13 +197,13 @@ LargeItemSet * CandidateItemSet::apriori_genThreaded(LargeItemSet * a) {
 			block_end++;*/
 		
 		//cout << "thread: " << block_init << ", " << block_end << endl;
-		threads.insert(threads.end(), new thread(run_apriori_genThreaded, new_candidate/*_thread[threads.size()]*/, a, &last_large, block_init, block_end));
+		threads.insert(threads.end(), new thread(run_apriori_genThreaded, &ontologies, new_candidate/*_thread[threads.size()]*/, a, &last_large, block_init, block_end));
 		
 		block_init = block_end;
 	}
 	if(block_end != a->getAmountTransactions()) {
 		//cout << "thread: " << block_end << ", " << a->getAmountTransactions() << endl;
-		threads.insert(threads.end(), new thread(run_apriori_genThreaded, new_candidate/*_thread[threads.size()]*/, a, &last_large, block_end, a->getAmountTransactions()));
+		threads.insert(threads.end(), new thread(run_apriori_genThreaded, &ontologies, new_candidate/*_thread[threads.size()]*/, a, &last_large, block_end, a->getAmountTransactions()));
 	}
 	
 	for(auto & t : threads)

@@ -38,7 +38,7 @@ class CandidateItemSet {
 		LargeItemSet * subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t);
 };
 
-void run_apriori_genThreaded(LargeItemSet *, LargeItemSet *, vector<ItemSet *> *, uint64_t, uint64_t);
+void run_apriori_genThreaded(Ontology * ontologies, LargeItemSet *, LargeItemSet *, vector<ItemSet *> *, uint64_t, uint64_t);
 
 vector<pair <uint64_t, uint64_t>> & startThreadSettings(vector <pair <string, string>> *);
 void run_subsetThreaded(CandidateTree *, vector <pair <string, string>> *, uint64_t, uint64_t);
