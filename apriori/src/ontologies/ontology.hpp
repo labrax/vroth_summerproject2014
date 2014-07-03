@@ -25,17 +25,19 @@ using std::pair;
 
 class Ontology {
 	private:
-		char * filename;
+		const char * filename;
 		ifstream file;
 		map<string, NodeOntology *> ontologies;
+		
+		bool processed;
 	public:
-		Ontology(char * filename);
+		Ontology(const char * filename);
 		~Ontology();
 		
 		void processOntologies();
 		bool checkAncestorOneAnother(string ontologyA, string ontologyB);
 		
-		void appendOntologies(vector<pair<string, string>> * normalized_transactions); //way too slow!
+		void appendOntologies(vector<pair<string, string>> * normalized_transactions); //slow!
 
 		void print();
 		

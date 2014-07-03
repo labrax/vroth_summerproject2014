@@ -19,12 +19,13 @@ using std::endl;
 
 using std::pair;
 
-Ontology::Ontology(char * filename) : filename(filename) {
+Ontology::Ontology(const char * filename) : filename(filename) {
 	ontologies.clear();
 	file.open(filename);
 	if(!file.is_open()) {
 		cerr << "Error opening \"" << filename << "\" ontologies file" << endl;
 	}
+	processed = false;
 }
 
 Ontology::~Ontology() {
@@ -81,10 +82,13 @@ void Ontology::processOntologies() {
 				}
 			}
 		}
+		processed = true;
 	}
 }
 
 bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
+	if(processed == false)
+		cerr << "using ontologies without being loaded!" << endl;
 	map<string, NodeOntology *>::iterator itA = ontologies.find(ontologyA);
 	map<string, NodeOntology *>::iterator itB = ontologies.find(ontologyB);
 	
@@ -101,6 +105,8 @@ bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
 }
 
 void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transactions) {
+	if(processed == false)
+		cerr << "using ontologies without being loaded!" << endl;
 	uint64_t end=0, increased_size=0; //begin and end indicate the range of a transaction; increased_size the amount of new values inserted into normalized_transactions
 	uint64_t initial_size = normalized_transactions->size();
 	for(uint64_t begin=0; begin < initial_size; begin=end/*+increased_size*/) { //will scan transaction by transaction
@@ -147,12 +153,16 @@ void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transa
 }
 
 void Ontology::print() {
+	if(processed == false)
+		cerr << "using ontologies without being loaded!" << endl;
 	for(auto & o : ontologies) {
 		o.second->print();
 	}
 }
 
 vector <pair <string, string>> * Ontology::getNewOntologies(vector <pair <string, string>> & transaction) {
+	if(processed == false)
+		cerr << "using ontologies without being loaded!" << endl;
 	map<string, bool> * newOntologies = new map <string, bool>();
 	
 	for(auto &t : transaction) {
