@@ -2,7 +2,7 @@
 SRC_DIR := src/
 OBJ_DIR := obj/
 
-OBJ_FILES := obj/database_normalized.o obj/rules.o obj/itemset.o obj/large.o obj/itemset_tree.o obj/main.o
+OBJ_FILES := obj/database_normalized.o obj/rules.o obj/itemset.o obj/large.o obj/itemset_tree.o obj/parameters.o obj/main.o
 CANDIDATE_FILES := obj/candidate/candidate_tree.o obj/candidate/candidate.o
 ONTOLOGIE_FILES := obj/ontologies/ontology.o obj/ontologies/node_ontology.o
 
@@ -11,8 +11,8 @@ ONTOLOGY_FOLDER := obj/ontologies/
 
 .PHONY: directories
 
-LD_FLAGS := -Wall -std=c++11 -pthread -O4
-CC_FLAGS := -Wall -std=c++11 -pthread -O4
+LD_FLAGS := -Wall -std=c++11 -pthread -g
+CC_FLAGS := -Wall -std=c++11 -pthread -g
 
 all: directories apriori
 
@@ -44,6 +44,9 @@ $(OBJ_DIR)large.o: $(SRC_DIR)large.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 $(OBJ_DIR)itemset_tree.o: $(SRC_DIR)itemset_tree.cpp
+	g++ $(CC_FLAGS) -c -o $@ $<
+	
+$(OBJ_DIR)parameters.o: $(SRC_DIR)parameters.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 $(OBJ_DIR)main.o: $(SRC_DIR)main.cpp
