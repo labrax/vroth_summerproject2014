@@ -46,23 +46,26 @@ LargeItemSet * CandidateItemSet::apriori_gen(LargeItemSet * a) {
 			map<string, bool>::iterator it = first->getItemSet().begin();
 			map<string, bool>::iterator it2 = second->getItemSet().begin();
 			
+			string last_second = second->getItemSet().rbegin()->first; //!test ontologies
+			
 			while(it->first != last_first) { //while is not the last
 				if(it->first != it2->first) {//its different in the middle: we are not cool
 					nice = false;
 					break;
-				}
-				
-				//!test for the ontologies
-				if(ontologies.checkAncestorOneAnother(it->first, last_first) == true) {
-					nice = false;
-					break;
-				}
-				//!test for the ontologies
-				
+				}						
 				it++; //increment both iterators
 				it2++;
 			}
 			//!this will test if they are similar until the last element
+			
+			if(nice == true) { //test ontologies correctly!
+				for(auto & otest: last_large[i]->getItemSet()) {
+					if(ontologies.checkAncestorOneAnother(otest.first, last_second) == true) {
+						nice = false;
+						break;
+					}
+				}
+			}
 			
 			if(nice == true) {
 				ItemSet * new_itemset = new ItemSet(first); //create new itemset
@@ -113,22 +116,26 @@ void run_apriori_genThreaded(Ontology * ontologies, LargeItemSet * new_candidate
 			map<string, bool>::iterator it = first->getItemSet().begin();
 			map<string, bool>::iterator it2 = second->getItemSet().begin();
 			
+			string last_second = second->getItemSet().rbegin()->first; //!test ontologies
+			
 			while(it->first != last_first) { //while is not the last
 				if(it->first != it2->first) {//its differente, we are not cool
 					nice = false;
 					break;
-				}
+				}	
 				it++; //increment both iterators
 				it2++;
-				
-				//!test for the ontologies
-				if(ontologies->checkAncestorOneAnother(it->first, last_first) == true) {
-					nice = false;
-					break;
-				}
-				//!test for the ontologies
 			}
 			//!this will test if they are similar until the last element
+			
+			if(nice == true) { //test ontologies correctly!
+				for(auto & otest: (*last_large)[i]->getItemSet()) {
+					if(ontologies->checkAncestorOneAnother(otest.first, last_second) == true) {
+						nice = false;
+						break;
+					}
+				}
+			}
 			
 			if(nice == true) {
 				ItemSet * new_itemset = new ItemSet(first); //create new itemset
