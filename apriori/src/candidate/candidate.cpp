@@ -120,6 +120,13 @@ void run_apriori_genThreaded(LargeItemSet * new_candidate, LargeItemSet * a, vec
 				}
 				it++; //increment both iterators
 				it2++;
+				
+				//!test for the ontologies
+				if(ontologies.checkAncestorOneAnother(it->first, it2->first) == true) {
+					nice = false;
+					break;
+				}
+				//!test for the ontologies
 			}
 			//!this will test if they are similar until the last element
 			
