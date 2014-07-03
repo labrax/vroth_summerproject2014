@@ -16,10 +16,6 @@ using std::pair;
 using std::unordered_map;
 using std::string;
 
-#include <iostream>
-using std::cout;
-using std::endl;
-
 CandidateTree::CandidateTree(unsigned int depth, string identifier, CandidateTree * father) : ItemSetTree(depth, identifier, father) {
 }
 
