@@ -18,7 +18,7 @@ using std::endl;
 int main(int argc, char * argv[]) {
 	Ontology a(argv[1]);
 	a.processOntologies();
-	//a.print();
+	a.print();
 	
 	vector<pair<string, string>> tra;
 	tra.insert(tra.end(), pair<string, string> ("TRANSACTION A", "MP:0020197"));
