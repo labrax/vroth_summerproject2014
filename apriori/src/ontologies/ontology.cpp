@@ -39,49 +39,92 @@ void Ontology::processOntologies() {
 		string line;
 		
 		NodeOntology * nNode;
+		
 		string id, name;
-		while (getline(file, line)) {
+		bool is_obsolete;
+		vector<pair<string, string>> is_a;
+		vector<string> consider; //TODO: use "consider" field
+		string replaced_by; //TODO use "replaced_by" field
+		
+		while (getline(file, line)) { //"ref": http://www.geneontology.org/GO.format.obo-1_2.shtml
 			unsigned int twopoints_pos = line.find_first_of(':');
 			
 			if(line == "[Term]") { //TODO: bug with [Typedef] in the end of file read (need to ignore that value)
-				id = "";
-				name = "";
-			}
-			else if(line.substr(0, twopoints_pos) == "id") {
-				id = line.substr(twopoints_pos+2);
-			}
-			else if(line.substr(0, twopoints_pos) == "name") {
-				name = line.substr(twopoints_pos+2);
 				
-				//cout << ">" << id << " " << name << endl;
-				
+				if(id == "")
+					continue;
+				//!create the node
 				map<string, NodeOntology *>::iterator it = ontologies.find(id);
 				if(it == ontologies.end()) {
 					//cout << "doesnt exist" << endl;
-					nNode = new NodeOntology(id, name);
+					nNode = new NodeOntology(id, name, is_obsolete);
 					ontologies.insert(pair<string, NodeOntology *>(id, nNode));
 				}
 				else {
 					//cout << "exists" << endl;
 					nNode = it->second;
 				}
+				//!create the node
+				
+				//!create the parents
+				for(auto & ia : is_a) {
+					map<string, NodeOntology *>::iterator it = ontologies.find(ia.first);
+					if(it == ontologies.end()) {
+						NodeOntology * father = new NodeOntology(ia.first, ia.second, is_obsolete);
+						ontologies.insert(pair<string, NodeOntology *>(ia.first, father));
+						father->insertChild(nNode);
+						nNode->insertParent(father);
+					}
+					else {
+						NodeOntology * father = it->second;
+						father->insertChild(nNode);
+						nNode->insertParent(father);
+					}
+				}
+				//!create the parents
+				
+				//!reset the data for the next ontology
+				id = "";
+				name = "";
+				is_obsolete = false;
+				is_a.clear();
+				consider.clear();
+				replaced_by = "";
+				//!reset the data for the next ontology
+			}
+			else if(line.substr(0, twopoints_pos) == "id") {
+				id = line.substr(twopoints_pos+2);
+			}
+			else if(line.substr(0, twopoints_pos) == "name") {
+				name = line.substr(twopoints_pos+2);
 			}
 			else if(line.substr(0, twopoints_pos) == "is_a") {
 				unsigned int exclamation_pos = line.find_first_of('!');
 				//cout << "<" << line.substr(twopoints_pos+2, exclamation_pos-(twopoints_pos+3)) << "> <" << line.substr(exclamation_pos+2) << ">" << endl;
-				
-				map<string, NodeOntology *>::iterator it = ontologies.find(line.substr(twopoints_pos+2, exclamation_pos-(twopoints_pos+3)));
-				if(it == ontologies.end()) {
-					NodeOntology * father = new NodeOntology(line.substr(twopoints_pos+2, exclamation_pos-(twopoints_pos+3)), line.substr(exclamation_pos+2));
-					ontologies.insert(pair<string, NodeOntology *>(line.substr(twopoints_pos+2, exclamation_pos-(twopoints_pos+3)), father));
-					nNode->insertParent(father);
-				}
-				else {
-					NodeOntology * father = it->second;
-					nNode->insertParent(father);
-				}
+				is_a.insert(is_a.end(), pair<string, string> (line.substr(twopoints_pos+2, exclamation_pos-(twopoints_pos+3)), line.substr(exclamation_pos+2)));
+			}
+			else if(line.substr(0, twopoints_pos) == "is_obsolete") {
+				if(line.substr(twopoints_pos+2) == "true")
+					is_obsolete = true;
+			}
+			else if(line.substr(0, twopoints_pos) == "consider") {
+				consider.insert(consider.end(), line.substr(twopoints_pos+2));
+			}
+			else if(line.substr(0, twopoints_pos) == "replaced_by") {
+				replaced_by = line.substr(twopoints_pos+2);
 			}
 		}
+		
+		//!set depth and height
+		for(auto & i : ontologies) {
+			if(i.second->getAmountParents() == 0) { //the node is root
+				i.second->setDepth(0);
+			}
+			if(i.second->getAmountChildren() == 0) {
+				i.second->setHeight(0);
+			}
+		}
+		//!set depth and height
 		processed = true;
 	}
 }
@@ -158,6 +201,15 @@ void Ontology::print() {
 	for(auto & o : ontologies) {
 		o.second->print();
 	}
+}
+
+NodeOntology * Ontology::getNode(string identifier) {
+	map<string, NodeOntology *>::iterator it = ontologies.find(identifier);
+	if(it != ontologies.end()) {
+		return it->second;
+	}
+	else
+		return NULL;
 }
 
 vector <pair <string, string>> * Ontology::getNewOntologies(vector <pair <string, string>> & transaction) {

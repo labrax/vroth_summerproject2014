@@ -41,6 +41,8 @@ class Ontology {
 
 		void print();
 		
+		NodeOntology * getNode(string identifier);
+		
 		vector <pair <string, string>> * getNewOntologies(vector <pair <string, string>> & transaction); //this function will return the new block of the transaction
 		
 };
