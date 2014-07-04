@@ -54,17 +54,17 @@ void Main::setup() {
 		char * new_dir = mkdtemp(tempDir);
 
 		char command[512]; //sort and remove duplicates for a file
-		sprintf(command, "sort %s | uniq > %s/%s", parameters->phenotypesFile(), new_dir, parameters->phenotypesFile());
+		sprintf(command, "sort %s | uniq > %s/%s", parameters->phenotypesFile().c_str(), new_dir, parameters->phenotypesFile().c_str());
 		system(command); //TODO: fetch value from system()
 
-		sprintf(command, "%s/%s", new_dir, parameters->phenotypesFile());
-		database = new DatabaseNormalized(command);
+		sprintf(command, "%s/%s", new_dir, parameters->phenotypesFile().c_str());
+		database = new DatabaseNormalized(string(command)); //TODO: check: <--- possible error here, because command is not static
 
 		sprintf(command, "rm -rf %s", new_dir); //remove temporary folder and files
 		system(command);
 	}
 	else {
-		database = new DatabaseNormalized(parameters->phenotypesFile());
+		database = new DatabaseNormalized(string(parameters->phenotypesFile()));
 	}
 	
 	database->processNormalizedTransactions(); //to store in a <TID, item> manner
@@ -176,10 +176,10 @@ void Main::run() {
 			cout << "sorting results" << endl;
 		large_obtained->sort();
 		
-		//if(Parameters::verbose) {
+		if(Parameters::verbose) {
 			large_obtained->printinfo();
 			large_obtained->print();
-		//}
+		}
 	} while(large_obtained->getItemSets().size() > 0);
 	
 	rules.addLarge(large_obtained);
