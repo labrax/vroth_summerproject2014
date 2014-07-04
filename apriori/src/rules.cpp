@@ -96,9 +96,9 @@ void Rules::computeRules() {
 		auto & i = rules.at(r);
 		get<0>(i).confidence = (double)get<2>(i)->getSupportCount()/(double)get<1>(i)->getSupportCount();
 		if(get<0>(i).confidence < confidence) {
-			cout << "tuple should be removed" << endl;
+			/*cout << "tuple should be removed" << endl;
 			cout << "first element: " << (double)get<2>(i)->getSupportCount() << " ";
-			cout << "second element: " << (double)get<1>(i)->getSupportCount();
+			cout << "second element: " << (double)get<1>(i)->getSupportCount();*/
 			delete(get<1>(i));
 			delete(get<2>(i));
 			rules.erase(rules.begin() + r); //TODO: why is it not removing?
@@ -112,7 +112,10 @@ void Rules::computeRules() {
 }
 
 void Rules::print() {
-	cout << "confidence" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
+	if(rules.size() != 0)
+		cout << "confidence" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
+	else
+		cout << "NO RULES GENERATED!" << endl;
 	for(auto &i : rules) {
 		if((double)get<2>(i)->getSupportCount()/(double)get<1>(i)->getSupportCount() < confidence)
 			continue;
