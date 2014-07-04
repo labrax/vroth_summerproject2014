@@ -16,8 +16,12 @@ using std::endl;
 
 using std::pair;
 
-NodeOntology::NodeOntology(string identifier, string name) : identifier(identifier), name(name) {
+NodeOntology::NodeOntology(string identifier, string name, bool is_obsolete) : identifier(identifier), name(name), is_obsolete(is_obsolete) {
 	parents.clear();
+	children.clear();
+	
+	height = 0;
+	depth = 0;
 }
 
 NodeOntology::~NodeOntology() {
@@ -36,6 +40,45 @@ void NodeOntology::insertParent(NodeOntology * parent) {
 	parents.insert(parents.end(), parent);
 }
 
+void NodeOntology::insertChild(NodeOntology * child) {
+	children.insert(children.end(), child);
+}
+
+const unsigned int NodeOntology::getAmountParents() {
+	return parents.size();
+}
+
+const unsigned int NodeOntology::getAmountChildren() {
+	return children.size();
+}
+
+const unsigned int & NodeOntology::getDepth() {
+	return depth;
+}
+
+void NodeOntology::setDepth(const unsigned int & depth) {
+	this->depth = depth;
+	for(auto & i : children) {
+		i->setDepth(depth+1);
+	}
+}
+
+const unsigned int & NodeOntology::getHeight() {
+	return height;
+}
+
+void NodeOntology::setHeight(const unsigned int & height) {
+	if(this->height < height)
+		this->height = height;
+	for(auto & i : parents) {
+		i->setHeight(this->height+1);
+	}
+}
+
+bool NodeOntology::isObsolete() {
+	return is_obsolete;
+}
+
 bool NodeOntology::isSon(string & identifier) {
 	if(identifier == this->identifier)
 		return true;
@@ -49,8 +92,22 @@ bool NodeOntology::isSon(string & identifier) {
 
 void NodeOntology::print() {
 	cout << identifier << ": \"" << name << "\" ";
+	if(is_obsolete)
+		cout << "OBSOLETE";
+	cout << "(" << depth << ", " << height << ") ";
+	if(parents.size() == 0) 
+		cout << "NO PARENT ";
+	else
+		cout << "PARENTS: ";
 	for(auto & p : parents) {
 		cout << p->identifier << " ";
+	}
+	if(children.size() == 0)
+		cout << "NO CHILDREN";
+	else
+		cout << "CHILDREN: ";
+	for(auto & c : children) {
+		cout << c->identifier << " ";
 	}
 	cout << endl;
 }
