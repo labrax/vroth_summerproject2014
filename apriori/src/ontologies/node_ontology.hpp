@@ -18,6 +18,11 @@ using std::vector;
 
 using std::map;
 
+typedef struct {
+	bool isFound;
+	unsigned int distance;
+} distance_to;
+
 class NodeOntology {
 	private:
 		string identifier;
@@ -53,4 +58,6 @@ class NodeOntology {
 		void print();
 		
 		map <string, bool> * returnOntologies();
+		
+		distance_to getDistance(NodeOntology *, bool);
 };

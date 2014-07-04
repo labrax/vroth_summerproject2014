@@ -10,6 +10,7 @@
 #include "node_ontology.hpp"
 
 #include <iostream>
+#include <climits>
 
 using std::cout;
 using std::endl;
@@ -128,4 +129,40 @@ map <string, bool> * NodeOntology::returnOntologies() {
 		}
 	}
 	return retOntol;
+}
+
+distance_to NodeOntology::getDistance(NodeOntology * target, bool newSearch) {
+	static map<NodeOntology *, bool> passed;
+	if(newSearch == true)
+		passed.clear();
+	distance_to d;
+	if(this == target) {
+		d.isFound = true;
+		d.distance=0;
+	}
+	else {
+		unsigned int minimum_distance = UINT_MAX;
+		passed.insert(pair<NodeOntology *, bool>(this, true));
+		for(auto & i : children) { //for the children nodes
+			if(passed.find(i) == passed.end()) { //haven't passed here
+				d = i->getDistance(target, false);
+				if(d.isFound == true)
+					if(d.distance < minimum_distance)
+						minimum_distance = d.distance;
+			}
+		}
+		for(auto & i : parents) { //for the parent nodes
+			if(passed.find(i) == passed.end()) {
+				d = i->getDistance(target, false);
+				if(d.isFound == true)
+					if(d.distance < minimum_distance)
+						minimum_distance = d.distance;
+			}
+		}
+		if(minimum_distance < UINT_MAX) {
+			d.isFound = true;
+			d.distance = minimum_distance + 1;
+		}
+	}
+	return d;
 }
