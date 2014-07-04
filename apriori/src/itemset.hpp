@@ -12,6 +12,8 @@
  
 #pragma once
 
+#include "ontologies/ontology.hpp"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -51,6 +53,7 @@ class ItemSet {
 		vector<ItemSet *> subItemSets();
 		
 		void print();
+		void printWithOntology(Ontology * ontologies);
 };
 
 bool ItemSetSort(ItemSet *, ItemSet *);
