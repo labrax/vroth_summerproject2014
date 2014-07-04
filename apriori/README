@@ -1,0 +1,31 @@
+/* author: Victor Roth Cardoso - vroth
+ * student sponsored by CNPq
+ * 
+ * in summer project at Aberystwyth University
+ * 
+ * 
+ * supervisors: Robert Hoehndorf and Georgios Gkoutos
+ */
+ 
+ 
+COMPILE
+	This program uses features of C++11 standard, which gcc4.7.2+ may have.
+	Be sure to have build-essential package on Linux.
+	This program uses pthreads.
+	
+	Use the Makefile to compile. (recommended: make -j <NUMBER_OF_CPUs>)
+	
+RUN
+	Run the program as specified in it.
+	
+	To show options, run as:
+	./apriori -h
+	
+	You'll need a phenotypes file, or transactions file.
+	The ontologies file (of class relationship) is optional. The format /.obo/ 1.2 is accepted.
+
+TEST MACHINE
+	This program was succesfully built using:
+		g++ (Ubuntu 4.8.2-19ubuntu1) 4.8.2
+	on
+		Linux ubuntu-linux 3.13.0-30-generic #54-Ubuntu SMP Mon Jun 9 22:45:01 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
