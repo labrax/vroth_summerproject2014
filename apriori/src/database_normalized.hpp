@@ -27,14 +27,14 @@ using std::pair;
 
 class DatabaseNormalized {
 	private:
-		const char * filename;
+		const string & filename;
 		ifstream file;
 		map <string, map<string, bool>> transactions;
 		vector <pair <string, string>> normalized_transactions;
 		uint64_t amount_transactions;
 		
 	public:
-		DatabaseNormalized(const char * filename);
+		DatabaseNormalized(const string & filename);
 		~DatabaseNormalized();
 		
 		void removeDuplicates(); //remove in normalized_transactions duplicates //TOO SLOW!

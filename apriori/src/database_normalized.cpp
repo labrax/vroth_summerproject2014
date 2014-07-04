@@ -21,7 +21,7 @@ using std::cerr;
 using std::endl;
 using std::pair;
 
-DatabaseNormalized::DatabaseNormalized(const char * filename) : filename(filename) {
+DatabaseNormalized::DatabaseNormalized(const string & filename) : filename(filename) {
 	file.open(filename);
 	if(!file.is_open()) {
 		cerr << "Error opening \"" << filename << "\" transactions file" << endl;
