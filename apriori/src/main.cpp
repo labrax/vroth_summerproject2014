@@ -149,16 +149,16 @@ void Main::run() {
 		large_1->print();
 	}
 	
-	Rules rules(parameters->getConfidence());
+	Rules rules(parameters->getConfidence(), ontologies);
 	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
 	do {
 		CandidateItemSet cis(*ontologies);
 		LargeItemSet * large_temp;
 		
 		if(!parameters->useThread())
-			large_temp = cis.apriori_gen(large_obtained); //TODO: verify with the threaded || TODO: add ontologies
+			large_temp = cis.apriori_gen(large_obtained); //TODO: verify with the threaded
 		else
-			large_temp = cis.apriori_genThreaded(large_obtained); //TODO: verify if there is gain in comparison without threads || TODO: add ontologies
+			large_temp = cis.apriori_genThreaded(large_obtained); //TODO: verify if there is gain in comparison without threads
 		
 		rules.addLarge(large_obtained);
 		
