@@ -15,6 +15,12 @@
 #include <cstdio>
 #include <cstring>
 
+#include <getopt.h>
+#define no_argument 0 //TODO: check if needed these defs
+#define required_argument 1
+#define optional_argument 2
+
+using std::cout;
 using std::cerr;
 using std::endl;
 
@@ -23,90 +29,113 @@ bool Parameters::verbose = false;
 unsigned int Parameters::thread_number = 0;
 
 Parameters::Parameters(int argc, char * argv[]) {
-	bool error = false;
-	
-	static char default_file[16] = "phenotypes.txt";
-	file = default_file;
-	preprocessed = false;
-
-	support = 0.5;
-	confidence = 0.8;
-	
-	use_thread = false;
-	
-	for(int i = 0; i<argc; i++) {
-		if(strcmp(argv[i], "-f") == 0) {
-			if(i+1 >= argc) {
-				error = true;
+	static struct option long_options[] = {
+		{"help",			no_argument, 0, 'h'},
+		{"preprocessed",	no_argument, 0, 'p'},
+		{"verbose",			no_argument, 0, 'v'},
+		{"debug",			no_argument, 0, 'd'},
+		
+		{"file", 			required_argument, 0, 'f'},
+		{"ontologies-file", required_argument, 0, 'o'},
+		
+		{"confidence", 		required_argument, 0, 'c'},
+		{"support", 		required_argument, 0, 's'},
+		
+		{"thread",			optional_argument, 0, 't'},
+		{0, 0, 0, 0},
+	};
+	int option_index = 0;
+    
+    file.assign("");
+    ontologies_file.assign("");
+    use_thread = false;
+    thread_number = 0;
+    use_ontology = false;
+    preprocessed = false;
+    support = 0.5;
+    confidence = 0.8;
+    
+    int c = getopt_long(argc, argv, "hpvdf:o:c:s:t::", long_options, &option_index);
+    
+    while(c != -1) {
+		switch(c) {
+			case 0:
+				if(long_options[option_index].flag != 0)
+					break;
+				cout << "option " << long_options[option_index].name;
+				if(optarg)
+					cout << " with arg " << std::boolalpha << optarg << endl;
 				break;
-			}
-			else {
-				file = argv[i+1];
-			}
-		}
-		else if(strcmp(argv[i], "-o") == 0) {
-			use_ontology = true;
-			if(i+1 >= argc) {
-				error = true;
+			case 'h':
+				print_instructions();
 				break;
-			}
-			else {
-				ontologies_file = argv[i+1];
-			}
-		}
-		else if(strcmp(argv[i], "-s") == 0) {
-			if(i+1 >= argc) {
-				error = true;
+			case 'p':
+				preprocessed = true;
 				break;
-			}
-			else {
-				support = atof(argv[i+1]);
-			}
-		}
-		else if(strcmp(argv[i], "-c") == 0) {
-			if(i+1 >= argc) {
-				error = true;
+			case 'v':
+				verbose = true;
 				break;
-			}
-			else {
-				confidence = atof(argv[i+1]);
-			}
+			case 'd':
+				debug = true;
+				break;
+			case 'f':
+				file.assign(optarg);
+				break;
+			case 'o':
+				ontologies_file.assign(optarg);
+				break;
+			case 'c':
+				confidence = atof(optarg);
+				break;
+			case 's':
+				support = atof(optarg);
+				break;
+			case 't':
+				use_thread = true;				
+				if(optarg) {
+					int getpos;
+					for(getpos = 0; (optarg[getpos] < '0' || optarg[getpos] > '9') && optarg[getpos] != ' '; ++getpos);
+								
+					if(isdigit(optarg[getpos]))
+						thread_number = atoi(optarg + getpos);
+				}
+				break;
+			default:
+				print_instructions();
+				break;
 		}
-		else if(strcmp(argv[i], "-t") == 0) {
-			use_thread = true;
-			if(i+1 < argc) {
-				if(isdigit(argv[i+1][0]))
-					thread_number = atoi(argv[i+1]);
-			}
-		}
-		else if(strcmp(argv[i], "-v") == 0) {
-			verbose = true;
-		}
-		else if(strcmp(argv[i], "-p") == 0) {
-			preprocessed = true;
-		}
-		else if(strcmp(argv[i], "-h") == 0) {
-			error = true;
-		}
+		c = getopt_long(argc, argv, "hpvdf:o:c:s:t::", long_options, &option_index);
 	}
 	
-	if(confidence <= 0 || confidence > 1)
-		error = true;
-		
-	if(support <= 0 || support > 1)
-		error = true;
+	if(optind < argc) {
+		cerr << "Guessing the remaining parameters: " << endl;
+		while(optind < argc) {
+			string par(argv[optind++]);
+			if(par.find(".obo") != string::npos) {
+				cerr << "\tconsidering " << par << " as the ontologies file" << endl;
+				ontologies_file = par;
+				use_ontology = true;
+			}
+			else if(par.find(".txt") != string::npos) {
+				cerr << "\tconsidering " << par << " as the phenotypes file" << endl;
+				file = par;
+			}
+			else {
+				cerr << "\tdoesn't know what " << par << " means" << endl;
+			}
+		}
+	}
+
+	if(confidence < 0 || confidence > 1) {
+		print_instructions();
+	}
 	
-	if(error) {
-		cerr << "use format:" << endl
-			 << "-f <file>\t to select the phenotypes file (default phenotypes.txt)" << endl
-			 << "-o <file>\t to select and use ontologies file" << endl
-			 << "-p\t\t to indicate that the file is preprocessed" << endl
-			 << "-s <support>\t to select the support (default 0.5)" << endl
-			 << "-c <confidence>\t to select the confidence (default 0.8)" << endl
-			 << "-t <number>\t to select threads (number is optional)" << endl
-			 << "-v\t\t enable verbose" << endl
-			 << endl;
-		exit(-1);
+	if(support < 0 || support > 1) {
+		print_instructions();
+	}
+	
+	if(file == "" || ontologies_file == "") {
+		print_instructions();
 	}
 	
 	cerr << std::boolalpha;
@@ -133,6 +162,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 			thread_number = std::thread::hardware_concurrency();
 			if(thread_number == 0) {
 				cerr << "Error initializing thread_number, running without threads!" << endl;
+				use_thread = false;
 				thread_number = 0;
 			}
 		}
@@ -154,11 +184,11 @@ const bool & Parameters::isPreprocessed() {
 	return preprocessed;
 }
 
-const char * Parameters::phenotypesFile() {
+const string & Parameters::phenotypesFile() {
 	return file;
 }
 
-const char * Parameters::ontologiesFile() {
+const string & Parameters::ontologiesFile() {
 	return ontologies_file;
 }
 
@@ -168,4 +198,29 @@ const double & Parameters::getSupport() {
 
 const double & Parameters::getConfidence() {
 	return confidence;
+}
+
+void print_instructions() {
+	cerr << "use format:" << endl //TODO: fix
+		 << "-f <file>\t to select the phenotypes file" << endl
+		 << "-o <file>\t to select and use ontologies file" << endl
+		 << "-p\t\t to indicate that the file is preprocessed" << endl
+		 << "-s <support>\t to select the support (default 0.5)" << endl
+		 << "-c <confidence>\t to select the confidence (default 0.8)" << endl
+		 << "-t <number>\t to select threads (number is optional)" << endl
+		 << "-v\t\t enable verbose" << endl
+		 << endl
+		 << "support and confidence must be in range 0 to 1" << endl
+		 << endl
+		 << "options can be guessed, if:" << endl
+		 << "the phenotypes file is .txt it doesn't need -f" << endl
+		 << "the ontologies file is .obo it doesn't need -o" << endl
+		 << endl;
+
+	cerr << "example of use: " << endl
+		 << "./apriori -f mousephenotypes.txt -o mammalian_phenotype.obo -t=20" << endl
+		 << "./apriori mousephenotypes.txt mammalian_phenotype.obo -t -s 0.01 -c 0.3" << endl
+		 << endl;
+		 
+	exit(-1);
 }

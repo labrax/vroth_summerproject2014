@@ -10,6 +10,9 @@
 #pragma once
 
 //#include <iostream>
+#include <string>
+
+using std::string;
 
 class Parameters {
 	private:
@@ -18,8 +21,8 @@ class Parameters {
 		
 		bool preprocessed;
 		
-		char * file;
-		char * ontologies_file;
+		string file;
+		string ontologies_file;
 		double support, confidence;
 		
 	public:
@@ -27,15 +30,18 @@ class Parameters {
 		~Parameters();
 		
 		static bool verbose;
-		static bool debug;
+		static bool debug; //TODO: use debug flag
 		static unsigned int thread_number;
 		
 		const bool & useThread();
 		const bool & useOntology();
 		const bool & isPreprocessed();
-		const char * phenotypesFile();
-		const char * ontologiesFile();
+
+		const string & phenotypesFile();
+		const string & ontologiesFile();
 		
 		const double & getSupport();
 		const double & getConfidence();
 };
+
+void print_instructions();
