@@ -6,6 +6,7 @@
 #include "../src/ontologies/ontology.hpp"
 
 #include <iostream>
+#include <string>
 
 #include <vector>
 
@@ -14,6 +15,19 @@ using std::pair;
 
 using std::cout;
 using std::endl;
+
+using std::string;
+
+void printRelation(Ontology * ontologies, string a, string b) {
+	distance_to d = ontologies->getDistance(a, b);
+	cout << std::boolalpha << "checkAncestorOneAnother" << a << "AND" << b << " is " << ontologies->checkAncestorOneAnother(a, b) << endl;
+	cout << std::boolalpha << "Is found: " << d.isFound;
+	if(d.isFound) {
+		cout << " with distance " << d.distance << endl;
+	}
+	else
+		cout << endl;
+}
 
 int main(int argc, char * argv[]) {
 	Ontology a(argv[1]);
@@ -28,7 +42,8 @@ int main(int argc, char * argv[]) {
 	tra.insert(tra.end(), pair<string, string> ("TRANSACTION C", "MP:0000180"));
 	tra.insert(tra.end(), pair<string, string> ("TRANSACTION D", "MP:0000592"));
 	
-	cout << "initial: " << tra.size() << endl;
+	
+	/*cout << "initial: " << tra.size() << endl;
 	for(auto & i : tra) {
 		cout << i.first << " " << i.second << endl;
 	}
@@ -49,7 +64,10 @@ int main(int argc, char * argv[]) {
 			else
 				cout << "false" << endl;
 		}
-	}
+	}*/
+	
+	printRelation(&a, string("MP:0001265"), string("MP:0005451"));
+	printRelation(&a, string("MP:0002221"), string("MP:0000689"));
 	
 	return 0;
 }
