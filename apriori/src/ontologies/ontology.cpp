@@ -19,7 +19,7 @@ using std::endl;
 
 using std::pair;
 
-Ontology::Ontology(const char * filename) : filename(filename) {
+Ontology::Ontology(const string & filename) : filename(filename) {
 	ontologies.clear();
 	file.open(filename);
 	if(!file.is_open()) {
@@ -49,7 +49,7 @@ void Ontology::processOntologies() {
 		while (getline(file, line)) { //"ref": http://www.geneontology.org/GO.format.obo-1_2.shtml
 			unsigned int twopoints_pos = line.find_first_of(':');
 			
-			if(line == "[Term]") { //TODO: bug with [Typedef] in the end of file read (need to ignore that value)
+			if(line == "[Term]" || line == "") { //TODO: this method of extracting information may ignore the last one
 				
 				if(id == "")
 					continue;
@@ -249,4 +249,18 @@ vector <pair <string, string>> * Ontology::getNewOntologies(vector <pair <string
 	delete(newOntologies);
 	
 	return newTransactions;
+}
+
+distance_to Ontology::getDistance(string & a, string & b) {
+	distance_to d;
+	map<string, NodeOntology *>::iterator itA = ontologies.find(a);
+	map<string, NodeOntology *>::iterator itB = ontologies.find(b);
+	
+	if(itA == ontologies.end() || itB == ontologies.end()) { //at least one of them was not found
+		d.isFound = false;
+	}
+	else {
+		d = itA->second->getDistance(itB->second, true);
+	}
+	return d;
 }

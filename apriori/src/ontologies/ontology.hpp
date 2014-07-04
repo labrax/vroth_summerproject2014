@@ -25,13 +25,13 @@ using std::pair;
 
 class Ontology {
 	private:
-		const char * filename;
+		const string & filename;
 		ifstream file;
 		map<string, NodeOntology *> ontologies;
 		
 		bool processed;
 	public:
-		Ontology(const char * filename);
+		Ontology(const string & filename);
 		~Ontology();
 		
 		void processOntologies();
@@ -45,4 +45,5 @@ class Ontology {
 		
 		vector <pair <string, string>> * getNewOntologies(vector <pair <string, string>> & transaction); //this function will return the new block of the transaction
 		
+		distance_to getDistance(string & a, string & b);
 };
