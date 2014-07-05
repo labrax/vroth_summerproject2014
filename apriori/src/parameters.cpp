@@ -134,7 +134,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 		print_instructions();
 	}
 	
-	if(file == "" || ontologies_file == "") {
+	if(file == "") {
 		print_instructions();
 	}
 	
