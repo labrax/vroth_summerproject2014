@@ -18,11 +18,32 @@ COMPILE
 RUN
 	Run the program as specified in it.
 	
+	You'll need a phenotypes file, or transactions file.
+	The ontologies file (of class relationship) is optional. The format /.obo/ 1.2 is accepted.
+	
 	To show options, run as:
 	./apriori -h
 	
-	You'll need a phenotypes file, or transactions file.
-	The ontologies file (of class relationship) is optional. The format /.obo/ 1.2 is accepted.
+	---
+	use format:
+	-f <file>	 to select the phenotypes file
+	-o <file>	 to select and use ontologies file
+	-p		 to indicate that the file is preprocessed
+	-s <support>	 to select the support (default 0.5)
+	-c <confidence>	 to select the confidence (default 0.8)
+	-t <number>	 to select threads (number is optional)
+	-v		 enable verbose
+
+	support and confidence must be in range 0 to 1
+
+	options can be guessed, if:
+	the phenotypes file is .txt it doesn't need -f
+	the ontologies file is .obo it doesn't need -o
+
+	example of use: 
+	./apriori -f mousephenotypes.txt -o mammalian_phenotype.obo -t=20
+	./apriori mousephenotypes.txt mammalian_phenotype.obo -t -s 0.01 -c 0.3
+	---
 
 TEST MACHINE
 	This program was succesfully built using:
