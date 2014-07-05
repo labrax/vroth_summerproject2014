@@ -147,8 +147,19 @@ void ItemSet::print() {
 
 void ItemSet::printWithOntology(Ontology * ontologies) {
 	for(auto &j: getItemSet()) {
-		cout << j.first << " (" << ontologies->getNode(j.first)->getName() << ") ";
+		if(ontologies->isProcessed()) {
+			NodeOntology * node = ontologies->getNode(j.first);
+			if(node != NULL)
+				cout << j.first << " (" << node->getName() << ") ";
+			else
+				cout << j.first << " (?) ";
+		}
+		else {
+			cout << j.first << " ";
+		}
 	}
+	if(Parameters::verbose)
+		cout << " (#SUPPORT:" << support_count << ") ";
 }
 
 bool ItemSetSort(ItemSet * c0, ItemSet * c1) {
