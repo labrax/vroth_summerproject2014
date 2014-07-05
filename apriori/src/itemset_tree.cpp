@@ -26,9 +26,6 @@ ItemSetTree::ItemSetTree(unsigned int depth, string identifier, ItemSetTree * fa
 	this->identifier = identifier;
 	this->father = father;
 	
-	itemsets.clear();
-	children.clear();
-	
 	tp = itemset_node;
 }
 

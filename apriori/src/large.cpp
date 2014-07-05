@@ -17,7 +17,6 @@ using std::endl;
 
 LargeItemSet::LargeItemSet(uint64_t iteration) {
 	this->k = iteration;
-	itemset.clear();
 
 	root = new ItemSetTree(0, "", NULL);
 }

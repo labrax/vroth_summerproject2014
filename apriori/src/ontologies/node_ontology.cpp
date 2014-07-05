@@ -18,9 +18,6 @@ using std::endl;
 using std::pair;
 
 NodeOntology::NodeOntology(string identifier, string name, bool is_obsolete) : identifier(identifier), name(name), is_obsolete(is_obsolete) {
-	parents.clear();
-	children.clear();
-	
 	height = 0;
 	depth = 0;
 }

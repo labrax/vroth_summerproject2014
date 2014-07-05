@@ -20,12 +20,10 @@ using std::endl;
 using std::pair;
 
 Ontology::Ontology() : filename(string("")) {
-	ontologies.clear();
 	processed = false;
 }
 
 Ontology::Ontology(const string & filename) : filename(filename) {
-	ontologies.clear();
 	file.open(filename);
 	if(!file.is_open()) {
 		cerr << "Error opening \"" << filename << "\" ontologies file" << endl;
