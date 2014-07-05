@@ -21,7 +21,7 @@ using std::cerr;
 using std::endl;
 using std::pair;
 
-DatabaseNormalized::DatabaseNormalized(const string & filename) : filename(filename) {
+DatabaseNormalized::DatabaseNormalized(string filename) : filename(filename) {
 	file.open(filename);
 	if(!file.is_open()) {
 		cerr << "Error opening \"" << filename << "\" transactions file" << endl;
@@ -32,35 +32,6 @@ DatabaseNormalized::DatabaseNormalized(const string & filename) : filename(filen
 DatabaseNormalized::~DatabaseNormalized() {
 	if(file.is_open()) {
 		file.close();
-	}
-}
-
-void DatabaseNormalized::processTransactions() {
-	if(file.is_open()) {
-		string line;
-		char first[32], second[32];
-		
-		while (getline(file, line)) {
-			map <string, bool> new_transaction;
-			
-			if(line.find('\t') != string::npos) {
-				sscanf(line.c_str(), "%s %s", first, second);
-			}
-			//cout << "F: <" << first << "> S: <" << second << ">" << endl;
-			
-			map <string, map<string, bool>>::iterator it = transactions.find(first);
-			
-			if(it != transactions.end()) {
-				it->second.insert(pair<string, bool>(second, true));
-			}
-			else {
-				new_transaction.insert(pair<string, bool>(second, true));
-				transactions.insert(pair<string, map<string, bool>>(first, new_transaction));
-			}
-		}
-	}
-	else {
-		cerr << "File is not open -- DatabaseNormalized::processTransactions()" << endl;
 	}
 }
 
@@ -133,26 +104,12 @@ bool normalizedCompare(const pair<string, string>& firstElem, const pair<string,
 		return firstElem.first < secondElem.first;
 }
 
-map <string, map<string, bool>> & DatabaseNormalized::getTransactions() {
-	return transactions;
-}
-
 vector <pair <string, string>> & DatabaseNormalized::getNormalizedTransactions() {
 	return normalized_transactions;
 }
 		
 uint64_t DatabaseNormalized::getAmountTransactions(void) {
 	return amount_transactions;
-}
-
-void DatabaseNormalized::printTransactions() {
-	for(auto i : transactions) {
-		cout << i.first << ": ";
-		for(auto j : i.second) {
-			cout << j.first << " ";
-		}
-		cout << endl;
-	}
 }
 
 void DatabaseNormalized::printNormalizedTransactions() {

@@ -27,27 +27,23 @@ using std::pair;
 
 class DatabaseNormalized {
 	private:
-		const string & filename;
+		string filename;
 		ifstream file;
-		map <string, map<string, bool>> transactions;
 		vector <pair <string, string>> normalized_transactions;
 		uint64_t amount_transactions;
 		
 	public:
-		DatabaseNormalized(const string & filename);
+		DatabaseNormalized(string filename);
 		~DatabaseNormalized();
 		
 		void removeDuplicates(); //remove in normalized_transactions duplicates //TOO SLOW!
 		
-		void processTransactions(); //not used!
 		void processNormalizedTransactions();
 		
-		map <string, map<string, bool>> & getTransactions(); //function for debug purpouses
 		vector <pair <string, string>> & getNormalizedTransactions();
 		
 		uint64_t getAmountTransactions(void);
 		
-		void printTransactions(); //print data in a proper manner for debug
 		void printNormalizedTransactions();
 };
 
