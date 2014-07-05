@@ -60,9 +60,13 @@ void Rules::computeRules() {
 				
 				m.sumDepth = 0;
 				m.sumHeight = 0;
+
 				for(auto & el : i->getItemSet()) { //obtain height and depth data
-					m.sumHeight += ontologies->getNode(el.first)->getHeight();
-					m.sumDepth += ontologies->getNode(el.first)->getDepth();
+					NodeOntology * node = ontologies->getNode(el.first);
+					if(node != NULL) {
+						m.sumHeight += node->getHeight();
+						m.sumDepth += node->getDepth();
+					}
 				}
 				
 				rules.insert(rules.end(), tuple<measures, ItemSet *, ItemSet *>(m, s, b));
