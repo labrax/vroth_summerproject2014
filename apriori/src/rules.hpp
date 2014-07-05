@@ -13,6 +13,8 @@
 #include "large.hpp"
 #include "ontologies/ontology.hpp"
 
+#include <cstdint>
+
 #include <vector>
 #include <tuple>
 
@@ -22,7 +24,11 @@ using std::tuple;
 typedef struct {
 	unsigned int sumDepth;
 	unsigned int sumHeight;
+	
+	uint64_t support_both;
+	uint64_t support_implied;
 	double confidence;
+	
 	double lift;
 } measures;
 

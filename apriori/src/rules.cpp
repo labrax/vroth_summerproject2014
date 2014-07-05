@@ -56,8 +56,8 @@ void Rules::computeRules() {
 		for(auto & i : l->getItemSets()) {
 			for(auto & s : i->subItemSets()) {
 				ItemSet * b = new ItemSet(i, s);
-				b->setSupportCount(i->getSupportCount()); //TODO: move to the right place //<---------------------------------------------------------first part here
 				
+				m.support_both = i->getSupportCount();
 				m.sumDepth = 0;
 				m.sumHeight = 0;
 
@@ -88,7 +88,7 @@ void Rules::computeRules() {
 				}
 			}
 			if(ok == true) {
-				get<1>(r)->setSupportCount(p->getSupportCount());                         //<---------------------------------------------------------second part here
+				get<0>(r).support_implied = p->getSupportCount();
 				break;
 			}
 		}
@@ -98,7 +98,7 @@ void Rules::computeRules() {
 	//!remove the ones without the confidence
 	for(uint64_t r = 0; r < rules.size(); r++) {
 		auto & i = rules.at(r);
-		get<0>(i).confidence = (double)get<2>(i)->getSupportCount()/(double)get<1>(i)->getSupportCount();
+		get<0>(i).confidence = (double)get<0>(i).support_both/(double)get<0>(i).support_implied;
 		if(get<0>(i).confidence < confidence) {
 			/*cout << "tuple should be removed" << endl;
 			cout << "first element: " << (double)get<2>(i)->getSupportCount() << " ";
