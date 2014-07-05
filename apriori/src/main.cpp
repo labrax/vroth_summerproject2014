@@ -58,7 +58,7 @@ void Main::setup() {
 		system(command); //TODO: fetch value from system()
 
 		sprintf(command, "%s/%s", new_dir, parameters->phenotypesFile().c_str());
-		database = new DatabaseNormalized(string(command)); //TODO: check: <--- possible error here, because command is not static
+		database = new DatabaseNormalized(string(command));
 
 		sprintf(command, "rm -rf %s", new_dir); //remove temporary folder and files
 		system(command);
@@ -156,20 +156,20 @@ void Main::run() {
 		CandidateItemSet cis(*ontologies);
 		LargeItemSet * large_temp;
 		
-		if(!parameters->useThread())
-			large_temp = cis.apriori_gen(large_obtained); //TODO: verify with the threaded
+		if(parameters->useThread())
+			large_temp = cis.apriori_genThreaded(large_obtained);
 		else
-			large_temp = cis.apriori_genThreaded(large_obtained); //TODO: verify if there is gain in comparison without threads
+			large_temp = cis.apriori_gen(large_obtained);
 		
 		rules.addLarge(large_obtained);
 		
 		if(Parameters::verbose)
 			cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
 
-		if(!parameters->useThread())
-			large_obtained = cis.subset(large_temp, &database->getNormalizedTransactions(), minimum_transactions);
-		else
+		if(parameters->useThread())
 			large_obtained = cis.subsetThreaded(large_temp, &database->getNormalizedTransactions(), minimum_transactions);
+		else
+			large_obtained = cis.subset(large_temp, &database->getNormalizedTransactions(), minimum_transactions);
 		
 		delete(large_temp);
 		

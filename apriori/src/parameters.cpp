@@ -16,7 +16,7 @@
 #include <cstring>
 
 #include <getopt.h>
-#define no_argument 0 //TODO: check if needed these defs
+#define no_argument 0
 #define required_argument 1
 #define optional_argument 2
 
@@ -201,7 +201,7 @@ const double & Parameters::getConfidence() {
 }
 
 void print_instructions() {
-	cerr << "use format:" << endl //TODO: fix
+	cerr << "use format:" << endl
 		 << "-f <file>\t to select the phenotypes file" << endl
 		 << "-o <file>\t to select and use ontologies file" << endl
 		 << "-p\t\t to indicate that the file is preprocessed" << endl
