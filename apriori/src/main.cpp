@@ -71,7 +71,6 @@ void Main::setup() {
 	if(Parameters::verbose)
 		cout << database->getNormalizedTransactions().size() << " normalized transactions obtained" << endl;
 	
-	ontologies = NULL;
 	if(parameters->useOntology()) {
 		ontologies = new Ontology(parameters->ontologiesFile());
 		ontologies->processOntologies();
@@ -80,6 +79,11 @@ void Main::setup() {
 		ontologies->appendOntologies(&database->getNormalizedTransactions());
 		if(Parameters::verbose)
 			cout << "ontologies inserted into transactions" << endl;
+	}
+	else {
+		ontologies = new Ontology();
+		if(Parameters::verbose)
+			cout << "ontologies not being used" << endl;
 	}
 	
 	if(parameters->useOntology())
@@ -94,9 +98,6 @@ void Main::setup() {
 		
 	/*a.removeDuplicates(); //TOO SLOW, USING uniq IN TERMINAL
 	cout << "removed duplicates!" << endl;*/
-
-	if(parameters->useThread())
-		startThreadSettings(&database->getNormalizedTransactions()); //setup threads
 	
 	if(Parameters::verbose)
 		cout << "Amount of transactions is " << database->getAmountTransactions() << endl;
