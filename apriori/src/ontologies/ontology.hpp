@@ -38,6 +38,8 @@ class Ontology {
 		const bool & isProcessed();
 		
 		void processOntologies();
+		void createNode(string id, string name, bool is_obsolete, vector<pair<string, string>> * is_a, vector<string> * consider, string replaced_by);
+
 		bool checkAncestorOneAnother(string ontologyA, string ontologyB);
 		
 		void appendOntologies(vector<pair<string, string>> * normalized_transactions); //slow!

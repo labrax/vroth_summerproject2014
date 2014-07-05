@@ -47,50 +47,21 @@ void Ontology::processOntologies() {
 	if(file.is_open()) {
 		string line;
 		
-		NodeOntology * nNode;
-		
 		string id, name;
 		bool is_obsolete;
 		vector<pair<string, string>> is_a;
-		vector<string> consider; //TODO: use "consider" field
-		string replaced_by; //TODO use "replaced_by" field
+		vector<string> consider;
+		string replaced_by;
 		
 		while (getline(file, line)) { //"ref": http://www.geneontology.org/GO.format.obo-1_2.shtml
 			unsigned int twopoints_pos = line.find_first_of(':');
 			
-			if(line == "[Term]" || line == "") { //TODO: this method of extracting information may ignore the last one
+			if(line == "[Term]") {
 				
 				if(id == "")
 					continue;
-				//!create the node
-				map<string, NodeOntology *>::iterator it = ontologies.find(id);
-				if(it == ontologies.end()) {
-					//cout << "doesnt exist" << endl;
-					nNode = new NodeOntology(id, name, is_obsolete);
-					ontologies.insert(pair<string, NodeOntology *>(id, nNode));
-				}
-				else {
-					//cout << "exists" << endl;
-					nNode = it->second;
-				}
-				//!create the node
 				
-				//!create the parents
-				for(auto & ia : is_a) {
-					map<string, NodeOntology *>::iterator it = ontologies.find(ia.first);
-					if(it == ontologies.end()) {
-						NodeOntology * father = new NodeOntology(ia.first, ia.second, is_obsolete);
-						ontologies.insert(pair<string, NodeOntology *>(ia.first, father));
-						father->insertChild(nNode);
-						nNode->insertParent(father);
-					}
-					else {
-						NodeOntology * father = it->second;
-						father->insertChild(nNode);
-						nNode->insertParent(father);
-					}
-				}
-				//!create the parents
+				createNode(id, name, is_obsolete, &is_a, &consider, replaced_by);
 				
 				//!reset the data for the next ontology
 				id = "";
@@ -124,6 +95,10 @@ void Ontology::processOntologies() {
 			}
 		}
 		
+		if(id != "") { //save if there is information not obtained from the loop
+			createNode(id, name, is_obsolete, &is_a, &consider, replaced_by);
+		}
+		
 		//!set depth and height
 		for(auto & i : ontologies) {
 			if(i.second->getAmountParents() == 0) { //the node is root
@@ -136,6 +111,39 @@ void Ontology::processOntologies() {
 		//!set depth and height
 		processed = true;
 	}
+}
+
+void Ontology::createNode(string id, string name, bool is_obsolete, vector<pair<string, string>> * is_a, vector<string> * consider, string replaced_by) { //TODO: use /consider/ and /replaced_by/ fields
+	NodeOntology * nNode;
+	//!create the node
+	map<string, NodeOntology *>::iterator it = ontologies.find(id);
+	if(it == ontologies.end()) {
+		//cout << "doesnt exist" << endl;
+		nNode = new NodeOntology(id, name, is_obsolete);
+		ontologies.insert(pair<string, NodeOntology *>(id, nNode));
+	}
+	else {
+		//cout << "exists" << endl;
+		nNode = it->second;
+	}
+	//!create the node
+	
+	//!create the parents
+	for(auto & ia : *is_a) {
+		map<string, NodeOntology *>::iterator it = ontologies.find(ia.first);
+		if(it == ontologies.end()) {
+			NodeOntology * father = new NodeOntology(ia.first, ia.second, is_obsolete);
+			ontologies.insert(pair<string, NodeOntology *>(ia.first, father));
+			father->insertChild(nNode);
+			nNode->insertParent(father);
+		}
+		else {
+			NodeOntology * father = it->second;
+			father->insertChild(nNode);
+			nNode->insertParent(father);
+		}
+	}
+	//!create the parents
 }
 
 bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
