@@ -19,6 +19,11 @@ using std::endl;
 
 using std::pair;
 
+Ontology::Ontology() : filename(string("")) {
+	ontologies.clear();
+	processed = false;
+}
+
 Ontology::Ontology(const string & filename) : filename(filename) {
 	ontologies.clear();
 	file.open(filename);
@@ -32,6 +37,10 @@ Ontology::~Ontology() {
 	for(auto & o : ontologies) {
 		delete(o.second);
 	}
+}
+
+const bool & Ontology::isProcessed() {
+	return processed;
 }
 
 void Ontology::processOntologies() {
@@ -131,7 +140,7 @@ void Ontology::processOntologies() {
 
 bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
 	if(processed == false)
-		cerr << "using ontologies without being loaded!" << endl;
+		cerr << "using ontologies without being loaded! " << __FILE__ << ":" << __LINE__ << endl;
 	map<string, NodeOntology *>::iterator itA = ontologies.find(ontologyA);
 	map<string, NodeOntology *>::iterator itB = ontologies.find(ontologyB);
 	
@@ -149,7 +158,7 @@ bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
 
 void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transactions) {
 	if(processed == false)
-		cerr << "using ontologies without being loaded!" << endl;
+		cerr << "using ontologies without being loaded! " << __FILE__ << ":" << __LINE__ << endl;
 	uint64_t end=0, increased_size=0; //begin and end indicate the range of a transaction; increased_size the amount of new values inserted into normalized_transactions
 	uint64_t initial_size = normalized_transactions->size();
 	for(uint64_t begin=0; begin < initial_size; begin=end/*+increased_size*/) { //will scan transaction by transaction
@@ -197,7 +206,7 @@ void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transa
 
 void Ontology::print() {
 	if(processed == false)
-		cerr << "using ontologies without being loaded!" << endl;
+		cerr << "using ontologies without being loaded! " << __FILE__ << ":" << __LINE__ << endl;
 	for(auto & o : ontologies) {
 		o.second->print();
 	}
@@ -214,7 +223,7 @@ NodeOntology * Ontology::getNode(string identifier) {
 
 vector <pair <string, string>> * Ontology::getNewOntologies(vector <pair <string, string>> & transaction) {
 	if(processed == false)
-		cerr << "using ontologies without being loaded!" << endl;
+		cerr << "using ontologies without being loaded! " << __FILE__ << ":" << __LINE__ << endl;
 	map<string, bool> * newOntologies = new map <string, bool>();
 	
 	for(auto &t : transaction) {

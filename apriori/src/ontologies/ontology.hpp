@@ -31,8 +31,11 @@ class Ontology {
 		
 		bool processed;
 	public:
+		Ontology(); //will initiate a "false" Ontology object
 		Ontology(const string & filename);
 		~Ontology();
+		
+		const bool & isProcessed();
 		
 		void processOntologies();
 		bool checkAncestorOneAnother(string ontologyA, string ontologyB);
