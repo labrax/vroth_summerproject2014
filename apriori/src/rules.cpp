@@ -20,8 +20,6 @@ using std::endl;
 using std::get;
 
 Rules::Rules(double confidence, Ontology * ontologies) : confidence(confidence), ontologies(ontologies) {
-	rules.clear();
-	larges.clear();
 }
 
 Rules::~Rules() {
@@ -105,8 +103,8 @@ void Rules::computeRules() {
 			cout << "second element: " << (double)get<1>(i)->getSupportCount();*/
 			delete(get<1>(i));
 			delete(get<2>(i));
-			rules.erase(rules.begin() + r); //TODO: why is it not removing?
-			r--; //as an element was removed
+			rules.erase(rules.begin() + r);
+			r--; //to fix with element removed
 		}
 	}
 	//!remove the ones without the confidence
