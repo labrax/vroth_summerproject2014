@@ -54,9 +54,9 @@ uint64_t LargeItemSet::getIteration() {
 }
 
 bool LargeItemSet::contains(ItemSet * a) {
-	return root->contains(a); //TODO: test approach (seems fine)
+	return root->contains(a);
 	
-	/*for(auto &i : itemset) {
+	/*for(auto &i : itemset) { //this way doesn't utilize the tree
 		bool cool = true;
 		for(auto &j : a->getItemSet()) {
 			if(i->contains(j.first) == false) {

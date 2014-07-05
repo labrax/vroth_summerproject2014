@@ -28,7 +28,7 @@ using std::mutex;
 class LargeItemSet {
 	private:
 		vector<ItemSet *> itemset;
-		ItemSetTree * root; //new approach to solve the problem with the function bool contains(ItemSet *);
+		ItemSetTree * root; //new approach to solve the slowdown with the function bool contains(ItemSet *);
 		
 		uint64_t k; //to identify the iteration, also the size
 		
