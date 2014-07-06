@@ -25,26 +25,31 @@ typedef struct {
 	unsigned int sumDepth;
 	unsigned int sumHeight;
 	
-	uint64_t support_both;
-	uint64_t support_implied;
-	double confidence;
+	uint64_t n_transactions;
+	uint64_t n_transactions_antecedent;
+	uint64_t n_transactions_implied;
 	
+	double confidence;
 	double lift;
 } measures;
 
 class Rules {
 	private:
-		double confidence;
 		vector<tuple <measures, ItemSet *, ItemSet *>> rules;
 		vector<LargeItemSet *> larges;
 		Ontology * ontologies;
+		
+		uint64_t amount_transactions;
+		double confidence;
 	public:
-		Rules(double confidence, Ontology * ontologies);
+		Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies);
 		~Rules();
 		
 		void addLarge(LargeItemSet *);
 		void computeRules();
 		void print();
+		
+		uint64_t getFrequency(ItemSet * itemset);
 };
 
 bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> &, const tuple<measures, ItemSet *, ItemSet *> &);

@@ -12,14 +12,15 @@
 #include <iostream>
 #include <algorithm>
 
-#include <cstdint>
-
 using std::cout;
 using std::endl;
 
 using std::get;
 
-Rules::Rules(double confidence, Ontology * ontologies) : confidence(confidence), ontologies(ontologies) {
+Rules::Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies) {
+	this->amount_transactions = amount_transactions;
+	this->confidence = confidence;
+	this->ontologies = ontologies;
 }
 
 Rules::~Rules() {
@@ -55,7 +56,7 @@ void Rules::computeRules() {
 			for(auto & s : i->subItemSets()) {
 				ItemSet * b = new ItemSet(i, s);
 				
-				m.support_both = i->getSupportCount();
+				m.n_transactions = i->getSupportCount();
 				m.sumDepth = 0;
 				m.sumHeight = 0;
 
@@ -73,10 +74,8 @@ void Rules::computeRules() {
 	}
 	//!create the rules from the LargeItemSets
 	
-	
-	//TODO ? parallel: small amount of data, maybe not needed
-	//!get the data for the confidence
-	for(auto & r : rules) {
+	//!get the support for every part of all rules
+	/*for(auto & r : rules) {
 		for(auto & p : larges[get<1>(r)->getAmountElements()-1]->getItemSets()) {
 			bool ok = true;
 			for(auto & e : get<1>(r)->getItemSet()) {
@@ -86,17 +85,22 @@ void Rules::computeRules() {
 				}
 			}
 			if(ok == true) {
-				get<0>(r).support_implied = p->getSupportCount();
+				get<0>(r).n_transactions_antecedent = p->getSupportCount();
 				break;
 			}
 		}
+	}*/
+	for(auto & r : rules) {
+		get<0>(r).n_transactions_antecedent = getFrequency(get<1>(r));
+		get<0>(r).n_transactions_implied = getFrequency(get<2>(r));
 	}
-	//!get the data for the confidence
+	//!get the support for every part of all rules
 	
 	//!remove the ones without the confidence
 	for(uint64_t r = 0; r < rules.size(); r++) {
 		auto & i = rules.at(r);
-		get<0>(i).confidence = (double)get<0>(i).support_both/(double)get<0>(i).support_implied;
+		get<0>(i).confidence = (double)get<0>(i).n_transactions/(double)get<0>(i).n_transactions_antecedent;
+		get<0>(i).lift = ((double) amount_transactions*get<0>(i).n_transactions)/((double) get<0>(i).n_transactions_antecedent*get<0>(i).n_transactions_implied);
 		if(get<0>(i).confidence < confidence) {
 			/*cout << "tuple should be removed" << endl;
 			cout << "first element: " << (double)get<2>(i)->getSupportCount() << " ";
@@ -115,14 +119,14 @@ void Rules::computeRules() {
 
 void Rules::print() {
 	if(rules.size() != 0)
-		cout << "confidence" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
+		cout << "confidence" << "\t" << "lift" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
 	else
 		cout << "NO RULES GENERATED!" << endl;
 	for(auto &i : rules) {
 		if((double)get<2>(i)->getSupportCount()/(double)get<1>(i)->getSupportCount() < confidence)
 			continue;
 			
-		cout << get<0>(i).confidence << "\t" << get<0>(i).sumDepth << "\t" << get<0>(i).sumHeight << "\t";
+		cout << get<0>(i).confidence << "\t" << get<0>(i).lift << "\t" << get<0>(i).sumDepth << "\t" << get<0>(i).sumHeight << "\t";
 		get<1>(i)->printWithOntology(ontologies);
 		cout << "===>\t";
 		get<2>(i)->printWithOntology(ontologies);
@@ -130,9 +134,26 @@ void Rules::print() {
 	}
 }
 
+uint64_t Rules::getFrequency(ItemSet * itemset) {
+	for(auto & p : larges[itemset->getAmountElements()-1]->getItemSets()) {
+		bool ok = true;
+		for(auto & e : itemset->getItemSet()) {
+			if(!(p->contains(e.first))) {
+				ok = false;
+				break;
+			}
+		}
+		if(ok == true) {
+			return p->getSupportCount();
+			break;
+		}
+	}
+	return 0; //this condition should never occur
+}
+
 bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> & a, const tuple<measures, ItemSet *, ItemSet *> & b) {
-	if(get<0>(b).sumHeight == get<0>(a).sumHeight)
+	if(get<0>(b).lift == get<0>(a).lift)
 		return get<0>(b).confidence < get<0>(a).confidence;
-	return get<0>(b).sumHeight > get<0>(a).sumHeight; //to order by lower height
+	return get<0>(b).lift < get<0>(a).lift;
 	//return get<0>(b).confidence < get<0>(a).confidence; //to order by confidence
 }

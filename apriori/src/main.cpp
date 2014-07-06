@@ -150,7 +150,7 @@ void Main::run() {
 		large_1->print();
 	}
 	
-	Rules rules(parameters->getConfidence(), ontologies);
+	Rules rules(database->getAmountTransactions(), parameters->getConfidence(), ontologies);
 	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
 	do {
 		CandidateItemSet cis(*ontologies);
