@@ -28,7 +28,7 @@ RUN
 	use format:
 	-f <file>	 to select the phenotypes file
 	-o <file>	 to select and use ontologies file
-	-p		 to indicate that the file is preprocessed
+	-p		 to indicate the phenotypes file is sorted with no duplicates
 	-s <support>	 to select the support (default 0.5)
 	-c <confidence>	 to select the confidence (default 0.8)
 	-t <number>	 to select threads (number is optional)

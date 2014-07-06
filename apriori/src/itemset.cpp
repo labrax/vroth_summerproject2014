@@ -127,10 +127,10 @@ vector<ItemSet *> ItemSet::subItemSets() {
 	} while(itemset.key_comp()((*it++).first, last));
 	
 	
-	delete(subsets[0]); //was needed in the beginning, now deleting
+	delete(subsets[0]); //the empty set was needed in the beginning, now deleting
 	subsets.erase(subsets.begin());
 	
-	delete(subsets[subsets.size()]); //this is not in a needed size (contains the whole original ItemSet)
+	delete(subsets[subsets.size()]); //the whole original ItemSet is not needed
 	subsets.erase(--subsets.end());
 
 	//cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
@@ -149,8 +149,12 @@ void ItemSet::printWithOntology(Ontology * ontologies) {
 	for(auto &j: getItemSet()) {
 		if(ontologies->isProcessed()) {
 			NodeOntology * node = ontologies->getNode(j.first);
-			if(node != NULL)
-				cout << j.first << " (" << node->getName() << ") ";
+			if(node != NULL) {
+				if(node->isObsolete())
+					cout << j.first << " *obsolete classification* (" << node->getName() << ") ";
+				else
+					cout << j.first << " (" << node->getName() << ") ";
+			}
 			else
 				cout << j.first << " (?) ";
 		}

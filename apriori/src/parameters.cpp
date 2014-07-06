@@ -41,7 +41,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 		{"confidence", 		required_argument, 0, 'c'},
 		{"support", 		required_argument, 0, 's'},
 		
-		{"thread",			optional_argument, 0, 't'},
+		{"thread",			optional_argument, 0, 't'}, //TODO: change the way argument is obtained
 		{0, 0, 0, 0},
 	};
 	int option_index = 0;
@@ -204,7 +204,7 @@ void print_instructions() {
 	cerr << "use format:" << endl
 		 << "-f <file>\t to select the phenotypes file" << endl
 		 << "-o <file>\t to select and use ontologies file" << endl
-		 << "-p\t\t to indicate that the file is preprocessed" << endl
+		 << "-p\t\t to indicate the phenotypes file is sorted with no duplicates" << endl
 		 << "-s <support>\t to select the support (default 0.5)" << endl
 		 << "-c <confidence>\t to select the confidence (default 0.8)" << endl
 		 << "-t <number>\t to select threads (number is optional)" << endl

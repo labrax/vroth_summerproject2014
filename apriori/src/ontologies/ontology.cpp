@@ -45,11 +45,11 @@ void Ontology::processOntologies() {
 	if(file.is_open()) {
 		string line;
 		
-		string id, name;
-		bool is_obsolete;
+		string id(""), name("");
+		bool is_obsolete=false;
 		vector<pair<string, string>> is_a;
 		vector<string> consider;
-		string replaced_by;
+		string replaced_by("");
 		
 		while (getline(file, line)) { //"ref": http://www.geneontology.org/GO.format.obo-1_2.shtml
 			unsigned int twopoints_pos = line.find_first_of(':');
