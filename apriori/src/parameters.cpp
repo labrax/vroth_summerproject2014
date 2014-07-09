@@ -85,6 +85,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 				file.assign(optarg);
 				break;
 			case 'o':
+				use_ontology = true;
 				ontologies_file.assign(optarg);
 				break;
 			case 'c':
