@@ -7,6 +7,11 @@
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
 
+/**
+ * TODO: this code includes a very poor way of threading, one way of obtaining more stable results would be divinding it better...
+ * 
+ */
+
 #include "candidate.hpp"
 #include "../parameters.hpp"
 
