@@ -145,10 +145,10 @@ void Main::run() {
 	}
 	//!OBTAINING 1-ITEMSETS
 	
-	if(Parameters::debug) {
+	if(Parameters::verbose)
 		large_1->printinfo();
+	if(Parameters::debug)
 		large_1->print();
-	}
 	
 	Rules rules(database->getAmountTransactions(), parameters->getConfidence(), ontologies);
 	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
@@ -177,10 +177,10 @@ void Main::run() {
 			cout << "sorting results" << endl;
 		large_obtained->sort();
 		
-		if(Parameters::debug) {
+		if(Parameters::verbose)
 			large_obtained->printinfo();
+		if(Parameters::debug)
 			large_obtained->print();
-		}
 	} while(large_obtained->getItemSets().size() > 0);
 	
 	rules.addLarge(large_obtained);
