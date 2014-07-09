@@ -163,7 +163,7 @@ void Main::run() {
 		
 		rules.addLarge(large_obtained);
 		
-		if(Parameters::debug)
+		if(Parameters::verbose)
 			cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
 
 		if(parameters->useThread())

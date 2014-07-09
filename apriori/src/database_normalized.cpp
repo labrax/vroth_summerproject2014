@@ -74,7 +74,7 @@ void DatabaseNormalized::processNormalizedTransactions() {
 		}
 		
 		if(Parameters::verbose)
-			cout << buggy_line << " buggy lines ignored" << endl;
+			cout << buggy_line << " buggy lines ignored with loading the transactions file" << endl;
 	}
 	else {
 		cerr << "File is not open -- DatabaseNormalized::processNormalizedTransactions()" << endl;
