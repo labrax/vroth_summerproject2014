@@ -75,21 +75,6 @@ void Rules::computeRules() {
 	//!create the rules from the LargeItemSets
 	
 	//!get the support for every part of all rules
-	/*for(auto & r : rules) {
-		for(auto & p : larges[get<1>(r)->getAmountElements()-1]->getItemSets()) {
-			bool ok = true;
-			for(auto & e : get<1>(r)->getItemSet()) {
-				if(!(p->contains(e.first))) {
-					ok = false;
-					break;
-				}
-			}
-			if(ok == true) {
-				get<0>(r).n_transactions_antecedent = p->getSupportCount();
-				break;
-			}
-		}
-	}*/
 	for(auto & r : rules) {
 		get<0>(r).n_transactions_antecedent = getFrequency(get<1>(r));
 		get<0>(r).n_transactions_consequent = getFrequency(get<2>(r));
@@ -122,6 +107,7 @@ void Rules::print() {
 		cout << "confidence" << "\t" << "lift" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
 	else
 		cout << "NO RULES GENERATED!" << endl;
+
 	for(auto &i : rules) {
 		if((double)get<2>(i)->getSupportCount()/(double)get<1>(i)->getSupportCount() < confidence)
 			continue;
