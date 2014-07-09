@@ -39,7 +39,9 @@ Parameters::Parameters(int argc, char * argv[]) {
 		{"ontologies-file", required_argument, 0, 'o'},
 		
 		{"confidence", 		required_argument, 0, 'c'},
-		{"support", 		required_argument, 0, 's'},
+		
+		{"minsupport", 		required_argument, 0, 'l'}, //TODO: maybe use number?
+		{"maxsupport", 		required_argument, 0, 'u'},
 		
 		{"thread",			optional_argument, 0, 't'}, //TODO: change the way argument is obtained
 		{0, 0, 0, 0},
@@ -52,10 +54,11 @@ Parameters::Parameters(int argc, char * argv[]) {
     thread_number = 0;
     use_ontology = false;
     preprocessed = false;
-    support = 0.5;
+    min_support = 0.5;
+    max_support = 1;
     confidence = 0.8;
     
-    int c = getopt_long(argc, argv, "hpvdf:o:c:s:t::", long_options, &option_index);
+    int c = getopt_long(argc, argv, "hpvdf:o:c:l:u:t::", long_options, &option_index);
     
     while(c != -1) {
 		switch(c) {
@@ -87,8 +90,11 @@ Parameters::Parameters(int argc, char * argv[]) {
 			case 'c':
 				confidence = atof(optarg);
 				break;
-			case 's':
-				support = atof(optarg);
+			case 'l':
+				min_support = atof(optarg);
+				break;
+			case 'u':
+				max_support = atof(optarg);
 				break;
 			case 't':
 				use_thread = true;				
@@ -104,7 +110,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 				print_instructions();
 				break;
 		}
-		c = getopt_long(argc, argv, "hpvdf:o:c:s:t::", long_options, &option_index);
+		c = getopt_long(argc, argv, "hpvdf:o:c:l:u:t::", long_options, &option_index);
 	}
 	
 	if(optind < argc) {
@@ -130,7 +136,11 @@ Parameters::Parameters(int argc, char * argv[]) {
 		print_instructions();
 	}
 	
-	if(support < 0 || support > 1) {
+	if(min_support < 0 || min_support > 1) {
+		print_instructions();
+	}
+	
+	if(max_support < 0 || max_support > 1) {
 		print_instructions();
 	}
 	
@@ -141,7 +151,8 @@ Parameters::Parameters(int argc, char * argv[]) {
 	cerr << std::boolalpha;
 	cerr << "running with" << endl
 		 << "file: " << file << " preprocessed: " << preprocessed << endl;
-	cerr << "support: " << support << endl
+	cerr << "min-support: " << min_support << endl
+		 << "max-support: " << max_support << endl
 		 << "confidence: " << confidence << endl;
 	cerr << "threads: " << use_thread;
 	if(thread_number != 0)
@@ -192,8 +203,12 @@ const string & Parameters::ontologiesFile() {
 	return ontologies_file;
 }
 
-const double & Parameters::getSupport() {
-	return support;
+const double & Parameters::getMinSupport() {
+	return min_support;
+}
+
+const double & Parameters::getMaxSupport() {
+	return max_support;
 }
 
 const double & Parameters::getConfidence() {
@@ -201,11 +216,12 @@ const double & Parameters::getConfidence() {
 }
 
 void print_instructions() {
-	cerr << "use format:" << endl
+	cerr << "use format:" << endl //TODO: rewrite print_instructions() with longer names
 		 << "-f <file>\t to select the phenotypes file" << endl
 		 << "-o <file>\t to select and use ontologies file" << endl
 		 << "-p\t\t to indicate the phenotypes file is sorted with no duplicates" << endl
-		 << "-s <support>\t to select the support (default 0.5)" << endl
+		 << "-l <min-support>\t to select the minimum support (default 0.5)" << endl
+		 << "-u <max-support>\t to select the maximum support (default 1)" << endl
 		 << "-c <confidence>\t to select the confidence (default 0.8)" << endl
 		 << "-t <number>\t to select threads (number is optional)" << endl
 		 << "-v\t\t enable verbose" << endl

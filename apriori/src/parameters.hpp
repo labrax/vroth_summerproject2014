@@ -23,7 +23,7 @@ class Parameters {
 		
 		string file;
 		string ontologies_file;
-		double support, confidence;
+		double min_support, max_support, confidence;
 		
 	public:
 		Parameters(int argc, char * argv[]);
@@ -40,7 +40,9 @@ class Parameters {
 		const string & phenotypesFile();
 		const string & ontologiesFile();
 		
-		const double & getSupport();
+		const double & getMinSupport();
+		const double & getMaxSupport();
+		
 		const double & getConfidence();
 };
 

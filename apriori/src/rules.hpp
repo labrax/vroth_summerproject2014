@@ -27,7 +27,7 @@ typedef struct {
 	
 	uint64_t n_transactions;
 	uint64_t n_transactions_antecedent;
-	uint64_t n_transactions_implied;
+	uint64_t n_transactions_consequent;
 	
 	double confidence;
 	double lift;

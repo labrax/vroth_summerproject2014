@@ -11,8 +11,8 @@ ONTOLOGY_FOLDER := obj/ontologies/
 
 .PHONY: directories
 
-LD_FLAGS := -Wall -std=c++11 -pthread -g
-CC_FLAGS := -Wall -std=c++11 -pthread -g
+LD_FLAGS := -Wall -std=c++11 -pthread -O4
+CC_FLAGS := -Wall -std=c++11 -pthread -O4
 
 all: directories apriori
 

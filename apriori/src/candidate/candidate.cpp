@@ -91,7 +91,7 @@ LargeItemSet * CandidateItemSet::apriori_genThreaded(LargeItemSet * a) {
 	return new_candidate;
 }
 
-LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t support) {
+LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t min_transactions, uint64_t max_transactions) {
 	for(auto &i: a->getItemSets()) {
 		ItemSet * e = new ItemSet(i);
 		root->insertItemSet(e);
@@ -100,12 +100,12 @@ LargeItemSet * CandidateItemSet::subset(LargeItemSet * a, vector <pair <string, 
 
 	run_subsetThreaded(root, normalized_transactions, 0, normalized_transactions->size());
 	
-	root->grabMinimumSupport(new_large, support);
+	root->grabMinimumMaximumSupport(new_large, min_transactions, max_transactions);
 	
 	return new_large;
 }
 
-LargeItemSet * CandidateItemSet::subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t support) {
+LargeItemSet * CandidateItemSet::subsetThreaded(LargeItemSet * a, vector <pair <string, string>> * normalized_transactions, uint64_t min_transactions, uint64_t max_transactions) {
 	for(auto &i: a->getItemSets()) {
 		ItemSet * e = new ItemSet(i);
 		root->insertItemSet(e);
@@ -152,7 +152,7 @@ LargeItemSet * CandidateItemSet::subsetThreaded(LargeItemSet * a, vector <pair <
 		delete(t);
 	
 	//cout << "scanning tree for support" << endl;
-	root->grabMinimumSupport(new_large, support);
+	root->grabMinimumMaximumSupport(new_large, min_transactions, max_transactions);
 	
 	return new_large;
 }

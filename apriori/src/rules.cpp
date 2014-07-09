@@ -92,15 +92,15 @@ void Rules::computeRules() {
 	}*/
 	for(auto & r : rules) {
 		get<0>(r).n_transactions_antecedent = getFrequency(get<1>(r));
-		get<0>(r).n_transactions_implied = getFrequency(get<2>(r));
+		get<0>(r).n_transactions_consequent = getFrequency(get<2>(r));
 	}
 	//!get the support for every part of all rules
 	
 	//!remove the ones without the confidence
 	for(uint64_t r = 0; r < rules.size(); r++) {
 		auto & i = rules.at(r);
+		get<0>(i).lift = ((double) amount_transactions*get<0>(i).n_transactions)/((double) get<0>(i).n_transactions_antecedent*get<0>(i).n_transactions_consequent);
 		get<0>(i).confidence = (double)get<0>(i).n_transactions/(double)get<0>(i).n_transactions_antecedent;
-		get<0>(i).lift = ((double) amount_transactions*get<0>(i).n_transactions)/((double) get<0>(i).n_transactions_antecedent*get<0>(i).n_transactions_implied);
 		if(get<0>(i).confidence < confidence) {
 			/*cout << "tuple should be removed" << endl;
 			cout << "first element: " << (double)get<2>(i)->getSupportCount() << " ";

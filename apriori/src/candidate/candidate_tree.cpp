@@ -64,10 +64,10 @@ void CandidateTree::transactionScan(vector <pair <string, string>> * transaction
 	}
 }
 
-void CandidateTree::grabMinimumSupport(LargeItemSet * dest, uint64_t support) {
+void CandidateTree::grabMinimumMaximumSupport(LargeItemSet * dest, uint64_t min_transactions, uint64_t max_transactions) {
 	if(tp == itemset_node) {
 		for(auto &i : itemsets) {
-			if(i->getSupportCount() > support) {
+			if(i->getSupportCount() > min_transactions && i->getSupportCount() <= max_transactions) {
 				ItemSet * e  = new ItemSet(i); //to avoid memory leak
 				e->setSupportCount(i->getSupportCount());
 				dest->insertSet(e);
@@ -77,7 +77,7 @@ void CandidateTree::grabMinimumSupport(LargeItemSet * dest, uint64_t support) {
 	}
 	else if(tp == bucket_node) {
 		for(auto &i : children) {
-			((CandidateTree *)i.second)->grabMinimumSupport(dest, support);
+			((CandidateTree *)i.second)->grabMinimumMaximumSupport(dest, min_transactions, max_transactions);
 		}
 	}
 }

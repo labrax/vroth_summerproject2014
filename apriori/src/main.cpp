@@ -102,9 +102,13 @@ void Main::setup() {
 	if(Parameters::verbose)
 		cout << "Amount of transactions is " << database->getAmountTransactions() << endl;
 	
-	minimum_transactions = database->getAmountTransactions()*parameters->getSupport();
+	min_transactions = database->getAmountTransactions()*parameters->getMinSupport();
 	if(Parameters::verbose)
-		cout << "The minimum support is obtained with " << minimum_transactions  << " transactions" << endl;
+		cout << "The minimum support is obtained with " << min_transactions  << " transactions" << endl;
+		
+	max_transactions = database->getAmountTransactions()*parameters->getMaxSupport();
+	if(Parameters::verbose)
+		cout << "The maximum support is obtained with " << max_transactions  << " transactions" << endl;
 }
 
 void Main::run() {
@@ -123,7 +127,7 @@ void Main::run() {
 	//this part will remove the elements without the support
 
 	for(auto it = itemset_1.begin(); it != itemset_1.end();) {
-		if((*it).second/(double) database->getAmountTransactions() < parameters->getSupport()) {
+		if((*it).second < min_transactions || (*it).second > max_transactions) {
 			//cout << "eliminating " << (*it).first << ", " << (*it).second << " because support is " <<  (*it).second/(double) a.getAmountTransactions() <<  endl;
 			
 			it = itemset_1.erase(it); //prunning of the 1 itemsets
@@ -167,9 +171,9 @@ void Main::run() {
 			cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
 
 		if(parameters->useThread())
-			large_obtained = cis.subsetThreaded(large_temp, &database->getNormalizedTransactions(), minimum_transactions);
+			large_obtained = cis.subsetThreaded(large_temp, &database->getNormalizedTransactions(), min_transactions, max_transactions);
 		else
-			large_obtained = cis.subset(large_temp, &database->getNormalizedTransactions(), minimum_transactions);
+			large_obtained = cis.subset(large_temp, &database->getNormalizedTransactions(), min_transactions, max_transactions);
 		
 		delete(large_temp);
 		

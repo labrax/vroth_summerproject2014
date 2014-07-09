@@ -30,5 +30,5 @@ class CandidateTree : public ItemSetTree{
 		~CandidateTree();
 		
 		void transactionScan(vector <pair <string, string>> *);
-		void grabMinimumSupport(LargeItemSet *, uint64_t);
+		void grabMinimumMaximumSupport(LargeItemSet *, uint64_t, uint64_t);
 };

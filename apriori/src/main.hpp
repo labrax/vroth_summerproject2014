@@ -26,7 +26,8 @@ class Main {
 		
 		Ontology * ontologies;
 
-		uint64_t minimum_transactions;
+		uint64_t min_transactions;
+		uint64_t max_transactions;
 
 	public:		
 		Main(int argc, char * argv[]);
