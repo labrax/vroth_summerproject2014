@@ -68,30 +68,26 @@ void Main::setup() {
 	}
 	
 	database->processNormalizedTransactions(); //to store in a <TID, item> manner
-	if(Parameters::verbose)
-		cout << database->getNormalizedTransactions().size() << " normalized transactions obtained" << endl;
 	
 	if(parameters->useOntology()) {
 		ontologies = new Ontology(parameters->ontologiesFile());
 		ontologies->processOntologies();
-		if(Parameters::verbose)
-			cout << "ontologies loaded" << endl;
 		ontologies->appendOntologies(&database->getNormalizedTransactions());
+		if(Parameters::debug)
+			cout << "ontologies have been loaded and inserted into transactions" << endl;
 		if(Parameters::verbose)
-			cout << "ontologies inserted into transactions" << endl;
+			cout << database->getNormalizedTransactions().size() << " normalized transactions obtained with ontologies added" << endl;
 	}
 	else {
 		ontologies = new Ontology();
+		if(Parameters::debug)
+			cout << "ontologies are not being used" << endl;
 		if(Parameters::verbose)
-			cout << "ontologies not being used" << endl;
+			cout << database->getNormalizedTransactions().size() << " normalized transactions obtained" << endl;
 	}
 	
-	if(parameters->useOntology())
-		if(Parameters::verbose)
-			cout << database->getNormalizedTransactions().size() << " normalized transactions obtained with ontologies added" << endl;
-	
 	std::sort(database->getNormalizedTransactions().begin(), database->getNormalizedTransactions().end(), normalizedCompare); //probably it will already be sorted, just in case this function is still here
-	if(Parameters::verbose)
+	if(Parameters::debug)
 		cout << "transactions sorted" << endl;
 		
 	//database->printNormalizedTransactions();
@@ -149,7 +145,7 @@ void Main::run() {
 	}
 	//!OBTAINING 1-ITEMSETS
 	
-	if(Parameters::verbose) {
+	if(Parameters::debug) {
 		large_1->printinfo();
 		large_1->print();
 	}
@@ -167,7 +163,7 @@ void Main::run() {
 		
 		rules.addLarge(large_obtained);
 		
-		if(Parameters::verbose)
+		if(Parameters::debug)
 			cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
 
 		if(parameters->useThread())
@@ -177,11 +173,11 @@ void Main::run() {
 		
 		delete(large_temp);
 		
-		if(Parameters::verbose)
+		if(Parameters::debug)
 			cout << "sorting results" << endl;
 		large_obtained->sort();
 		
-		if(Parameters::verbose) {
+		if(Parameters::debug) {
 			large_obtained->printinfo();
 			large_obtained->print();
 		}
