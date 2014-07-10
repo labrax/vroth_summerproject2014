@@ -18,8 +18,14 @@
 #include <vector>
 #include <tuple>
 
+#include <map>
+#include <string>
+
 using std::vector;
 using std::tuple;
+
+using std::map;
+using std::string;
 
 typedef struct {
 	unsigned int sumDepth;
@@ -28,6 +34,8 @@ typedef struct {
 	uint64_t n_transactions;
 	uint64_t n_transactions_antecedent;
 	uint64_t n_transactions_consequent;
+	
+	double semantic_similarity;
 	
 	double confidence;
 	double lift;
@@ -41,8 +49,9 @@ class Rules {
 		
 		uint64_t amount_transactions;
 		double confidence;
+		std::map<string, uint64_t> itemset_1; //to calculate the amount of information
 	public:
-		Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies);
+		Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies, map<string, uint64_t> & itemset_1);
 		~Rules();
 		
 		void addLarge(LargeItemSet *);
@@ -50,6 +59,8 @@ class Rules {
 		void print();
 		
 		uint64_t getFrequency(ItemSet * itemset);
+		void calculateSemanticSimilarity();
+		double informationMeasure(string identifier);
 };
 
 bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> &, const tuple<measures, ItemSet *, ItemSet *> &);
