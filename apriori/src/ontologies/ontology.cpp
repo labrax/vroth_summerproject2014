@@ -111,7 +111,7 @@ void Ontology::processOntologies() {
 	}
 }
 
-void Ontology::createNode(string id, string name, bool is_obsolete, vector<pair<string, string>> * is_a, vector<string> * consider, string replaced_by) { //TODO: use /consider/ and /replaced_by/ fields
+void Ontology::createNode(string id, string name, bool is_obsolete, vector<pair<string, string>> * is_a, vector<string> * consider, string replaced_by) { //TODO: use /consider/ and /replaced_by/ fields if needed
 	NodeOntology * nNode;
 	//!create the node
 	map<string, NodeOntology *>::iterator it = ontologies.find(id);

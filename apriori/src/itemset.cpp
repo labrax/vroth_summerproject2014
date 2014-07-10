@@ -162,7 +162,7 @@ void ItemSet::printWithOntology(Ontology * ontologies) {
 			cout << j.first << " ";
 		}
 	}
-	if(Parameters::verbose)
+	if(Parameters::debug)
 		cout << " (#SUPPORT:" << support_count << ") ";
 }
 
