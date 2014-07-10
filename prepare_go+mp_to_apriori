@@ -1,0 +1,4 @@
+manual removal of links on file, leaving on the codes MP_XXXX and GO_YYYY
+replacing '_' for ':'
+replacing ' ' for '\t'
+sort | uniq (for preprocessing)
