@@ -16,7 +16,9 @@ COMPILE
 	Use the Makefile to compile. (recommended: make -j <NUMBER_OF_CPUs>)
 	
 RUN
-	Run the program as specified in it.
+	Run the program as specified in it, or in the end of this section.
+
+	This program will require 'sort' and 'uniq' programs, which will be executed as the preprocessing stage.
 	
 	You'll need a phenotypes file, or transactions file.
 	The ontologies file (of class relationship) is optional. The format /.obo/ 1.2 is accepted.
@@ -25,7 +27,7 @@ RUN
 	./apriori -h
 	
 	---
-	use format:
+	use format: //TODO: copy new version
 	-f <file>	 to select the phenotypes file
 	-o <file>	 to select and use ontologies file
 	-p		 to indicate the phenotypes file is sorted with no duplicates
