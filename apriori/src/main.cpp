@@ -54,8 +54,8 @@ void Main::setup() {
 		char * new_dir = mkdtemp(tempDir);
 
 		char command[512]; //sort and remove duplicates for a file
-		sprintf(command, "sort %s | uniq > %s/%s", parameters->phenotypesFile().c_str(), new_dir, parameters->phenotypesFile().c_str());
-		system(command); //TODO: fetch value from system()
+		sprintf(command, "sort %s | uniq > %s/%s", parameters->phenotypesFile().c_str(), new_dir, parameters->phenotypesFile().c_str()); //TODO: find a way to execute in Windows
+		system(command); //TODO: fetch value from system() - warning when compiling with -O4
 
 		sprintf(command, "%s/%s", new_dir, parameters->phenotypesFile().c_str());
 		database = new DatabaseNormalized(string(command));
@@ -120,7 +120,9 @@ void Main::run() {
 		}
 	}
 	
-	//this part will remove the elements without the support
+	
+	//this part is ignored to keep the information! ////TODO: <---------------------------------------------remove this block
+	/*//this part will remove the elements without the support
 
 	for(auto it = itemset_1.begin(); it != itemset_1.end();) {
 		if((*it).second < min_transactions || (*it).second > max_transactions) {
@@ -131,11 +133,13 @@ void Main::run() {
 		else {
 			++it; //when its not eliminated may follow the list
 		}
-	}
+	}*/
 	
 	LargeItemSet * large_1 = new LargeItemSet(1);
 	//this will print the count and transfer each item that /survived/
 	for(auto &i : itemset_1) {
+		if(i.second < min_transactions || i.second > max_transactions) //will skip it if it shouldn't be in large(1)
+			continue;
 		//cout << i.first << " #SUP:" << i.second << " " << i.second/(double) a.getAmountTransactions() << endl;
 		ItemSet * a = new ItemSet();
 		a->insert(i.first);
@@ -150,7 +154,7 @@ void Main::run() {
 	if(Parameters::debug)
 		large_1->print();
 	
-	Rules rules(database->getAmountTransactions(), parameters->getConfidence(), ontologies);
+	Rules rules(database->getAmountTransactions(), parameters->getConfidence(), ontologies, itemset_1);
 	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
 	do {
 		CandidateItemSet cis(*ontologies);
