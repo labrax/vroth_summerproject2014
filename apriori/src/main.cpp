@@ -72,7 +72,9 @@ void Main::setup() {
 	if(parameters->useOntology()) {
 		ontologies = new Ontology(parameters->ontologiesFile());
 		ontologies->processOntologies();
-		ontologies->appendOntologies(&database->getNormalizedTransactions());
+		if(!Parameters::dont_append_ontologies)
+			ontologies->appendOntologies(&database->getNormalizedTransactions());
+			
 		if(Parameters::debug)
 			cout << "ontologies have been loaded and inserted into transactions" << endl;
 		if(Parameters::verbose)

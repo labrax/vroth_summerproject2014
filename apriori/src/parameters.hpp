@@ -30,8 +30,10 @@ class Parameters {
 		~Parameters();
 		
 		static bool verbose;
-		static bool debug; //TODO: use debug flag
+		static bool debug;
 		static unsigned int thread_number;
+		
+		static bool dont_append_ontologies;
 		
 		const bool & useThread();
 		const bool & useOntology();

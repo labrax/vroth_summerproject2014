@@ -28,8 +28,12 @@ bool Parameters::debug = false;
 bool Parameters::verbose = false;
 unsigned int Parameters::thread_number = 0;
 
+bool Parameters::dont_append_ontologies = false;
+
 Parameters::Parameters(int argc, char * argv[]) {
 	static struct option long_options[] = {
+		{"dont-append-ontologies", no_argument, 0, 'a'}, //to have ontologies data for similarity semantic comparison without appending transaction data
+		
 		{"help",			no_argument, 0, 'h'},
 		{"preprocessed",	no_argument, 0, 'p'},
 		{"verbose",			no_argument, 0, 'v'},
@@ -58,7 +62,7 @@ Parameters::Parameters(int argc, char * argv[]) {
     max_support = 1;
     confidence = 0.8;
     
-    int c = getopt_long(argc, argv, "hpvdf:o:c:l:u:t::", long_options, &option_index);
+    int c = getopt_long(argc, argv, "ahpvdf:o:c:l:u:t::", long_options, &option_index);
     
     while(c != -1) {
 		switch(c) {
@@ -68,6 +72,9 @@ Parameters::Parameters(int argc, char * argv[]) {
 				cout << "option " << long_options[option_index].name;
 				if(optarg)
 					cout << " with arg " << std::boolalpha << optarg << endl;
+				break;
+			case 'a':
+				dont_append_ontologies = true;
 				break;
 			case 'h':
 				print_instructions();
@@ -111,7 +118,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 				print_instructions();
 				break;
 		}
-		c = getopt_long(argc, argv, "hpvdf:o:c:l:u:t::", long_options, &option_index);
+		c = getopt_long(argc, argv, "ahpvdf:o:c:l:u:t::", long_options, &option_index);
 	}
 	
 	if(optind < argc) {
@@ -179,6 +186,9 @@ Parameters::Parameters(int argc, char * argv[]) {
 				thread_number = 0;
 			}
 		}
+		
+	if(dont_append_ontologies)
+		cerr << "dont-append-ontologies: true" << endl;
 }
 
 Parameters::~Parameters() {
