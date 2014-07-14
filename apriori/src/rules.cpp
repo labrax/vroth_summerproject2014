@@ -143,6 +143,11 @@ uint64_t Rules::getFrequency(ItemSet * itemset) {
 }
 
 void Rules::calculateSemanticSimilarity() {
+	if(ontologies->isProcessed() == false) {
+		if(Parameters::verbose)
+			cout << "no semantic similarity was calculated" << endl;
+		return;
+	}
 	for(auto & r : rules) {
 		double similarity_intercession = 0;
 		double similarity_union = 0;
