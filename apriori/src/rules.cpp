@@ -103,6 +103,9 @@ void Rules::computeRules() {
 	
 	calculateSemanticSimilarity();
 	
+	if(Parameters::filter_results)
+		filterABC();
+	
 	//sort the rules
 	std::sort(rules.begin(), rules.end(), rulesSort);
 }
@@ -238,6 +241,54 @@ double Rules::informationMeasure(string identifier) {
 	if(Parameters::debug)
 		cout << "M: " << -log2((double)it->second/(double)amount_transactions) << endl;
 	return (-log2((double)it->second/(double)amount_transactions));
+}
+
+void Rules::filterABC() { //this will filter rules with A + B => C where A => C has higher confidence
+	vector<tuple<string, string, double>> pairs; //identifier A, identifier B, confidence
+	
+	unsigned int removed = 0;
+	
+	if(Parameters::verbose)
+		cout << "filtering results: ";
+	for(auto & r: rules) {
+		unsigned int total_elements = get<1>(r)->getAmountElements() + get<2>(r)->getAmountElements();
+		if(total_elements == 2) {
+			pairs.insert(pairs.end(), tuple<string, string, double> (get<1>(r)->getItemSet().begin()->first, get<2>(r)->getItemSet().begin()->first, get<0>(r).confidence));
+		}
+	}
+	
+	for(uint64_t b = 0; b < rules.size(); b++) { //this part will search for the A + B => C and remove if the confidence is lower than the original A + B => C
+		auto & r = rules.at(b);
+		if(get<1>(r)->getAmountElements() == 2 && get<2>(r)->getAmountElements() == 1) {
+			for(auto & p : pairs) {
+				bool ok = false;
+				if(get<1>(p) == get<2>(r)->getItemSet().begin()->first) { //matched C
+					for(auto & i : get<1>(r)->getItemSet()) {
+						if(i.first == get<0>(p)) {
+							ok = true;
+							
+							if(get<0>(r).confidence < get<2>(p)) { //remove element
+								if(Parameters::debug) {
+									cout << "REMOVED:" << endl;
+									get<1>(r)->printWithOntology(ontologies);
+									cout << "===>\t";
+									get<2>(r)->printWithOntology(ontologies);
+									cout << endl;			
+								}
+								rules.erase(rules.begin() + b);
+								b--; //to fix with element removed
+								removed++;
+							}
+						}
+					}
+				}
+				if(ok == true)
+					break;
+			}
+		}
+	}
+	if(Parameters::verbose)
+		cout << removed << " removed" << endl;
 }
 
 bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> & a, const tuple<measures, ItemSet *, ItemSet *> & b) {

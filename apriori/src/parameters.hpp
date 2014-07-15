@@ -34,6 +34,7 @@ class Parameters {
 		static unsigned int thread_number;
 		
 		static bool dont_append_ontologies;
+		static bool filter_results;
 		
 		const bool & useThread();
 		const bool & useOntology();

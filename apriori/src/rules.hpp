@@ -61,6 +61,8 @@ class Rules {
 		uint64_t getFrequency(ItemSet * itemset);
 		void calculateSemanticSimilarity();
 		double informationMeasure(string identifier);
+		
+		void filterABC();
 };
 
 bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> &, const tuple<measures, ItemSet *, ItemSet *> &);

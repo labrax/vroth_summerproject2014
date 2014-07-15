@@ -29,10 +29,12 @@ bool Parameters::verbose = false;
 unsigned int Parameters::thread_number = 0;
 
 bool Parameters::dont_append_ontologies = false;
+bool Parameters::filter_results = false;
 
 Parameters::Parameters(int argc, char * argv[]) {
 	static struct option long_options[] = {
 		{"dont-append-ontologies", no_argument, 0, 'a'}, //to have ontologies data for similarity semantic comparison without appending transaction data
+		{"filter-results", no_argument, 0, 'r'}, //to filter the results A + B => C where A => C has higher support
 		
 		{"help",			no_argument, 0, 'h'},
 		{"preprocessed",	no_argument, 0, 'p'},
@@ -62,7 +64,7 @@ Parameters::Parameters(int argc, char * argv[]) {
     max_support = 1;
     confidence = 0.8;
     
-    int c = getopt_long(argc, argv, "ahpvdf:o:c:l:u:t::", long_options, &option_index);
+    int c = getopt_long(argc, argv, "arhpvdf:o:c:l:u:t::", long_options, &option_index);
     
     while(c != -1) {
 		switch(c) {
@@ -75,6 +77,9 @@ Parameters::Parameters(int argc, char * argv[]) {
 				break;
 			case 'a':
 				dont_append_ontologies = true;
+				break;
+			case 'r':
+				filter_results = true;
 				break;
 			case 'h':
 				print_instructions();
@@ -118,7 +123,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 				print_instructions();
 				break;
 		}
-		c = getopt_long(argc, argv, "ahpvdf:o:c:l:u:t::", long_options, &option_index);
+		c = getopt_long(argc, argv, "arhpvdf:o:c:l:u:t::", long_options, &option_index);
 	}
 	
 	if(optind < argc) {
@@ -189,6 +194,9 @@ Parameters::Parameters(int argc, char * argv[]) {
 		
 	if(dont_append_ontologies)
 		cerr << "dont-append-ontologies: true" << endl;
+		
+	if(filter_results)
+		cerr << "filter-results: true" << endl;
 }
 
 Parameters::~Parameters() {
