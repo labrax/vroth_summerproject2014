@@ -2,10 +2,4 @@
 *.out
 apriori/apriori
 
-*.txt
-*.arff
-*.obo
-
-*.bkp
-
 output_files/
