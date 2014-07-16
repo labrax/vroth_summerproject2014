@@ -44,8 +44,6 @@ typedef struct {
 class Rules {
 	private:
 		vector<tuple <measures, ItemSet *, ItemSet *>> rules;
-		map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> rulesMap;
-		
 		vector<LargeItemSet *> larges;
 		Ontology * ontologies;
 		
@@ -64,10 +62,7 @@ class Rules {
 		void calculateSemanticSimilarity();
 		double informationMeasure(string identifier);
 		
-		vector<tuple <measures, ItemSet *, ItemSet *>> & getRules();
-		map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> & getRulesMap();
-		
-		void filterRules(); //TODO: improve
+		void filterABC();
 };
 
 bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> &, const tuple<measures, ItemSet *, ItemSet *> &);

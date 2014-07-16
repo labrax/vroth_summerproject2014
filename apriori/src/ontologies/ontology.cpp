@@ -10,8 +10,6 @@
 #include "ontology.hpp"
 #include "node_ontology.hpp"
 
-#include "../parameters.hpp"
-
 #include <iostream>
 #include <cstdint>
 
@@ -203,15 +201,13 @@ void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transa
 		}
 		//!merge the initial with the additional*/
 		
-		increased_size += newtra->size();
+		increased_size = newtra->size();
 		for(auto & i: *newtra) {
 			normalized_transactions->insert(normalized_transactions->end(), i);
 		}
 		
 		delete(newtra);
 	}
-	if(Parameters::verbose)
-		cout << increased_size << " items added to transactions" << endl;
 }
 
 void Ontology::print() {
