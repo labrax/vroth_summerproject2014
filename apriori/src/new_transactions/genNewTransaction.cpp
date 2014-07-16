@@ -62,9 +62,9 @@ vector <pair <string, string>> & genNewTransaction::generateNewData(bool use_thr
 		
 		vector<thread *> threads;
 		
-		cout << "0 to " << new_transactions.size() << endl;
+		//cout << "0 to " << new_transactions.size() << endl;
 		for(uint64_t i=0; i<thread_blocks.size(); i++) {
-			cout << "thread : " << get<0>(thread_blocks[i]) << " " << get<1>(thread_blocks[i]) << endl;
+			//cout << "thread : " << get<0>(thread_blocks[i]) << " " << get<1>(thread_blocks[i]) << endl;
 			threads.insert(threads.end(), new thread(run_threaded, get<0>(thread_blocks[i]), get<1>(thread_blocks[i]), get<2>(thread_blocks[i]), &new_transactions, rulesMap));
 		}
 		
@@ -134,7 +134,7 @@ void run_threaded(uint64_t tstart, uint64_t tend, vector<pair<string,string>> * 
 		vector<pair<string, string>> * newtra = getNewTransaction(transaction, rulesMap); //get new data
 		
 		for(auto & i: *newtra) {
-			tout->insert(new_transactions->end(), i);
+			tout->insert(tout->end(), i);
 		}
 		
 		delete(newtra);
