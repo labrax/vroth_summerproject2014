@@ -15,6 +15,8 @@
 #include "candidate/candidate.hpp"
 #include "rules.hpp"
 
+#include "new_transactions/genNewTransaction.hpp"
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -54,7 +56,7 @@ void Main::setup() {
 		char * new_dir = mkdtemp(tempDir);
 
 		char command[512]; //sort and remove duplicates for a file
-		sprintf(command, "sort %s | uniq > %s/%s", parameters->phenotypesFile().c_str(), new_dir, parameters->phenotypesFile().c_str()); //TODO: find a way to execute in Windows
+		sprintf(command, "sort -u %s  > %s/%s", parameters->phenotypesFile().c_str(), new_dir, parameters->phenotypesFile().c_str()); //TODO: find a way to execute in Windows
 		system(command); //TODO: fetch value from system() - warning when compiling with -O4
 
 		sprintf(command, "%s/%s", new_dir, parameters->phenotypesFile().c_str());
@@ -101,10 +103,14 @@ void Main::setup() {
 		cout << "Amount of transactions is " << database->getAmountTransactions() << endl;
 	
 	min_transactions = database->getAmountTransactions()*parameters->getMinSupport();
+	if(min_transactions == 0)
+		min_transactions = 1;
 	if(Parameters::verbose)
 		cout << "The minimum support is obtained with " << min_transactions  << " transactions" << endl;
 		
 	max_transactions = database->getAmountTransactions()*parameters->getMaxSupport();
+	if(max_transactions == 0)
+		max_transactions = 1;
 	if(Parameters::verbose)
 		cout << "The maximum support is obtained with " << max_transactions  << " transactions" << endl;
 }
@@ -193,6 +199,12 @@ void Main::run() {
 	
 	rules.computeRules();
 	rules.print();
+	
+	if(parameters->genNewTransactionFile()) {
+		genNewTransaction gNT(&rules, database, ontologies);
+		gNT.generateNewData(parameters->useThread());
+		gNT.toFile(parameters->outputFile());
+	}
 	
 	if(ontologies)
 		delete(ontologies);
