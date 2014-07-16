@@ -104,7 +104,7 @@ void Rules::computeRules() {
 	calculateSemanticSimilarity();
 	
 	if(Parameters::filter_results)
-		filterABC();
+		filterRules();
 	
 	//sort the rules
 	std::sort(rules.begin(), rules.end(), rulesSort);
@@ -243,7 +243,25 @@ double Rules::informationMeasure(string identifier) {
 	return (-log2((double)it->second/(double)amount_transactions));
 }
 
-void Rules::filterABC() { //this will filter rules with A + B => C where A => C has higher confidence
+vector<tuple <measures, ItemSet *, ItemSet *>> & Rules::getRules() {
+	return rules;
+}
+
+map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> & Rules::getRulesMap() { //will go through the rules and generate the map for faster search
+	 //TODO: check, the elements should be sorted, so this hash will be fine
+	 
+	for(auto & r : rules) {
+		map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>>::iterator it = rulesMap.find(get<1>(r)->getItemSet().begin()->first);
+		if(it == rulesMap.end()) {
+			rulesMap.insert(pair<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> (get<1>(r)->getItemSet().begin()->first, vector<tuple <measures *, ItemSet *, ItemSet *>>() ));
+		}
+		it = rulesMap.find(get<1>(r)->getItemSet().begin()->first); //now will get the iterator where it was inserted
+		it->second.insert(it->second.end(), tuple<measures *, ItemSet *, ItemSet *> (&(get<0>(r)), get<1>(r), get<2>(r)));
+	}
+	return rulesMap;
+}
+
+void Rules::filterRules() { //this will filter rules with A + B => C where A => C has higher confidence
 	vector<tuple<string, string, double>> pairs; //identifier A, identifier B, confidence
 	
 	unsigned int removed = 0;

@@ -21,8 +21,11 @@ class Parameters {
 		
 		bool preprocessed;
 		
+		bool gen_new_transaction_file;
+		
 		string file;
 		string ontologies_file;
+		string output_file;
 		double min_support, max_support, confidence;
 		
 	public:
@@ -39,9 +42,12 @@ class Parameters {
 		const bool & useThread();
 		const bool & useOntology();
 		const bool & isPreprocessed();
+		const bool & genNewTransactionFile();
 
 		const string & phenotypesFile();
 		const string & ontologiesFile();
+		
+		const string & outputFile(); //for new transaction added with rules
 		
 		const double & getMinSupport();
 		const double & getMaxSupport();

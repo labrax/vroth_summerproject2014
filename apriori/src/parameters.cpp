@@ -44,6 +44,8 @@ Parameters::Parameters(int argc, char * argv[]) {
 		{"file", 			required_argument, 0, 'f'},
 		{"ontologies-file", required_argument, 0, 'o'},
 		
+		{"new-transactions-file", 	required_argument, 0, 'x'},
+		
 		{"confidence", 		required_argument, 0, 'c'},
 		
 		{"minsupport", 		required_argument, 0, 'l'}, //TODO: use the amount directly
@@ -56,15 +58,17 @@ Parameters::Parameters(int argc, char * argv[]) {
     
     file.assign("");
     ontologies_file.assign("");
+    output_file.assign("");
     use_thread = false;
     thread_number = 0;
     use_ontology = false;
     preprocessed = false;
+    gen_new_transaction_file = false;
     min_support = 0.5;
     max_support = 1;
     confidence = 0.8;
     
-    int c = getopt_long(argc, argv, "arhpvdf:o:c:l:u:t::", long_options, &option_index);
+    int c = getopt_long(argc, argv, "arhpvdf:o:x:c:l:u:t::", long_options, &option_index);
     
     while(c != -1) {
 		switch(c) {
@@ -100,6 +104,10 @@ Parameters::Parameters(int argc, char * argv[]) {
 				use_ontology = true;
 				ontologies_file.assign(optarg);
 				break;
+			case 'x':
+				gen_new_transaction_file = true;
+				output_file.assign(optarg);
+				break;
 			case 'c':
 				confidence = atof(optarg);
 				break;
@@ -123,7 +131,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 				print_instructions();
 				break;
 		}
-		c = getopt_long(argc, argv, "arhpvdf:o:c:l:u:t::", long_options, &option_index);
+		c = getopt_long(argc, argv, "arhpvdf:o:x:c:l:u:t::", long_options, &option_index);
 	}
 	
 	if(optind < argc) {
@@ -161,6 +169,10 @@ Parameters::Parameters(int argc, char * argv[]) {
 		print_instructions();
 	}
 	
+	if(gen_new_transaction_file && output_file == "") {
+		print_instructions();
+	}
+	
 	cerr << std::boolalpha;
 	cerr << "running with" << endl
 		 << "file: " << file << " preprocessed: " << preprocessed << endl;
@@ -192,11 +204,9 @@ Parameters::Parameters(int argc, char * argv[]) {
 			}
 		}
 		
-	if(dont_append_ontologies)
-		cerr << "dont-append-ontologies: true" << endl;
-		
-	if(filter_results)
-		cerr << "filter-results: true" << endl;
+	cerr << "dont-append-ontologies: " << dont_append_ontologies << endl;
+	cerr << "filter-results: " << filter_results << endl;
+	cerr << "new-transactions-file: " << gen_new_transaction_file << endl;
 }
 
 Parameters::~Parameters() {
@@ -215,12 +225,20 @@ const bool & Parameters::isPreprocessed() {
 	return preprocessed;
 }
 
+const bool & Parameters::genNewTransactionFile() {
+	return gen_new_transaction_file;
+}
+
 const string & Parameters::phenotypesFile() {
 	return file;
 }
 
 const string & Parameters::ontologiesFile() {
 	return ontologies_file;
+}
+
+const string & Parameters::outputFile() {
+	return output_file;
 }
 
 const double & Parameters::getMinSupport() {
@@ -245,6 +263,8 @@ void print_instructions() {
 		 << "-c <confidence>\t to select the confidence (default 0.8)" << endl
 		 << "-t <number>\t to select threads (number is optional)" << endl
 		 << "-v\t\t enable verbose" << endl
+		 << endl
+		 //TODO: add -a -r -x <file> to this list
 		 << endl
 		 << "support and confidence must be in range 0 to 1" << endl
 		 << endl
