@@ -27,16 +27,25 @@ RUN
 	./apriori -h
 	
 	---
-	use format: //TODO: copy new version
-	-f <file>	 to select the phenotypes file
-	-o <file>	 to select and use ontologies file
-	-p		 to indicate the phenotypes file is sorted with no duplicates
-	-s <support>	 to select the support (default 0.5)
-	-c <confidence>	 to select the confidence (default 0.8)
-	-t <number>	 to select threads (number is optional)
-	-v		 enable verbose
+	use format:
+	-a	dont-append-ontologies: only use ontologies for semantic similarity
+	-r	filter-results: will remove rules in the format A+B=>C where A=>C exists and has higher support
 
-	support and confidence must be in range 0 to 1
+	-h	help: will print this instruction of use
+	-p	preprocessed: will not use 'sort -u' in the file before reading
+	-v	verbose: will print some information of execution
+	-d	debug: will print the sets information
+
+	-f	file <file>: 'transactions' input file
+	-o	ontologies-file <file>: input file
+
+	-x	new-transactions-file <file>: create a new 'transactions' file using the rules
+
+	-c	confidence <number 0 to 1>: confidence value - default 0.8
+	-l	minsupport <number 0 to 1>: minimum support value - default 0.5
+	-u	maxsupport <number 0 to 1>: maximum support value - default 1
+
+	-t	thread <optional: number of threads>: to use parallelization
 
 	options can be guessed, if:
 	the phenotypes file is .txt it doesn't need -f
@@ -45,6 +54,7 @@ RUN
 	example of use: 
 	./apriori -f mousephenotypes.txt -o mammalian_phenotype.obo -t=20
 	./apriori mousephenotypes.txt mammalian_phenotype.obo -t -s 0.01 -c 0.3
+
 	---
 
 TEST MACHINE

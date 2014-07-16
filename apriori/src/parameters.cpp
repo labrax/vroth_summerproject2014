@@ -254,19 +254,25 @@ const double & Parameters::getConfidence() {
 }
 
 void print_instructions() {
-	cerr << "use format:" << endl //TODO: rewrite print_instructions() with longer names
-		 << "-f <file>\t to select the phenotypes file" << endl
-		 << "-o <file>\t to select and use ontologies file" << endl
-		 << "-p\t\t to indicate the phenotypes file is sorted with no duplicates" << endl
-		 << "-l <min-support>\t to select the minimum support (default 0.5)" << endl
-		 << "-u <max-support>\t to select the maximum support (default 1)" << endl
-		 << "-c <confidence>\t to select the confidence (default 0.8)" << endl
-		 << "-t <number>\t to select threads (number is optional)" << endl
-		 << "-v\t\t enable verbose" << endl
+	cerr << "use format:" << endl
+		 << "-a	dont-append-ontologies: only use ontologies for semantic similarity" << endl
+		 << "-r	filter-results: will remove rules in the format A+B=>C where A=>C exists and has higher support" << endl
 		 << endl
-		 //TODO: add -a -r -x <file> to this list
+		 << "-h	help: will print this instruction of use" << endl
+		 << "-p	preprocessed: will not use 'sort -u' in the file before reading" << endl
+		 << "-v	verbose: will print some information of execution" << endl
+		 << "-d	debug: will print the sets information" << endl
 		 << endl
-		 << "support and confidence must be in range 0 to 1" << endl
+		 << "-f	file <file>: 'transactions' input file" << endl
+		 << "-o	ontologies-file <file>: input file" << endl
+		 << endl
+		 << "-x	new-transactions-file <file>: create a new 'transactions' file using the rules" << endl
+		 << endl
+		 << "-c	confidence <number 0 to 1>: confidence value - default 0.8" << endl
+		 << "-l	minsupport <number 0 to 1>: minimum support value - default 0.5" << endl
+		 << "-u	maxsupport <number 0 to 1>: maximum support value - default 1" << endl
+		 << endl
+		 << "-t	thread <optional: number of threads>: to use parallelization" << endl
 		 << endl
 		 << "options can be guessed, if:" << endl
 		 << "the phenotypes file is .txt it doesn't need -f" << endl
