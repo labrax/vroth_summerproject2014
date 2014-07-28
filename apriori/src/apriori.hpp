@@ -17,9 +17,9 @@
 
 #include "ontologies/ontology.hpp"
 
-class Main {
+class Apriori {
 	private:
-		Parameters * parameters;
+		Parameters parameters;
 
 		DatabaseNormalized * database;
 		vector<LargeItemSet *> largesets;
@@ -30,8 +30,8 @@ class Main {
 		uint64_t max_transactions;
 
 	public:		
-		Main(int argc, char * argv[]);
-		~Main();
+		Apriori(int argc, char * argv[]);
+		~Apriori();
 		
 		void setup();
 		void run();

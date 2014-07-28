@@ -7,12 +7,12 @@
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
  
-#include "main.hpp"
+#include "apriori.hpp"
  
 #include "database_normalized.hpp"
 #include "itemset.hpp"
 #include "large.hpp"
-#include "candidate/candidate.hpp"
+#include "candidate_apriori/candidate.hpp"
 #include "rules.hpp"
 
 #include "new_transactions/genNewTransaction.hpp"
@@ -27,13 +27,13 @@
 #include <algorithm>
 
 #include <cstdio>
-#include <cstdlib>
+//#include <cstdlib>
 
 using namespace std;
 
 #ifndef _TEST_
 int main(int argc, char *argv[]) {
-	Main program(argc, argv);
+	Apriori program(argc, argv);
 	
 	program.setup();
 	program.run();
@@ -42,37 +42,19 @@ int main(int argc, char *argv[]) {
 }
 #endif
 
-Main::Main(int argc, char * argv[]) {
-	parameters = new Parameters(argc, argv);
+Apriori::Apriori(int argc, char * argv[]) : parameters(argc, argv) {
+	
 }
 
-Main::~Main() {
-	delete(parameters);
+Apriori::~Apriori() {
+	
 }
 
-void Main::setup() {
-	if(parameters->isPreprocessed() == false) {
-		char tempDir[32] = "apriori.XXXXXX";
-		char * new_dir = mkdtemp(tempDir);
-
-		char command[512]; //sort and remove duplicates for a file
-		sprintf(command, "sort -u %s  > %s/%s", parameters->phenotypesFile().c_str(), new_dir, parameters->phenotypesFile().c_str()); //TODO: find a way to execute in Windows
-		system(command); //TODO: fetch value from system() - warning when compiling with -O4
-
-		sprintf(command, "%s/%s", new_dir, parameters->phenotypesFile().c_str());
-		database = new DatabaseNormalized(string(command));
-
-		sprintf(command, "rm -rf %s", new_dir); //remove temporary folder and files
-		system(command);
-	}
-	else {
-		database = new DatabaseNormalized(string(parameters->phenotypesFile()));
-	}
+void Apriori::setup() {
+	database = new DatabaseNormalized(parameters.phenotypesFile(), parameters.isPreprocessed());
 	
-	database->processNormalizedTransactions(); //to store in a <TID, item> manner
-	
-	if(parameters->useOntology()) {
-		ontologies = new Ontology(parameters->ontologiesFile());
+	if(parameters.useOntology()) {
+		ontologies = new Ontology(parameters.ontologiesFile());
 		ontologies->processOntologies();
 		if(!Parameters::dont_append_ontologies)
 			ontologies->appendOntologies(&database->getNormalizedTransactions());
@@ -102,20 +84,20 @@ void Main::setup() {
 	if(Parameters::verbose)
 		cout << "Amount of transactions is " << database->getAmountTransactions() << endl;
 	
-	min_transactions = database->getAmountTransactions()*parameters->getMinSupport();
+	min_transactions = database->getAmountTransactions()*parameters.getMinSupport();
 	if(min_transactions == 0)
 		min_transactions = 1;
 	if(Parameters::verbose)
 		cout << "The minimum support is obtained with " << min_transactions  << " transactions" << endl;
 		
-	max_transactions = database->getAmountTransactions()*parameters->getMaxSupport();
+	max_transactions = database->getAmountTransactions()*parameters.getMaxSupport();
 	if(max_transactions == 0)
 		max_transactions = 1;
 	if(Parameters::verbose)
 		cout << "The maximum support is obtained with " << max_transactions  << " transactions" << endl;
 }
 
-void Main::run() {
+void Apriori::run() {
 	//!OBTAINING 1-ITEMSETS
 	std::map<string, uint64_t> itemset_1;
 	for(auto &i : database->getNormalizedTransactions()) {
@@ -127,21 +109,6 @@ void Main::run() {
 			itemset_1.insert(pair<string, uint64_t> (i.second, 1));
 		}
 	}
-	
-	
-	//this part is ignored to keep the information! ////TODO: <---------------------------------------------remove this block
-	/*//this part will remove the elements without the support
-
-	for(auto it = itemset_1.begin(); it != itemset_1.end();) {
-		if((*it).second < min_transactions || (*it).second > max_transactions) {
-			//cout << "eliminating " << (*it).first << ", " << (*it).second << " because support is " <<  (*it).second/(double) a.getAmountTransactions() <<  endl;
-			
-			it = itemset_1.erase(it); //prunning of the 1 itemsets
-		}
-		else {
-			++it; //when its not eliminated may follow the list
-		}
-	}*/
 	
 	LargeItemSet * large_1 = new LargeItemSet(1);
 	//this will print the count and transfer each item that /survived/
@@ -162,13 +129,13 @@ void Main::run() {
 	if(Parameters::debug)
 		large_1->print();
 	
-	Rules rules(database->getAmountTransactions(), parameters->getConfidence(), ontologies, itemset_1);
+	Rules rules(database->getAmountTransactions(), parameters.getConfidence(), ontologies, itemset_1);
 	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
 	do {
 		CandidateItemSet cis(*ontologies);
 		LargeItemSet * large_temp;
 		
-		if(parameters->useThread())
+		if(parameters.useThread())
 			large_temp = cis.apriori_genThreaded(large_obtained);
 		else
 			large_temp = cis.apriori_gen(large_obtained);
@@ -178,7 +145,7 @@ void Main::run() {
 		if(Parameters::verbose)
 			cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
 
-		if(parameters->useThread())
+		if(parameters.useThread())
 			large_obtained = cis.subsetThreaded(large_temp, &database->getNormalizedTransactions(), min_transactions, max_transactions);
 		else
 			large_obtained = cis.subset(large_temp, &database->getNormalizedTransactions(), min_transactions, max_transactions);
@@ -200,10 +167,10 @@ void Main::run() {
 	rules.computeRules();
 	rules.print();
 	
-	if(parameters->genNewTransactionFile()) {
+	if(parameters.genNewTransactionFile()) {
 		genNewTransaction gNT(&rules, database, ontologies);
-		gNT.generateNewData(parameters->useThread());
-		gNT.toFile(parameters->outputFile());
+		gNT.generateNewData(parameters.useThread());
+		gNT.toFile(parameters.outputFile());
 	}
 	
 	if(ontologies)
