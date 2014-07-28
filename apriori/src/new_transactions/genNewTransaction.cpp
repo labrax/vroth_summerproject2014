@@ -94,6 +94,11 @@ vector <pair <string, string>> & genNewTransaction::generateNewData(bool use_thr
 	
 	std::sort(new_transactions.begin(), new_transactions.end(), normalizedCompare);
 	
+	for(auto & v : *rulesMap) {
+		for(auto & r: v.second)
+			delete(r);
+	}
+	
 	return new_transactions;
 }
 
