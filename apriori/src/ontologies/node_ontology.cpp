@@ -18,8 +18,8 @@ using std::endl;
 using std::pair;
 
 NodeOntology::NodeOntology(string identifier, string name, bool is_obsolete) : identifier(identifier), name(name), is_obsolete(is_obsolete) {
-	height = 0;
-	depth = 0;
+	max_height = 0;
+	max_depth = 0;
 }
 
 NodeOntology::~NodeOntology() {
@@ -51,25 +51,26 @@ const unsigned int NodeOntology::getAmountChildren() {
 }
 
 const unsigned int & NodeOntology::getDepth() {
-	return depth;
+	return max_depth;
 }
 
 void NodeOntology::setDepth(const unsigned int & depth) {
-	this->depth = depth;
+	if(this->max_depth < max_depth)
+		this->max_depth = max_depth;
 	for(auto & i : children) {
-		i->setDepth(depth+1);
+		i->setDepth(this->max_depth+1);
 	}
 }
 
 const unsigned int & NodeOntology::getHeight() {
-	return height;
+	return max_height;
 }
 
 void NodeOntology::setHeight(const unsigned int & height) {
-	if(this->height < height)
-		this->height = height;
+	if(this->max_height < max_height)
+		this->max_height = max_height;
 	for(auto & i : parents) {
-		i->setHeight(this->height+1);
+		i->setHeight(this->max_height+1);
 	}
 }
 
@@ -92,7 +93,7 @@ void NodeOntology::print() {
 	cout << identifier << ": \"" << name << "\" ";
 	if(is_obsolete)
 		cout << "OBSOLETE";
-	cout << "(" << depth << ", " << height << ") ";
+	cout << "(" << max_depth << ", " << max_height << ") ";
 	if(parents.size() == 0) 
 		cout << "NO PARENT ";
 	else

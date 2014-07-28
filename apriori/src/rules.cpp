@@ -110,7 +110,7 @@ void Rules::computeRules() {
 	std::sort(rules.begin(), rules.end(), rulesSort);
 }
 
-void Rules::print() {
+void Rules::print() { //TODO: add std::setprecision(X) to output of rules
 	if(rules.size() != 0)
 		cout << "confidence" << "\t" << "semantic similarity" << "\t" << "lift" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
 	else

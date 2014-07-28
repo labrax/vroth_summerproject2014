@@ -31,7 +31,7 @@ class NodeOntology {
 		vector <NodeOntology *> parents;
 		
 		vector <NodeOntology *> children;
-		unsigned int height, depth;
+		unsigned int max_height, max_depth;
 	public:
 		NodeOntology(string identifier, string name, bool is_obsolete);
 		~NodeOntology();

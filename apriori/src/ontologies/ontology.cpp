@@ -99,7 +99,7 @@ void Ontology::processOntologies() {
 			createNode(id, name, is_obsolete, &is_a, &consider, replaced_by);
 		}
 		
-		//!set depth and height
+		//!set depth and height //<---------------- TODO: fix depth and height
 		for(auto & i : ontologies) {
 			if(i.second->getAmountParents() == 0) { //the node is root
 				i.second->setDepth(0);

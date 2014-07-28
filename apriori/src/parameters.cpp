@@ -49,7 +49,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 		{"confidence", 		required_argument, 0, 'c'},
 		
 		{"minsupport", 		required_argument, 0, 'l'}, //TODO: use the amount directly
-		{"maxsupport", 		required_argument, 0, 'u'},
+		{"maxsupport", 		required_argument, 0, 'u'}, //here too ^
 		
 		{"thread",			optional_argument, 0, 't'}, //TODO: change the way argument is obtained, so it can be spaced (as required_argument with a hack)
 		{0, 0, 0, 0},
