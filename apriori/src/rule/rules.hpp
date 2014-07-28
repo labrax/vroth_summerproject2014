@@ -9,11 +9,10 @@
 
 #pragma once
 
-#include "itemset.hpp"
-#include "large.hpp"
-#include "ontologies/ontology.hpp"
-
-#include <cstdint>
+#include "../itemset.hpp"
+#include "../large.hpp"
+#include "../ontologies/ontology.hpp"
+#include "rule_node.hpp"
 
 #include <vector>
 #include <tuple>
@@ -27,24 +26,10 @@ using std::tuple;
 using std::map;
 using std::string;
 
-typedef struct {
-	unsigned int sumDepth;
-	unsigned int sumHeight;
-	
-	uint64_t n_transactions;
-	uint64_t n_transactions_antecedent;
-	uint64_t n_transactions_consequent;
-	
-	double semantic_similarity;
-	
-	double confidence;
-	double lift;
-} measures;
-
 class Rules {
 	private:
-		vector<tuple <measures, ItemSet *, ItemSet *>> rules;
-		map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> rulesMap;
+		vector<RuleNode *> rules;
+		map<string, vector<RuleNode *>> rulesMap;
 		
 		vector<LargeItemSet *> larges;
 		Ontology * ontologies;
@@ -64,10 +49,10 @@ class Rules {
 		void calculateSemanticSimilarity();
 		double informationMeasure(string identifier);
 		
-		vector<tuple <measures, ItemSet *, ItemSet *>> & getRules();
-		map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> & getRulesMap();
+		vector<RuleNode *> & getRules();
+		map<string, vector<RuleNode *>> & getRulesMap();
 		
-		void filterRules(); //TODO: improve
+		void filterRules(); //TODO: implement Rules::filterRules()
 };
 
-bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> &, const tuple<measures, ItemSet *, ItemSet *> &);
+bool rulesSort(const RuleNode * a, const RuleNode * b);

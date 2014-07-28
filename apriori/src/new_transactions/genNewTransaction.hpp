@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../rules.hpp"
+#include "../rule/rules.hpp"
 #include "../database_normalized.hpp"
 #include "../ontologies/ontology.hpp"
 
@@ -38,5 +38,5 @@ class genNewTransaction {
 		void toFile(string);
 };
 
-void run_threaded(uint64_t tstart, uint64_t tend, vector<pair<string,string>> * tout, vector<pair <string, string>> * new_transactions, map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> * rulesMap);
-vector <pair <string, string>> * getNewTransaction(vector <pair <string, string>> & transaction, map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> * rulesMap);
+void run_threaded(uint64_t tstart, uint64_t tend, vector<pair<string,string>> * tout, vector<pair <string, string>> * new_transactions, map<string, vector<RuleNode *>> * rulesMap);
+vector <pair <string, string>> * getNewTransaction(vector <pair <string, string>> & transaction, map<string, vector<RuleNode *>> * rulesMap);

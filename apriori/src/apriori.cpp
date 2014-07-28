@@ -13,7 +13,7 @@
 #include "itemset.hpp"
 #include "large.hpp"
 #include "candidate_apriori/candidate.hpp"
-#include "rules.hpp"
+#include "rule/rules.hpp"
 
 #include "new_transactions/genNewTransaction.hpp"
 

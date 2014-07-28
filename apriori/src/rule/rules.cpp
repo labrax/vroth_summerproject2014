@@ -8,15 +8,13 @@
  */
 
 #include "rules.hpp"
-#include "parameters.hpp"
+#include "../parameters.hpp"
 
 #include <iostream>
 #include <algorithm>
 
 using std::cout;
 using std::endl;
-
-using std::get;
 
 Rules::Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies, map<string, uint64_t> & itemset_1) {
 	this->amount_transactions = amount_transactions;
@@ -26,12 +24,11 @@ Rules::Rules(uint64_t amount_transactions, double confidence, Ontology * ontolog
 }
 
 Rules::~Rules() {
-	for(auto & i : rules) {
-		delete(get<1>(i));
-		delete(get<2>(i));
-	}
 	for(auto & i : larges) {
 		delete(i);
+	}
+	for(auto & r: rules) {
+		delete(r);
 	}
 }
 
@@ -41,12 +38,6 @@ void Rules::addLarge(LargeItemSet * a) {
 
 void Rules::computeRules() {
 	//!create the rules from the LargeItemSets
-	measures m;
-	m.sumDepth = 0;
-	m.sumHeight = 0;
-	m.confidence = 0;
-	m.lift = 0;
-	m.semantic_similarity = 0;
 	for(auto & l : larges) {
 		if(l->getIteration() == 1) {
 			//cout << "skipping large 1" << endl;
@@ -59,19 +50,10 @@ void Rules::computeRules() {
 			for(auto & s : i->subItemSets()) {
 				ItemSet * b = new ItemSet(i, s);
 				
-				m.n_transactions = i->getSupportCount();
-				m.sumDepth = 0;
-				m.sumHeight = 0;
-
-				for(auto & el : i->getItemSet()) { //obtain height and depth data
-					NodeOntology * node = ontologies->getNode(el.first);
-					if(node != NULL) {
-						m.sumHeight += node->getHeight();
-						m.sumDepth += node->getDepth();
-					}
-				}
+				RuleNode * new_node = new RuleNode(s,b);
+				new_node->setNTransactions(i->getSupportCount());
 				
-				rules.insert(rules.end(), tuple<measures, ItemSet *, ItemSet *>(m, s, b));
+				rules.insert(rules.end(), new_node);
 			}
 		}
 	}
@@ -79,27 +61,17 @@ void Rules::computeRules() {
 	
 	//!get the support for every part of all rules
 	for(auto & r : rules) {
-		get<0>(r).n_transactions_antecedent = getFrequency(get<1>(r));
-		get<0>(r).n_transactions_consequent = getFrequency(get<2>(r));
+		r->setNTransactionsAntecedent(getFrequency(r->getItemSetAntecedent())); //support for each side
+		r->setNTransactionsConsequent(getFrequency(r->getItemSetConsequent()));
+		
+		r->calculateConfidence(); //remaining variables
+		if(r->getConfidence() < confidence)
+			continue;
+		r->calculateSupport(amount_transactions); //calculate the other data
+		r->calculateLift(amount_transactions);
+		r->calculateDepthHeight(ontologies);
 	}
 	//!get the support for every part of all rules
-	
-	//!remove the ones without the confidence
-	for(uint64_t r = 0; r < rules.size(); r++) {
-		auto & i = rules.at(r);
-		get<0>(i).lift = ((double) amount_transactions*get<0>(i).n_transactions)/((double) get<0>(i).n_transactions_antecedent*get<0>(i).n_transactions_consequent);
-		get<0>(i).confidence = (double)get<0>(i).n_transactions/(double)get<0>(i).n_transactions_antecedent;
-		if(get<0>(i).confidence < confidence) {
-			/*cout << "tuple should be removed" << endl;
-			cout << "first element: " << (double)get<2>(i)->getSupportCount() << " ";
-			cout << "second element: " << (double)get<1>(i)->getSupportCount();*/
-			delete(get<1>(i));
-			delete(get<2>(i));
-			rules.erase(rules.begin() + r);
-			r--; //to fix with element removed
-		}
-	}
-	//!remove the ones without the confidence
 	
 	calculateSemanticSimilarity();
 	
@@ -112,18 +84,18 @@ void Rules::computeRules() {
 
 void Rules::print() { //TODO: add std::setprecision(X) to output of rules
 	if(rules.size() != 0)
-		cout << "confidence" << "\t" << "semantic similarity" << "\t" << "lift" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
+		cout << "support" << "\t" << "confidence" << "\t" << "semantic similarity" << "\t" << "lift" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
 	else
 		cout << "NO RULES GENERATED!" << endl;
 
 	for(auto &i : rules) {
-		if((double)get<2>(i)->getSupportCount()/(double)get<1>(i)->getSupportCount() < confidence)
+		if(i->getConfidence() < confidence)
 			continue;
 			
-		cout << get<0>(i).confidence << "\t" << get<0>(i).semantic_similarity << "\t" << get<0>(i).lift << "\t" << get<0>(i).sumDepth << "\t" << get<0>(i).sumHeight << "\t";
-		get<1>(i)->printWithOntology(ontologies);
+		cout << i->getSupport() << "\t" << i->getConfidence() << "\t" << i->getSemanticSimilarity() << "\t" << i->getLift() << "\t" << i->getSumDepth() << "\t" << i->getSumHeight() << "\t";
+		i->getItemSetAntecedent()->printWithOntology(ontologies);
 		cout << "===>\t";
-		get<2>(i)->printWithOntology(ontologies);
+		i->getItemSetConsequent()->printWithOntology(ontologies);
 		cout << endl;
 	}
 }
@@ -152,13 +124,16 @@ void Rules::calculateSemanticSimilarity() {
 		return;
 	}
 	for(auto & r : rules) {
+		if(r->getConfidence() < confidence)
+			continue;
+			
 		double similarity_intercession = 0;
 		double similarity_union = 0;
 
 		map <string, bool> * first_ontologies = NULL; //will store all the parents from the 1st itemset
 		map <string, bool> * second_ontologies = NULL; //will store all the parents from the 2nd itemset
 		
-		for(auto & f : get<1>(r)->getItemSet()) { //get all the parent nodes from the 1st itemset (antecedent)
+		for(auto & f : r->getItemSetAntecedent()->getItemSet()) { //get all the parent nodes from the 1st itemset (antecedent)
 			NodeOntology * search_1 = ontologies->getNode(f.first);
 			map <string, bool> * result_first = search_1->returnOntologies();
 			if(result_first != NULL) {
@@ -174,7 +149,7 @@ void Rules::calculateSemanticSimilarity() {
 				}
 			}
 		}
-		for(auto & s : get<2>(r)->getItemSet()) { //get all the parent nodes from the 2nd itemset (consequent)
+		for(auto & s : r->getItemSetConsequent()->getItemSet()) { //get all the parent nodes from the 2nd itemset (consequent)
 			NodeOntology * search_2 = ontologies->getNode(s.first);
 			map <string, bool> * result_second = search_2->returnOntologies();
 			if(result_second != NULL) {
@@ -193,9 +168,9 @@ void Rules::calculateSemanticSimilarity() {
 
 		if(Parameters::debug) {
 			cout << "for the rule:" << endl;
-			get<1>(r)->printWithOntology(ontologies);
+			r->getItemSetAntecedent()->printWithOntology(ontologies);
 			cout << "===>\t";
-			get<2>(r)->printWithOntology(ontologies);
+			r->getItemSetConsequent()->printWithOntology(ontologies);
 			cout << endl;			
 		}
 
@@ -221,7 +196,8 @@ void Rules::calculateSemanticSimilarity() {
 		
 		if(Parameters::debug)
 			cout << "similarity: " << similarity_intercession << "\t" << similarity_union << endl;
-		get<0>(r).semantic_similarity = similarity_intercession/similarity_union;
+			
+		r->setSemanticSimilarity(similarity_intercession/similarity_union);
 		
 		if(first_ontologies != NULL)
 			delete(first_ontologies);
@@ -243,75 +219,40 @@ double Rules::informationMeasure(string identifier) {
 	return (-log2((double)it->second/(double)amount_transactions));
 }
 
-vector<tuple <measures, ItemSet *, ItemSet *>> & Rules::getRules() {
+vector<RuleNode *> & Rules::getRules() {
 	return rules;
 }
 
-map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> & Rules::getRulesMap() { //will go through the rules and generate the map for faster search
+map<string, vector<RuleNode *>> & Rules::getRulesMap() { //will go through the rules and generate the map for faster search
 	 //TODO: check, the elements should be sorted, so this hash will be fine
 	 
 	for(auto & r : rules) {
-		map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>>::iterator it = rulesMap.find(get<1>(r)->getItemSet().begin()->first);
+		map<string, vector<RuleNode *>>::iterator it = rulesMap.find(r->getItemSetAntecedent()->getItemSet().begin()->first);
 		if(it == rulesMap.end()) {
-			rulesMap.insert(pair<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> (get<1>(r)->getItemSet().begin()->first, vector<tuple <measures *, ItemSet *, ItemSet *>>() ));
+			rulesMap.insert(pair<string, vector<RuleNode *>> (r->getItemSetAntecedent()->getItemSet().begin()->first, vector<RuleNode *>() ));
 		}
-		it = rulesMap.find(get<1>(r)->getItemSet().begin()->first); //now will get the iterator where it was inserted
-		it->second.insert(it->second.end(), tuple<measures *, ItemSet *, ItemSet *> (&(get<0>(r)), get<1>(r), get<2>(r)));
+		it = rulesMap.find(r->getItemSetAntecedent()->getItemSet().begin()->first); //now will get the iterator where it was inserted
+		
+		ItemSet * antecedent = new ItemSet(r->getItemSetAntecedent());
+		ItemSet * consequent = new ItemSet(r->getItemSetConsequent());
+		it->second.insert(it->second.end(), new RuleNode(antecedent, consequent));
 	}
 	return rulesMap;
 }
 
-void Rules::filterRules() { //this will filter rules with A + B => C where A => C has higher confidence
-	vector<tuple<string, string, double>> pairs; //identifier A, identifier B, confidence
+void Rules::filterRules() { //TODO: implement Rules::filterRules()
+	cout << "filterRules() is disabled" << endl;
+	return;
 	
 	unsigned int removed = 0;
-	
-	if(Parameters::verbose)
-		cout << "filtering results: ";
-	for(auto & r: rules) {
-		unsigned int total_elements = get<1>(r)->getAmountElements() + get<2>(r)->getAmountElements();
-		if(total_elements == 2) {
-			pairs.insert(pairs.end(), tuple<string, string, double> (get<1>(r)->getItemSet().begin()->first, get<2>(r)->getItemSet().begin()->first, get<0>(r).confidence));
-		}
-	}
-	
-	for(uint64_t b = 0; b < rules.size(); b++) { //this part will search for the A + B => C and remove if the confidence is lower than the original A + B => C
-		auto & r = rules.at(b);
-		if(get<1>(r)->getAmountElements() == 2 && get<2>(r)->getAmountElements() == 1) {
-			for(auto & p : pairs) {
-				bool ok = false;
-				if(get<1>(p) == get<2>(r)->getItemSet().begin()->first) { //matched C
-					for(auto & i : get<1>(r)->getItemSet()) {
-						if(i.first == get<0>(p)) {
-							ok = true;
-							
-							if(get<0>(r).confidence < get<2>(p)) { //remove element
-								if(Parameters::debug) {
-									cout << "REMOVED:" << endl;
-									get<1>(r)->printWithOntology(ontologies);
-									cout << "===>\t";
-									get<2>(r)->printWithOntology(ontologies);
-									cout << endl;			
-								}
-								rules.erase(rules.begin() + b);
-								b--; //to fix with element removed
-								removed++;
-							}
-						}
-					}
-				}
-				if(ok == true)
-					break;
-			}
-		}
-	}
+
 	if(Parameters::verbose)
 		cout << removed << " removed" << endl;
 }
 
-bool rulesSort(const tuple<measures, ItemSet *, ItemSet *> & a, const tuple<measures, ItemSet *, ItemSet *> & b) {
-	if(get<0>(b).semantic_similarity == get<0>(a).semantic_similarity)
-		return get<0>(b).confidence < get<0>(a).confidence;
-	return get<0>(b).semantic_similarity > get<0>(a).semantic_similarity; //the less the better
+bool rulesSort(const RuleNode * a, const RuleNode * b) {
+	if(b->getSemanticSimilarity() == a->getSemanticSimilarity())
+		return b->getConfidence() < a->getConfidence();
+	return b->getSemanticSimilarity() > a->getSemanticSimilarity(); //the less the better
 	//return get<0>(b).confidence < get<0>(a).confidence; //to order by confidence
 }

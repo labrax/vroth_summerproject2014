@@ -38,7 +38,7 @@ genNewTransaction::~genNewTransaction() {
 }
 
 vector <pair <string, string>> & genNewTransaction::generateNewData(bool use_thread) {
-	map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> * rulesMap = &rules->getRulesMap(); //for the operations
+	map<string, vector<RuleNode *>> * rulesMap = &rules->getRulesMap(); //for the operations
 	
 	new_transactions = database->getNormalizedTransactions(); //will copy the vector data
 	
@@ -119,7 +119,7 @@ void genNewTransaction::toFile(string file) {
 	}
 }
 
-void run_threaded(uint64_t tstart, uint64_t tend, vector<pair<string,string>> * tout, vector<pair <string, string>> * new_transactions, map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> * rulesMap) {	
+void run_threaded(uint64_t tstart, uint64_t tend, vector<pair<string,string>> * tout, vector<pair <string, string>> * new_transactions, map<string, vector<RuleNode *>> * rulesMap) {	
 	uint64_t end=0; //begin and end indicate the range of a transaction; increased_size the amount of new values inserted into normalized_transactions
 	
 	uint64_t initial_size = tend;
@@ -141,16 +141,16 @@ void run_threaded(uint64_t tstart, uint64_t tend, vector<pair<string,string>> * 
 	}
 }
 
-vector <pair <string, string>> * getNewTransaction(vector <pair <string, string>> & transaction, map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>> * rulesMap) {	
+vector <pair <string, string>> * getNewTransaction(vector <pair <string, string>> & transaction, map<string, vector<RuleNode *>> * rulesMap) {	
 	vector<pair <string, string>> * newTransactionData = new vector<pair <string, string>>();
 	
 	for(auto & e : transaction) {
-		map<string, vector<tuple <measures *, ItemSet *, ItemSet *>>>::iterator it = rulesMap->find(e.second);
+		map<string, vector<RuleNode *>>::iterator it = rulesMap->find(e.second);
 		if(it != rulesMap->end()) { //if the element has a rule associated to it (NOTE: this structure only store the first element for each rule, what should be enough, as the rules are in crescent order)
 			for(auto & r : it->second) { //try each rule
 				bool ok = false;
 				
-				for(auto & a : get<1>(r)->getItemSet()) { //will go through the antecedents
+				for(auto & a : r->getItemSetAntecedent()->getItemSet()) { //will go through the antecedents
 					bool sub_ok = false;
 					
 					for(auto & p : transaction) {
@@ -169,7 +169,7 @@ vector <pair <string, string>> * getNewTransaction(vector <pair <string, string>
 				}
 				
 				if(ok == true) { //add the consequent if the antecedents are present
-					for(auto & c : get<2>(r)->getItemSet()) { //for each of the consequents
+					for(auto & c : r->getItemSetConsequent()->getItemSet()) { //for each of the consequents
 						
 						bool cool = true; //test for duplicates
 						for(auto & t : transaction) {

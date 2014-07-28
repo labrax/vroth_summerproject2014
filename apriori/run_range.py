@@ -87,4 +87,6 @@ class ExecApriori:
 
 if __name__ == "__main__":
 	a = ExecApriori()
-	a.loop(0.01, 0.10, 0.005)
+	#a.loop(0.01, 0.10, 0.005)
+	a.executeNo(1, 0.01)
+	a.executeWith(2, 0.01)
