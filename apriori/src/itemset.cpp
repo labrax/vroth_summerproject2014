@@ -137,6 +137,43 @@ vector<ItemSet *> ItemSet::subItemSets() {
 	return subsets;
 }
 
+vector<ItemSet *> ItemSet::subItemSets(unsigned int maximum_elements) {
+	vector<ItemSet *> subsets;
+	
+	string last = itemset.rbegin()->first;
+	map<string, bool>::iterator it = itemset.begin();
+	do {
+		if(subsets.size() == 0) {
+			ItemSet * a0 = new ItemSet();
+			ItemSet * a1 = new ItemSet();
+			a1->insert(it->first);
+
+			subsets.insert(subsets.end(), a0);
+			subsets.insert(subsets.end(), a1);
+		}
+		else {
+			unsigned int old_size = subsets.size();
+			for(unsigned int i=0; i<old_size; i++) {
+				if(subsets[i]->getAmountElements() < maximum_elements) {
+					ItemSet * a0 = new ItemSet(subsets[i]);
+					a0->insert(it->first);
+					subsets.insert(subsets.end(), a0);
+				}
+			}
+		}
+	} while(itemset.key_comp()((*it++).first, last));
+	
+	
+	delete(subsets[0]); //the empty set was needed in the beginning, now deleting
+	subsets.erase(subsets.begin());
+	
+	delete(subsets[subsets.size()]); //the whole original ItemSet is not needed
+	subsets.erase(--subsets.end());
+
+	//cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
+	return subsets;
+}
+
 void ItemSet::print() {
 	for(auto &j: getItemSet()) {
 		cout << j.first << " ";

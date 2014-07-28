@@ -16,17 +16,46 @@
 
 #include <cstdint>
 
+#include <cstdlib>
+
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::pair;
 
-DatabaseNormalized::DatabaseNormalized(string filename) : filename(filename) {
+DatabaseNormalized::DatabaseNormalized(string transactions_file, bool preprocessed) {
+	char command[512]; //sort and remove duplicates for a file
+
+	if(preprocessed == false) {
+		char tempDir[32] = "transactions.XXXXXX";
+		char * new_dir = mkdtemp(tempDir);
+		string new_file;
+		
+		if(transactions_file.find("/") == string::npos)
+			new_file = transactions_file;
+		else
+			new_file = transactions_file.substr(transactions_file.find_last_of("/")+1);
+			
+		sprintf(command, "sort -u %s  > %s/%s", transactions_file.c_str(), new_dir, new_file.c_str()); //TODO: find a way to execute in Windows
+		system(command); //TODO: fetch value from system() - warning when compiling with -O4
+
+		sprintf(command, "%s/%s", new_dir, new_file.c_str());
+		this->filename = command;
+		
+		sprintf(command, "rm -rf %s", new_dir); //remove temporary folder and files
+	}
+	else
+		this->filename = transactions_file;
+	
 	file.open(filename);
 	if(!file.is_open()) {
 		cerr << "Error opening \"" << filename << "\" transactions file" << endl;
 	}
-	amount_transactions = 0;
+	
+	processNormalizedTransactions();
+	
+	if(preprocessed == false)
+		system(command); //remove temporary folder and files
 }
 
 DatabaseNormalized::~DatabaseNormalized() {

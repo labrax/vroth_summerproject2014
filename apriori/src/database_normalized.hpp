@@ -32,13 +32,12 @@ class DatabaseNormalized {
 		vector <pair <string, string>> normalized_transactions;
 		uint64_t amount_transactions;
 		
+		void processNormalizedTransactions();
 	public:
-		DatabaseNormalized(string filename);
+		DatabaseNormalized(string transactions_file, bool preprocessed);
 		~DatabaseNormalized();
 		
 		void removeDuplicates(); //remove in normalized_transactions duplicates //TOO SLOW!
-		
-		void processNormalizedTransactions();
 		
 		vector <pair <string, string>> & getNormalizedTransactions();
 		

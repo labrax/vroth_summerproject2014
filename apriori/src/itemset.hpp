@@ -51,6 +51,7 @@ class ItemSet {
 		bool contains(string);
 		
 		vector<ItemSet *> subItemSets();
+		vector<ItemSet *> subItemSets(unsigned int maximum_elements);
 		
 		void print();
 		void printWithOntology(Ontology * ontologies);
