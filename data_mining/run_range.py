@@ -10,7 +10,7 @@ from subprocess import call
 class ExecApriori:
 	#info_file will store some information
 	
-	def executeWith(self, num, minimum_support):
+	def executeWith(self, num, minimum_support): #single execution
 		#NOTE: IF CHANGED VERIFY WITH LOOP FUNCTION! IT IS BEING USED 6 "CHANGE" AND 11 "NEW_mouseWithOnto_CHANGE"
 		argsWith = ["time", "./apriori", "mp.txt", "-p", "mammalian_phenotype.obo", "-l", "CHANGE", "-c", "0.5", "-t18", "-x", "NEW_mouseWithOnto_CHANGE"]
 		try:
@@ -32,7 +32,7 @@ class ExecApriori:
 		stderr_file.close()
 		stdout_file.close()
 		
-	def executeNo(self, num, minimum_support):
+	def executeNo(self, num, minimum_support): #single execution
 		#NOTE: IF CHANGED VERIFY WITH LOOP FUNCTION! IT IS BEING USED 6 "CHANGE" AND 12 "NEW_mouseNoOnto_CHANGE"
 		argsNo =   ["time", "./apriori", "mp.txt", "-p", "mammalian_phenotype.obo", "-l", "CHANGE", "-c", "0.5", "-t18", "-a", "-x", "NEW_mouseNoOnto_CHANGE"]
 		try:
@@ -54,7 +54,7 @@ class ExecApriori:
 		stderr_file.close()
 		stdout_file.close()
 			
-	def loop(self, range_low, range_high, step):
+	def loop(self, range_low, range_high, step): #run in a range and step for the support
 		num = 1 #to identify each iteration
 		i = range_low #i is the support
 		while True:
@@ -70,7 +70,7 @@ class ExecApriori:
 			
 			i += step
 
-	def run(self, args, out, err):
+	def run(self, args, out, err): #execute the external program
 		call(args, stdout=out, stderr=err)
 
 	def __init__(self):

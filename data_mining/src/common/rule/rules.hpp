@@ -39,6 +39,7 @@ class Rules {
 		std::map<string, uint64_t> itemset_1; //to calculate the amount of information
 	public:
 		Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies, map<string, uint64_t> & itemset_1);
+		Rules(string file);
 		~Rules();
 		
 		void addLarge(LargeItemSet *);

@@ -8,14 +8,12 @@
  */
  
 #include "apriori.hpp"
- 
-#include "database_normalized.hpp"
-#include "itemset.hpp"
-#include "large.hpp"
-#include "candidate_apriori/candidate.hpp"
-#include "rule/rules.hpp"
 
-#include "new_transactions/genNewTransaction.hpp"
+#include "../common/itemset.hpp"
+#include "candidate_apriori/candidate.hpp"
+#include "../common/rule/rules.hpp"
+
+#include "../common/new_transactions/genNewTransaction.hpp"
 
 #include <iostream>
 #include <fstream>

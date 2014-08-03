@@ -16,7 +16,7 @@
 
 #include "candidate_tree.hpp"
 #include "../large.hpp"
-#include "../ontologies/ontology.hpp"
+#include "../../common/ontologies/ontology.hpp"
 
 using std::vector;
 using std::pair;

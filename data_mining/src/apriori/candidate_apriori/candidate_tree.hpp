@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../itemset_tree.hpp"
+#include "../../common/itemset_tree.hpp"
 #include "../large.hpp"
 
 #include <string>

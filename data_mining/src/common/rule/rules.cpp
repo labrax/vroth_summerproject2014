@@ -23,6 +23,10 @@ Rules::Rules(uint64_t amount_transactions, double confidence, Ontology * ontolog
 	this->itemset_1 = itemset_1;
 }
 
+Rules::Rules(string file) { //TODO: implement Rules::Rules(string file)
+	
+}
+
 Rules::~Rules() {
 	for(auto & i : larges) {
 		delete(i);

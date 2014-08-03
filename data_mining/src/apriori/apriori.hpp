@@ -11,11 +11,11 @@
 
 #include <cstdint>
 
-#include "database_normalized.hpp"
+#include "../common/database_normalized.hpp"
 #include "large.hpp"
 #include "parameters.hpp"
 
-#include "ontologies/ontology.hpp"
+#include "../common/ontologies/ontology.hpp"
 
 class Apriori {
 	private:

@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include "../itemset.hpp"
-#include "../itemset_tree.hpp"
+#include "../common/itemset.hpp"
+#include "../common/itemset_tree.hpp"
 
 #include <vector>
 #include <mutex>

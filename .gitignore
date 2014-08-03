@@ -1,5 +1,7 @@
 *.o
 *.out
-apriori/apriori
+data_mining/apriori
+data_mining/max_miner
+data_mining/rule_appender
 
 output_files/
