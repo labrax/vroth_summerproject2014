@@ -127,9 +127,19 @@ void Apriori::run() {
 	if(Parameters::debug)
 		large_1->print();
 	
-	Rules rules(database->getAmountTransactions(), parameters.getConfidence(), ontologies, itemset_1);
+	unsigned int iteration = 1;
+	
+	Rules rules(database->getAmountTransactions(), parameters.getConfidence(), ontologies, itemset_1, "SCTacELDH12X", true);
 	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
 	do {
+		if(parameters.useItemsetFiltering())
+			large_obtained->filterSet(ontologies);
+		rules.addLarge(large_obtained);
+		rules.computeRules(iteration);
+		if(parameters.useRulesFiltering())
+			rules.filterRules(iteration);
+		//rules.print(iteration);
+		
 		CandidateItemSet cis(*ontologies);
 		LargeItemSet * large_temp;
 		
@@ -137,8 +147,6 @@ void Apriori::run() {
 			large_temp = cis.apriori_genThreaded(large_obtained);
 		else
 			large_temp = cis.apriori_gen(large_obtained);
-		
-		rules.addLarge(large_obtained);
 		
 		if(Parameters::verbose)
 			cout << "large_temp->size() = " << large_temp->getItemSets().size() << endl;
@@ -158,11 +166,24 @@ void Apriori::run() {
 			large_obtained->printinfo();
 		if(Parameters::debug)
 			large_obtained->print();
-	} while(large_obtained->getItemSets().size() > 0);
+			
+		iteration++;
+	} while(large_obtained->getItemSets().size() > 0 && parameters.getMaximumIteration() != 0 && iteration <= parameters.getMaximumIteration());
 	
+	if(parameters.useItemsetFiltering())
+		large_obtained->filterSet(ontologies);
 	rules.addLarge(large_obtained);
 	
-	rules.computeRules();
+	//rules.computeAllRules();
+	//rules.print();
+	
+	rules.computeRules(iteration);
+	//rules.print(iteration);
+	
+	if(parameters.useRulesFiltering())
+		rules.filterRules(iteration);
+	
+	rules.migrateIterationRulesToRules();
 	rules.print();
 	
 	if(parameters.genNewTransactionFile()) {

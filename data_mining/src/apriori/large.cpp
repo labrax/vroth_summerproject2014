@@ -40,6 +40,11 @@ void LargeItemSet::insertSet(ItemSet * set) {
 	large_lock.unlock();
 }
 
+void LargeItemSet::filterSet(Ontology * ontologies) { //TODO: implement LargeItemSet::removeSet(Ontology * ontologies)
+	cout << "not implemented LargeItemSet::filterSet(Ontology * ontologies)" << endl;
+	//problems: remove itemset from the Tree of data; otherwise it will be fine
+}
+
 vector<ItemSet *> & LargeItemSet::getItemSets() {
 	return itemset;
 }

@@ -28,6 +28,9 @@ class Parameters {
 		string output_file;
 		double min_support, max_support, confidence;
 		
+		bool itemset_filtering;
+		bool rules_filtering;
+		unsigned int maximum_iteration;
 	public:
 		Parameters(int argc, char * argv[]);
 		~Parameters();
@@ -53,6 +56,10 @@ class Parameters {
 		const double & getMaxSupport();
 		
 		const double & getConfidence();
+		
+		const bool & useItemsetFiltering();
+		const bool & useRulesFiltering();
+		const unsigned int & getMaximumIteration();
 };
 
 void print_instructions();

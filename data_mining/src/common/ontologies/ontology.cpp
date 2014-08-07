@@ -95,11 +95,11 @@ void Ontology::processOntologies() {
 			}
 		}
 		
-		if(id != "") { //save if there is information not obtained from the loop
+		if(id != "") { //save if there is information not saved on the loop
 			createNode(id, name, is_obsolete, &is_a, &consider, replaced_by);
 		}
 		
-		//!set depth and height //<---------------- TODO: fix depth and height
+		//!set depth and height
 		for(auto & i : ontologies) {
 			if(i.second->getAmountParents() == 0) { //the node is root
 				i.second->setDepth(0);
@@ -162,6 +162,22 @@ bool Ontology::checkAncestorOneAnother(string ontologyA, string ontologyB) {
 			return true;
 		return false;
 	}
+}
+
+bool Ontology::checkSon(string child, string parent) {
+	if(processed == false)
+		cerr << "using ontologies without being loaded! " << __FILE__ << ":" << __LINE__ << endl;
+	map<string, NodeOntology *>::iterator itA = ontologies.find(child);
+	map<string, NodeOntology *>::iterator itB = ontologies.find(parent);
+	
+	if(itA == ontologies.end() || itB == ontologies.end()) { //both doesn't exist on the relations
+		return false;
+	}
+	else {
+		if(itA->second->isSon(parent))
+			return true;
+		return false;
+	}	
 }
 
 void Ontology::appendOntologies(vector<pair<string, string>> * normalized_transactions) {

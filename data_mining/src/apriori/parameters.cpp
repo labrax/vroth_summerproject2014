@@ -41,6 +41,10 @@ Parameters::Parameters(int argc, char * argv[]) {
 		{"verbose",			no_argument, 0, 'v'},
 		{"debug",			no_argument, 0, 'd'},
 		
+		{"rules-filtering",	no_argument, 0, 'R'},
+		{"itemsets-filtering",	no_argument, 0, 'I'},
+		{"maximum-filtering",	required_argument, 0, 'M'},
+		
 		{"transactions-file", required_argument, 0, 'f'},
 		{"ontologies-file", required_argument, 0, 'o'},
 		
@@ -68,7 +72,11 @@ Parameters::Parameters(int argc, char * argv[]) {
     max_support = 1;
     confidence = 0.8;
     
-    int c = getopt_long(argc, argv, "arhpvdf:o:x:c:l:u:t::", long_options, &option_index);
+    rules_filtering = false;
+    itemset_filtering = false;
+    maximum_iteration = 0;
+    
+    int c = getopt_long(argc, argv, "arhpvdRIM:f:o:x:c:l:u:t::", long_options, &option_index);
     
     while(c != -1) {
 		switch(c) {
@@ -96,6 +104,15 @@ Parameters::Parameters(int argc, char * argv[]) {
 				break;
 			case 'd':
 				debug = true;
+				break;
+			case 'R':
+				rules_filtering = true;
+				break;
+			case 'I':
+				itemset_filtering = true;
+				break;
+			case 'M':
+				maximum_iteration = atoi(optarg);
 				break;
 			case 'f':
 				file.assign(optarg);
@@ -131,7 +148,7 @@ Parameters::Parameters(int argc, char * argv[]) {
 				print_instructions();
 				break;
 		}
-		c = getopt_long(argc, argv, "arhpvdf:o:x:c:l:u:t::", long_options, &option_index);
+		c = getopt_long(argc, argv, "arhpvdRIM:f:o:x:c:l:u:t::", long_options, &option_index);
 	}
 	
 	if(optind < argc) {
@@ -207,6 +224,10 @@ Parameters::Parameters(int argc, char * argv[]) {
 	cerr << "dont-append-ontologies: " << dont_append_ontologies << endl;
 	cerr << "filter-results: " << filter_results << endl;
 	cerr << "new-transactions-file: " << gen_new_transaction_file << endl;
+	
+	cerr << "rules-filtering: " << rules_filtering << endl;
+	cerr << "itemset-filtering: " << itemset_filtering << endl;
+	cerr << "maximum-iterations: " << maximum_iteration << endl;
 }
 
 Parameters::~Parameters() {
@@ -253,10 +274,23 @@ const double & Parameters::getConfidence() {
 	return confidence;
 }
 
+const bool & Parameters::useItemsetFiltering() {
+	return itemset_filtering;
+}
+
+const bool & Parameters::useRulesFiltering() {
+	return rules_filtering;
+}
+
+const unsigned int & Parameters::getMaximumIteration() {
+	return maximum_iteration;
+}
+
+
 void print_instructions() {
 	cerr << "use format:" << endl
 		 << "-a	dont-append-ontologies: only use ontologies for semantic similarity" << endl
-		 << "-r	filter-results: will remove rules in the format A+B=>C where A=>C exists and has higher support" << endl
+		 << "-r	filter-results: DISABLED" << endl //TODO: see what to do with -r (filter-results)
 		 << endl
 		 << "-h	help: will print this instruction of use" << endl
 		 << "-p	preprocessed: will not use 'sort -u' in the file before reading" << endl
@@ -271,6 +305,10 @@ void print_instructions() {
 		 << "-c	confidence <number 0 to 1>: confidence value - default 0.8" << endl
 		 << "-l	minsupport <number 0 to 1>: minimum support value - default 0.5" << endl
 		 << "-u	maxsupport <number 0 to 1>: maximum support value - default 1" << endl
+		 << endl
+		 << "-R to enable rules-filtering" << endl
+		 << "-I to enable itemset-filtering" << endl
+		 << "-M <number> to limit the number of iterations" << endl
 		 << endl
 		 << "-t	thread <optional: number of threads>: to use parallelization" << endl
 		 << endl

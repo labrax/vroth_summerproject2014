@@ -2,7 +2,7 @@
 SRC_DIR := src/
 OBJ_DIR := obj/
 
-COMMON_OBJ := obj/common/database_normalized.o obj/common/itemset.o obj/common/itemset_tree.o obj/common/genNewTransaction.o obj/common/ontologies/ontology.o obj/common/ontologies/node_ontology.o obj/common/rule/rules.o obj/common/rule/rule_node.o
+COMMON_OBJ := obj/common/database_normalized.o obj/common/itemset.o obj/common/itemset_tree.o obj/common/genNewTransaction.o obj/common/ontologies/ontology.o obj/common/ontologies/node_ontology.o obj/common/rule/rules.o obj/common/rule/rule_node.o obj/common/rule/rule_group.o
 
 APRIORI_OBJ := obj/apriori/apriori.o obj/apriori/large.o obj/apriori/parameters.o obj/apriori/candidate_apriori/candidate.o obj/apriori/candidate_apriori/candidate_tree.o
 MMB_OBJ := obj/max_miner/mmb.o obj/max_miner/large.o obj/max_miner/parameters.o obj/max_miner/candidate_maxminer/candidate.o obj/max_miner/candidate_maxminer/candidate_struct.o
@@ -19,12 +19,17 @@ OBJ_APRIORI_DIR := obj/apriori/
 OBJ_MAX_MINER_DIR := obj/max_miner/
 OBJ_RULEAPPENDER_DIR := obj/rule_appender/
 
+TODO = $(shell grep -r TODO src/rule_appender/ src/apriori/ src/common/)
+
 .PHONY: directories
 
-LD_FLAGS := -Wall -std=c++11 -pthread -g
-CC_FLAGS := -Wall -std=c++11 -pthread -g
+LD_FLAGS := -Wall -std=c++11 -pthread -O3
+CC_FLAGS := -Wall -std=c++11 -pthread -O3
 
 all: directories apriori rule_appender
+	$(info ==TODO==)
+	$(info $(TODO))
+	$(info ========)
 
 apriori: directories $(APRIORI_OBJ) $(COMMON_OBJ)
 	g++ $(LD_FLAGS) -o $@ $(APRIORI_OBJ) $(COMMON_OBJ)
@@ -49,6 +54,9 @@ $(OBJ_COMMON_DIR)rule/rules.o: $(SRC_DIR)common/rule/rules.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 	
 $(OBJ_COMMON_DIR)rule/rule_node.o: $(SRC_DIR)common/rule/rule_node.cpp
+	g++ $(CC_FLAGS) -c -o $@ $<
+
+$(OBJ_COMMON_DIR)rule/rule_group.o: $(SRC_DIR)common/rule/rule_group.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 $(OBJ_COMMON_DIR)database_normalized.o: $(SRC_DIR)common/database_normalized.cpp

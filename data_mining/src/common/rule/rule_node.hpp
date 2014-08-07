@@ -32,6 +32,7 @@ class RuleNode {
 	public:
 		RuleNode();
 		RuleNode(ItemSet * antecedent, ItemSet * consequent);
+		RuleNode(const RuleNode & other);
 		~RuleNode();
 		
 		void setNTransactions(uint64_t n_transactions);

@@ -47,6 +47,17 @@ bool ItemSet::insert(string elem) {
 		return false;
 }
 
+bool ItemSet::remove(string elem) {
+	map<string, bool>::iterator find = itemset.find(elem);
+	
+	if(find == itemset.end())
+		return false;
+	else {
+		itemset.erase(find);
+		return true;
+	}
+}
+
 map <string, bool> & ItemSet::getItemSet() {
 	return itemset;
 }
@@ -169,6 +180,50 @@ vector<ItemSet *> ItemSet::subItemSets(unsigned int maximum_elements) {
 	
 	delete(subsets[subsets.size()]); //the whole original ItemSet is not needed
 	subsets.erase(--subsets.end());
+
+	//cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
+	return subsets;
+}
+
+vector<ItemSet *> ItemSet::subItemSets(unsigned int minimum_elements, unsigned int maximum_elements) {
+	vector<ItemSet *> subsets;
+	
+	string last = itemset.rbegin()->first;
+	map<string, bool>::iterator it = itemset.begin();
+	do {
+		if(subsets.size() == 0) {
+			ItemSet * a0 = new ItemSet();
+			ItemSet * a1 = new ItemSet();
+			a1->insert(it->first);
+
+			subsets.insert(subsets.end(), a0);
+			subsets.insert(subsets.end(), a1);
+		}
+		else {
+			unsigned int old_size = subsets.size();
+			for(unsigned int i=0; i<old_size; i++) {
+				if(subsets[i]->getAmountElements() < maximum_elements) {
+					ItemSet * a0 = new ItemSet(subsets[i]);
+					a0->insert(it->first);
+					subsets.insert(subsets.end(), a0);
+				}
+			}
+		}
+	} while(itemset.key_comp()((*it++).first, last));
+	
+	
+	delete(subsets[0]); //the empty set was needed in the beginning, now deleting
+	subsets.erase(subsets.begin());
+	
+	delete(subsets[subsets.size()]); //the whole original ItemSet is not needed
+	subsets.erase(--subsets.end());
+
+	for(unsigned int i=0; i < subsets.size(); i++) {
+		if(subsets[i]->getAmountElements() < minimum_elements) { //if has not the required amount, delete
+			delete(subsets[i]);
+			i--; //fix ordering
+		}
+	}
 
 	//cerr << "itemset.size() " << itemset.size() << "\tsubsets.size() " << subsets.size() << endl;
 	return subsets;

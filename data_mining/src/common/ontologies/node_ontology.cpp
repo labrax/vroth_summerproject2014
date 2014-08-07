@@ -50,25 +50,25 @@ const unsigned int NodeOntology::getAmountChildren() {
 	return children.size();
 }
 
-const unsigned int & NodeOntology::getDepth() {
+unsigned int NodeOntology::getDepth() {
 	return max_depth;
 }
 
-void NodeOntology::setDepth(const unsigned int & depth) {
-	if(this->max_depth < max_depth)
-		this->max_depth = max_depth;
+void NodeOntology::setDepth(unsigned int depth) {
+	if(this->max_depth < depth)
+		this->max_depth = depth;
 	for(auto & i : children) {
 		i->setDepth(this->max_depth+1);
 	}
 }
 
-const unsigned int & NodeOntology::getHeight() {
+unsigned int NodeOntology::getHeight() {
 	return max_height;
 }
 
-void NodeOntology::setHeight(const unsigned int & height) {
-	if(this->max_height < max_height)
-		this->max_height = max_height;
+void NodeOntology::setHeight(unsigned int height) {
+	if(this->max_height < height)
+		this->max_height = height;
 	for(auto & i : parents) {
 		i->setHeight(this->max_height+1);
 	}

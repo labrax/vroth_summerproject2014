@@ -7,6 +7,10 @@
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
 
+
+//note: this is a dummy header
+
+
 #pragma once
 
 //#include <iostream>
@@ -35,6 +39,10 @@ class Parameters {
 		static bool verbose;
 		static bool debug;
 		static unsigned int thread_number;
+		
+		static bool itemset_filtering;
+		static bool rules_filtering;
+		static unsigned int maximum_iteration;
 		
 		static bool dont_append_ontologies;
 		static bool filter_results;

@@ -7,13 +7,19 @@
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
 
+
+//note: this is a dummy header
+
+
 /** a general class for storing a set of k-itemsets
  */
 
-#pragma once
+#ifndef _LARGE_H
+#define _LARGE_H
 
 #include "../common/itemset.hpp"
 #include "../common/itemset_tree.hpp"
+#include "../common/ontologies/ontology.hpp"
 
 #include <vector>
 #include <mutex>
@@ -37,6 +43,7 @@ class LargeItemSet {
 		LargeItemSet(uint64_t);
 		~LargeItemSet();
 		void insertSet(ItemSet * set);
+		void filterSet(Ontology * ontologies); //TODO: implement LargeItemSet::filterSet(Ontology * ontologies)
 		
 		vector<ItemSet *> & getItemSets();
 		uint64_t getAmountTransactions();
@@ -49,3 +56,5 @@ class LargeItemSet {
 		
 		void sort();
 };
+
+#endif

@@ -10,17 +10,32 @@
 #include "rules.hpp"
 #include "../parameters.hpp"
 
+#include <cstring>
+
 #include <iostream>
 #include <algorithm>
+
+#include <iomanip>
+
+using std::pair;
 
 using std::cout;
 using std::endl;
 
-Rules::Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies, map<string, uint64_t> & itemset_1) {
+using std::setw;
+
+//note: compiling defining SEMANTIC_SIMILARITY_ALL to compute the semantic similarity for all elements grouped individually (intercession set)
+
+//example on how to:
+//#define SEMANTIC_SIMILARITY_ALL
+
+Rules::Rules(uint64_t amount_transactions, double confidence, Ontology * ontologies, map<string, uint64_t> & itemset_1, char output_format[16], bool try_ontology_name) { //NOTE: "SCTacELDH12X" will print every information with '\n'
 	this->amount_transactions = amount_transactions;
 	this->confidence = confidence;
 	this->ontologies = ontologies;
 	this->itemset_1 = itemset_1;
+	strcpy(this->output_format, output_format);
+	this->try_ontology_name = try_ontology_name;
 }
 
 Rules::Rules(string file) { //TODO: implement Rules::Rules(string file)
@@ -31,8 +46,13 @@ Rules::~Rules() {
 	for(auto & i : larges) {
 		delete(i);
 	}
-	for(auto & r: rules) {
+	/*for(auto & r: rules) {
 		delete(r);
+	}*/
+	for(auto & ri: rulesIteration) {
+		for(auto & r: *(ri.second))
+			delete(r);
+		delete(ri.second);
 	}
 }
 
@@ -40,7 +60,7 @@ void Rules::addLarge(LargeItemSet * a) {
 	larges.insert(larges.end(), a);
 }
 
-void Rules::computeRules() {
+void Rules::computeAllRules() {
 	//!create the rules from the LargeItemSets
 	for(auto & l : larges) {
 		if(l->getIteration() == 1) {
@@ -74,34 +94,289 @@ void Rules::computeRules() {
 		r->calculateSupport(amount_transactions); //calculate the other data
 		r->calculateLift(amount_transactions);
 		r->calculateDepthHeight(ontologies);
+		
+		if(ontologies->isProcessed() == true) {
+			#ifdef SEMANTIC_SIMILARITY_ALL
+			calculateSemanticSimilarityAll(r);
+			#else
+			calculateSemanticSimilaritySide(r);
+			#endif
+		}
 	}
 	//!get the support for every part of all rules
-	
-	calculateSemanticSimilarity();
-	
-	if(Parameters::filter_results)
-		filterRules();
 	
 	//sort the rules
 	std::sort(rules.begin(), rules.end(), rulesSort);
 }
 
-void Rules::print() { //TODO: add std::setprecision(X) to output of rules
-	if(rules.size() != 0)
-		cout << "support" << "\t" << "confidence" << "\t" << "semantic similarity" << "\t" << "lift" << "\t" << "sumDepth" << "\t" << "sumHeight" << "\t" << "Elements ==>" << "\t" << "Elements" << endl;
-	else
-		cout << "NO RULES GENERATED!" << endl;
-
-	for(auto &i : rules) {
-		if(i->getConfidence() < confidence)
-			continue;
+void Rules::print() {
+	if(rules.size() != 0) {
+		printHeader();
+		
+		for(auto &i : rules) {
+			if(i->getConfidence() < confidence)
+				continue;
 			
-		cout << i->getSupport() << "\t" << i->getConfidence() << "\t" << i->getSemanticSimilarity() << "\t" << i->getLift() << "\t" << i->getSumDepth() << "\t" << i->getSumHeight() << "\t";
-		i->getItemSetAntecedent()->printWithOntology(ontologies);
-		cout << "===>\t";
-		i->getItemSetConsequent()->printWithOntology(ontologies);
-		cout << endl;
+			printNode(i);
+		}
 	}
+	else if(Parameters::verbose) {
+		cout << "NO RULES GENERATED!" << endl;
+	}
+}
+
+void Rules::computeRules(unsigned int iteration) {
+	if(iteration <= 1) {
+		if(Parameters::verbose)
+			cout << "cant calculate for iteration " << iteration << endl;
+		return;
+	}
+	else if(larges.size() < iteration-1) {
+		if(Parameters::verbose)
+			cout << "can not calculate because there is no large information" << endl;
+		return;
+	}
+	else if(rulesIteration.size() >= iteration-1) {
+		if(Parameters::verbose)
+			cout << "rules have already been calculated for the specific generation" << endl;
+		return;
+	}
+	
+	vector<RuleNode*> * new_rules = new vector<RuleNode*>();
+	
+	rulesIteration.insert(pair<unsigned int, vector<RuleNode*>*>(iteration, new_rules));
+	
+	auto & l = larges[iteration-1];
+	for(auto & i : l->getItemSets()) {
+		for(auto & s : i->subItemSets()) {
+			ItemSet * b = new ItemSet(i, s);
+			
+			RuleNode * new_node = new RuleNode(s,b);
+			new_node->setNTransactions(i->getSupportCount());
+			
+			new_rules->insert(new_rules->end(), new_node);
+		}
+	}
+	//!create the rules from the LargeItemSets
+	
+	//!get the support for every part of all rules
+	for(auto & r : *new_rules) {
+		r->setNTransactionsAntecedent(getFrequency(r->getItemSetAntecedent())); //support for each side
+		r->setNTransactionsConsequent(getFrequency(r->getItemSetConsequent()));
+		
+		r->calculateConfidence(); //remaining variables
+		if(r->getConfidence() < confidence)
+			continue;
+		r->calculateSupport(amount_transactions); //calculate the other data
+		r->calculateLift(amount_transactions);
+		r->calculateDepthHeight(ontologies);
+		
+		if(ontologies->isProcessed() == true) {
+			#ifdef SEMANTIC_SIMILARITY_ALL
+			calculateSemanticSimilarityAll(r);
+			#else
+			calculateSemanticSimilaritySide(r);
+			#endif
+		}
+	}
+	//!get the support for every part of all rules
+	
+	//sort the rules
+	std::sort((*new_rules).begin(), (*new_rules).end(), rulesSort);
+	
+	if(Parameters::verbose)
+		cout << "for iteration " << iteration << " size is " << (*new_rules).size() << endl;
+}
+
+void Rules::filterRules(unsigned int iteration) { //TODO: implement Rules::filterRules()
+	if(iteration == 1)
+		return;
+	map<unsigned int, vector<RuleNode*>*>::iterator it = rulesIteration.find(iteration);
+	if(it == rulesIteration.end()) {
+		cout << "error trying to find rules in iteration " << iteration << endl;
+		return;
+	}
+	else {
+		rule_group.clear(); //to clear for this step
+		
+		vector<RuleNode *> * rule_vector = it->second;
+		
+		unsigned int removed = rule_vector->size();
+		
+		RuleGroup * mergeTo;
+		for(auto & r : *rule_vector) {
+			if(r->getConfidence() < confidence)
+				continue;
+			bool added = false;
+			for(auto & e : rule_group) {
+				if(added == false && e->wasUsed() == false && e->addRule(r) == true) {
+					added=true;
+					mergeTo = e;
+					//break;
+				}
+				//test if there is now another group that can be joined
+				else if(added == true && e->ruleBelong(r)) {
+					mergeTo->mergeGroup(e);
+				}
+			}
+			if(added == false) {
+				rule_group.insert(rule_group.end(), new RuleGroup(r, ontologies));
+			}
+		}
+		
+		//!AT THIS POINT ALL THE RULES IN ruleIteration IN INDEX [iteration-1] HAVE INVALID REFERENCE, AND MUST BE IGNORED
+		rule_vector->clear();
+		//!AT THIS POINT ALL THE RULES IN ruleIteration IN INDEX [iteration-1] HAVE INVALID REFERENCE, AND MUST BE IGNORED
+		
+		//!now copy the rules that have not been pruned back
+		for(auto & i: rule_group) {
+			for(auto & b : *i->getHeads()) {
+				rule_vector->insert(rule_vector->end(), b);
+			}
+		}
+		//!now copy the rules that have not been pruned back
+		removed -= rule_vector->size();
+		
+		if(Parameters::verbose)
+			cout << removed << " removed" << endl;
+	}
+	
+	if(Parameters::debug) {
+		for(auto & g: rule_group) {
+			g->print();
+		}
+	}
+}
+
+void Rules::print(unsigned int iteration) {
+	map<unsigned int, vector<RuleNode*>*>::iterator it = rulesIteration.find(iteration);
+	if(it != rulesIteration.end()) {
+		if((it->second)->size() != 0) {
+			printHeader();
+			
+			for(auto &i : *(it->second)) {
+				if(i->getConfidence() < confidence)
+					continue;
+				
+				printNode(i);
+			}
+		}
+		else if(Parameters::verbose) {
+			cout << "NO RULES GENERATED FOR ITERATION " <<  iteration << " !" << endl;
+		}
+	}
+}
+
+void Rules::printHeader() {
+	for(unsigned int i = 0; output_format[i]!='\0'; i++) {
+		switch (output_format[i]) {
+			case 'S':
+				cout << "support";
+				break;
+			case 'C':
+				cout << "confidence";
+				break;
+			case 'T':
+				cout << "transactions";
+				break;
+			case 'a':
+				cout << "transactions_antecedent";
+				break;
+			case 'c':
+				cout << "transactions_consequent";
+				break;
+			case 'E':
+				cout << "semantic_similarity";
+				break;
+			case 'L':
+				cout << "lift";
+				break;
+			case 'D':
+				cout << "sumDepth";
+				break;
+			case 'H':
+				cout << "sumHeight";
+				break;
+			case '1':
+				cout << "Antecedent";
+				cout << "===>";
+				break;
+			case '2':
+				cout << "Consequent";
+				break;
+			case 'X':
+				cout << endl;
+				break;
+			default:
+				break;
+		}
+		if(output_format[i] != 'X')
+			cout << '\t';
+	}
+}
+
+void Rules::printNode(RuleNode * i) {
+	for(unsigned int k = 0; output_format[k]!='\0'; k++) {
+		switch (output_format[k]) {
+			case 'S':
+				cout << std::setprecision(5) << setw(7) << i->getSupport();
+				break;
+			case 'C':
+				cout << setw(10) << i->getConfidence();
+				break;
+			case 'T':
+				cout << setw(12) << i->getNTransactions();
+				break;
+			case 'a':
+				cout << setw(23) << i->getNTransactionsAntecedent();
+				break;
+			case 'c':
+				cout << setw(23) << i->getNTransactionsConsequent();
+				break;
+			case 'E':
+				cout << setw(19) << i->getSemanticSimilarity();
+				break;
+			case 'L':
+				cout << setw(4) << i->getLift();
+				break;
+			case 'D':
+				cout << setw(8) << i->getSumDepth();
+				break;
+			case 'H':
+				cout << setw(9) << i->getSumHeight();
+				break;
+			case '1':
+				if(try_ontology_name)
+					i->getItemSetAntecedent()->printWithOntology(ontologies);
+				else
+					i->getItemSetAntecedent()->print();
+				cout << "===>";
+				break;
+			case '2':
+				if(try_ontology_name)
+					i->getItemSetConsequent()->printWithOntology(ontologies);
+				else
+					i->getItemSetConsequent()->print();
+				break;
+			case 'X':
+				cout << endl;
+				break;
+			default:
+				break;
+		}
+		if(output_format[k] != 'X')
+			cout << '\t';
+	}
+}
+
+void Rules::migrateIterationRulesToRules() {	
+	for(auto & rl : rulesIteration) {
+		for(auto & rs : *rl.second) {
+			rules.insert(rules.end(), rs);
+		}
+	}
+	
+	std::sort(rules.begin(), rules.end(), rulesSort);
 }
 
 uint64_t Rules::getFrequency(ItemSet * itemset) {
@@ -121,94 +396,126 @@ uint64_t Rules::getFrequency(ItemSet * itemset) {
 	return 0; //this condition should never occur
 }
 
-void Rules::calculateSemanticSimilarity() {
+void Rules::calculateSemanticSimilaritySide(RuleNode * r) {
 	if(ontologies->isProcessed() == false) {
 		if(Parameters::verbose)
 			cout << "no semantic similarity was calculated" << endl;
 		return;
 	}
-	for(auto & r : rules) {
-		if(r->getConfidence() < confidence)
-			continue;
-			
-		double similarity_intercession = 0;
-		double similarity_union = 0;
-
-		map <string, bool> * first_ontologies = NULL; //will store all the parents from the 1st itemset
-		map <string, bool> * second_ontologies = NULL; //will store all the parents from the 2nd itemset
 		
-		for(auto & f : r->getItemSetAntecedent()->getItemSet()) { //get all the parent nodes from the 1st itemset (antecedent)
-			NodeOntology * search_1 = ontologies->getNode(f.first);
-			map <string, bool> * result_first = search_1->returnOntologies();
-			if(result_first != NULL) {
-				if(first_ontologies == NULL)
-					first_ontologies = result_first;
-				else {
-					for(auto & e : *result_first) {
-						if(first_ontologies->find(e.first) == first_ontologies->end()) {
-							first_ontologies->insert(pair<string, bool> (e.first, true));
-						}
+	double similarity_intercession = 0;
+	double similarity_union = 0;
+
+	map <string, bool> * first_ontologies = NULL; //will store all the parents from the 1st itemset
+	map <string, bool> * second_ontologies = NULL; //will store all the parents from the 2nd itemset
+	
+	for(auto & f : r->getItemSetAntecedent()->getItemSet()) { //get all the parent nodes from the 1st itemset (antecedent)
+		NodeOntology * search_1 = ontologies->getNode(f.first);
+		map <string, bool> * result_first = search_1->returnOntologies();
+		if(result_first != NULL) {
+			if(first_ontologies == NULL)
+				first_ontologies = result_first;
+			else {
+				for(auto & e : *result_first) {
+					if(first_ontologies->find(e.first) == first_ontologies->end()) {
+						first_ontologies->insert(pair<string, bool> (e.first, true));
 					}
-					delete(result_first);
 				}
+				delete(result_first);
 			}
 		}
-		for(auto & s : r->getItemSetConsequent()->getItemSet()) { //get all the parent nodes from the 2nd itemset (consequent)
-			NodeOntology * search_2 = ontologies->getNode(s.first);
-			map <string, bool> * result_second = search_2->returnOntologies();
-			if(result_second != NULL) {
-				if(second_ontologies == NULL)
-					second_ontologies = result_second;
-				else {
-					for(auto & e : *result_second) {
-						if(second_ontologies->find(e.first) == second_ontologies->end()) {
-							second_ontologies->insert(pair<string, bool> (e.first, true));
-						}
-					}
-					delete(result_second);
-				}
-			}
-		}
-
-		if(Parameters::debug) {
-			cout << "for the rule:" << endl;
-			r->getItemSetAntecedent()->printWithOntology(ontologies);
-			cout << "===>\t";
-			r->getItemSetConsequent()->printWithOntology(ontologies);
-			cout << endl;			
-		}
-
-		if(Parameters::debug)		
-			cout << "intercession" << endl;
-		for(auto & i : *first_ontologies) { //get the intercession value
-			if(second_ontologies->find(i.first) != second_ontologies->end()) {
-				similarity_intercession += informationMeasure(i.first);
-			}
-		}
-		
-		//now i'll join the two sets to get the union
-		for(auto & j : *second_ontologies) {
-			first_ontologies->insert(pair<string, bool> (j.first, true));
-		}
-		//the sets are joined
-		
-		if(Parameters::debug)
-			cout << "union" << endl;
-		for(auto & i : *first_ontologies) { //get the union value
-			similarity_union += informationMeasure(i.first);
-		}
-		
-		if(Parameters::debug)
-			cout << "similarity: " << similarity_intercession << "\t" << similarity_union << endl;
-			
-		r->setSemanticSimilarity(similarity_intercession/similarity_union);
-		
-		if(first_ontologies != NULL)
-			delete(first_ontologies);
-		if(second_ontologies != NULL)
-			delete(second_ontologies);
 	}
-	return;
+	for(auto & s : r->getItemSetConsequent()->getItemSet()) { //get all the parent nodes from the 2nd itemset (consequent)
+		NodeOntology * search_2 = ontologies->getNode(s.first);
+		map <string, bool> * result_second = search_2->returnOntologies();
+		if(result_second != NULL) {
+			if(second_ontologies == NULL)
+				second_ontologies = result_second;
+			else {
+				for(auto & e : *result_second) {
+					if(second_ontologies->find(e.first) == second_ontologies->end()) {
+						second_ontologies->insert(pair<string, bool> (e.first, true));
+					}
+				}
+				delete(result_second);
+			}
+		}
+	}
+
+	for(auto & i : *first_ontologies) { //get the intercession value
+		if(second_ontologies->find(i.first) != second_ontologies->end()) {
+			similarity_intercession += informationMeasure(i.first);
+		}
+	}
+	
+	//now i'll join the two sets to get the union
+	for(auto & j : *second_ontologies) {
+		first_ontologies->insert(pair<string, bool> (j.first, true));
+	}
+	//the sets are joined
+	
+	for(auto & i : *first_ontologies) { //get the union value
+		similarity_union += informationMeasure(i.first);
+	}
+	
+	if(first_ontologies != NULL)
+		delete(first_ontologies);
+	if(second_ontologies != NULL)
+		delete(second_ontologies);
+		
+	r->setSemanticSimilarity(similarity_intercession/similarity_union);
+}
+
+void Rules::calculateSemanticSimilarityAll(RuleNode * r) {
+	if(ontologies->isProcessed() == false) {
+		if(Parameters::verbose)
+			cout << "no semantic similarity was calculated" << endl;
+		return;
+	}
+	
+	double similarity_intercession = 0;
+	double similarity_union = 0;
+
+	vector<map<string,bool> *> ontologies_elem;
+	
+	for(auto & f : r->getItemSetAntecedent()->getItemSet()) { //get all the parent nodes from the 1st itemset (antecedent)
+		NodeOntology * search_1 = ontologies->getNode(f.first);
+		map <string, bool> * result_first = search_1->returnOntologies();
+		ontologies_elem.insert(ontologies_elem.end(), result_first);
+	}
+	for(auto & s : r->getItemSetConsequent()->getItemSet()) { //get all the parent nodes from the 2nd itemset (consequent)
+		NodeOntology * search_2 = ontologies->getNode(s.first);
+		map <string, bool> * result_second = search_2->returnOntologies();
+		ontologies_elem.insert(ontologies_elem.end(), result_second);
+	}
+
+	//the intercession of all sets
+	for(auto & i: *(ontologies_elem[0])) {
+		bool ok = true;
+		for(unsigned int s=1; s<ontologies_elem.size(); s++) {
+			if(ontologies_elem[s]->find(i.first) == ontologies_elem[s]->end()) {
+				ok=false;
+				break;
+			}
+		}
+		if(ok == true)
+			similarity_intercession += informationMeasure(i.first);
+	}
+	
+	//the union of the sets
+	for(unsigned int s=1; s<ontologies_elem.size(); s++) {
+		for(auto & j: *(ontologies_elem[s]))
+			ontologies_elem[0]->insert(pair<string, bool> (j.first, true));
+	}
+	
+	for(auto & i : *(ontologies_elem[0])) { //get the union value
+		similarity_union += informationMeasure(i.first);
+	}
+	
+	for(auto & e : ontologies_elem)
+		delete(e);
+	
+	r->setSemanticSimilarity( ((double) similarity_intercession)/ ((double) similarity_union) );
 }
 
 double Rules::informationMeasure(string identifier) {
@@ -219,7 +526,7 @@ double Rules::informationMeasure(string identifier) {
 		return 0;
 	}
 	if(Parameters::debug)
-		cout << "M: " << -log2((double)it->second/(double)amount_transactions) << endl;
+		cout << "M: " << identifier << " " << -log2((double)it->second/(double)amount_transactions) << endl;
 	return (-log2((double)it->second/(double)amount_transactions));
 }
 
@@ -242,16 +549,6 @@ map<string, vector<RuleNode *>> & Rules::getRulesMap() { //will go through the r
 		it->second.insert(it->second.end(), new RuleNode(antecedent, consequent));
 	}
 	return rulesMap;
-}
-
-void Rules::filterRules() { //TODO: implement Rules::filterRules()
-	cout << "filterRules() is disabled" << endl;
-	return;
-	
-	unsigned int removed = 0;
-
-	if(Parameters::verbose)
-		cout << removed << " removed" << endl;
 }
 
 bool rulesSort(const RuleNode * a, const RuleNode * b) {

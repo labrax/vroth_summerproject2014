@@ -41,6 +41,7 @@ class Ontology {
 		void createNode(string id, string name, bool is_obsolete, vector<pair<string, string>> * is_a, vector<string> * consider, string replaced_by);
 
 		bool checkAncestorOneAnother(string ontologyA, string ontologyB);
+		bool checkSon(string child, string parent);
 		
 		void appendOntologies(vector<pair<string, string>> * normalized_transactions); //slow!
 

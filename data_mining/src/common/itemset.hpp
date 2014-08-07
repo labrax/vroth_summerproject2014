@@ -39,6 +39,7 @@ class ItemSet {
 		ItemSet(ItemSet * copy);
 		ItemSet(ItemSet * original, ItemSet * without);
 		bool insert(string);
+		bool remove(string);
 		
 		map <string, bool> & getItemSet();
 		unsigned int getAmountElements();
@@ -52,6 +53,7 @@ class ItemSet {
 		
 		vector<ItemSet *> subItemSets();
 		vector<ItemSet *> subItemSets(unsigned int maximum_elements);
+		vector<ItemSet *> subItemSets(unsigned int minimum_elements, unsigned int maximum_elements);
 		
 		void print();
 		void printWithOntology(Ontology * ontologies);

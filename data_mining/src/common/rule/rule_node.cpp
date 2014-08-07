@@ -8,6 +8,12 @@
  */
 
 #include "rule_node.hpp"
+#include "../parameters.hpp"
+
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 RuleNode::RuleNode() {
 	RuleNode(NULL, NULL);
@@ -26,6 +32,11 @@ RuleNode::RuleNode(ItemSet * antecedent, ItemSet * consequent): antecedent(antec
 	
 	sumDepth_antecedent=0; sumHeight_antecedent=0;
 	sumDepth_consequent=0; sumHeight_consequent=0;
+}
+
+RuleNode::RuleNode(const RuleNode & other) : sumDepth_antecedent(other.sumDepth_antecedent), sumDepth_consequent(other.sumDepth_consequent), sumHeight_antecedent(other.sumHeight_antecedent), sumHeight_consequent(other.sumHeight_consequent), n_transactions(other.n_transactions), n_transactions_antecedent(other.n_transactions_antecedent), n_transactions_consequent(other.n_transactions_consequent), semantic_similarity(other.semantic_similarity), support(other.support), confidence(other.confidence), lift(other.lift) {
+	antecedent = new ItemSet(other.antecedent);
+	consequent = new ItemSet(other.consequent);
 }
 
 RuleNode::~RuleNode() {

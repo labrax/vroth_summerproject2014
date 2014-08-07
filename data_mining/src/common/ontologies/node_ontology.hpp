@@ -45,15 +45,15 @@ class NodeOntology {
 		const unsigned int getAmountParents();
 		const unsigned int getAmountChildren();
 		
-		const unsigned int & getDepth();
-		void setDepth(const unsigned int &);
+		unsigned int getDepth();
+		void setDepth(unsigned int);
 		
-		const unsigned int & getHeight();
-		void setHeight(const unsigned int &);
+		unsigned int getHeight();
+		void setHeight(unsigned int);
 		
 		bool isObsolete();
 		
-		bool isSon(string &); //will return true for a check of the same value!
+		bool isSon(string &); //will return true for a check of the same value! -- note: this may return some problems
 		
 		void print();
 		
