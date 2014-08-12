@@ -130,7 +130,7 @@ void Apriori::run() {
 	unsigned int iteration = 1;
 	
 	Rules rules(database->getAmountTransactions(), parameters.getConfidence(), ontologies, itemset_1, "SCTacELDH12X", true);
-	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed on the object end
+	LargeItemSet * large_obtained = large_1; //every large obtained will be passed to Rules::addLarge; where it will be destroyed with the object
 	do {
 		if(parameters.useItemsetFiltering())
 			large_obtained->filterSet(ontologies);
@@ -168,7 +168,7 @@ void Apriori::run() {
 			large_obtained->print();
 			
 		iteration++;
-	} while(large_obtained->getItemSets().size() > 0 && parameters.getMaximumIteration() != 0 && iteration <= parameters.getMaximumIteration());
+	} while(large_obtained->getItemSets().size() > 0 && (parameters.getMaximumIteration() == 0 || iteration <= parameters.getMaximumIteration()));
 	
 	if(parameters.useItemsetFiltering())
 		large_obtained->filterSet(ontologies);

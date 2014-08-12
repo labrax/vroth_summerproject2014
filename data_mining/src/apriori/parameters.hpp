@@ -7,7 +7,8 @@
  * supervisors: Robert Hoehndorf and Georgios Gkoutos
  */
 
-#pragma once
+#ifndef __PARAMETERS_H_
+#define __PARAMETERS_H_
 
 //#include <iostream>
 #include <string>
@@ -63,3 +64,5 @@ class Parameters {
 };
 
 void print_instructions();
+
+#endif

@@ -1,9 +1,9 @@
-//g++ -Wall -g -std=c++11 ontology.cpp ../src/ontologies/ontology.cpp ../src/ontologies/node_ontology.cpp
+//g++ -Wall -g -std=c++11 ontology.cpp ../src/common/ontologies/ontology.cpp ../src/common/ontologies/node_ontology.cpp ../src/apriori/parameters.cpp
 
 /** this test is to make sure of the expansion of every pair of the transaction in the whole transaction (without generating duplicates), and the obtaining of MP:0000001 in each of them
  */
 
-#include "../src/ontologies/ontology.hpp"
+#include "../src/common/ontologies/ontology.hpp"
 
 #include <iostream>
 #include <string>
@@ -20,7 +20,7 @@ using std::string;
 
 void printRelation(Ontology * ontologies, string a, string b) {
 	distance_to d = ontologies->getDistance(a, b);
-	cout << std::boolalpha << "checkAncestorOneAnother" << a << "AND" << b << " is " << ontologies->checkAncestorOneAnother(a, b) << endl;
+	cout << std::boolalpha << "checkAncestorOneAnother " << a << " AND " << b << " is " << ontologies->checkAncestorOneAnother(a, b) << endl;
 	cout << std::boolalpha << "Is found: " << d.isFound;
 	if(d.isFound) {
 		cout << " with distance " << d.distance << endl;
@@ -32,7 +32,7 @@ void printRelation(Ontology * ontologies, string a, string b) {
 int main(int argc, char * argv[]) {
 	Ontology a(argv[1]);
 	a.processOntologies();
-	a.print();
+	//a.print();
 	
 	vector<pair<string, string>> tra;
 	tra.insert(tra.end(), pair<string, string> ("TRANSACTION A", "MP:0020197"));
@@ -68,6 +68,8 @@ int main(int argc, char * argv[]) {
 	
 	printRelation(&a, string("MP:0001265"), string("MP:0005451"));
 	printRelation(&a, string("MP:0002221"), string("MP:0000689"));
+	
+	printRelation(&a, string("MP:0010678"), string("MP:0010680"));
 	
 	return 0;
 }

@@ -35,6 +35,7 @@ class ItemSetGroup {
 		bool wasUsed();
 		
 		void mergeGroup(ItemSetGroup *);
+		void cancelMerge();
 		
 		void print();
 };

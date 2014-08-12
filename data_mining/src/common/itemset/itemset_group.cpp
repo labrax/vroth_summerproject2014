@@ -49,8 +49,10 @@ bool ItemSetGroup::itemsetBelong(ItemSet * itemset) { //this function returns tr
 				break;
 			}
 		}
-		if(match == false)
+		if(match == false) {
+			//cout << a.first << " didnt match" << endl;
 			return false;
+		}
 	}
 	return true;
 }
@@ -139,13 +141,28 @@ bool ItemSetGroup::wasUsed() {
 
 void ItemSetGroup::mergeGroup(ItemSetGroup * itemset_group) {
 	if(itemset_group->wasUsed() == false) {
+		bool ok = true;
 		for(auto & e : *(itemset_group->getHeads())) {
-			if(addItemSet(e) == false) {
-				cout << "Error merging group. Probably error in logic." << endl;
+			if(itemsetBelong(e) == false) {
+				ok = false;
+				break;
 			}
 		}
-		itemset_group->getHeads()->clear();
+		if(ok == true) {
+			for(auto & e: *(itemset_group->getHeads())) {
+				if(addItemSet(e) == false) {
+					cout << ">> Error merging group. Probably error in logic: " __FILE__ << " " << __LINE__ << endl;
+				}
+			}
+			itemset_group->getHeads()->clear();
+		}
+		else
+			itemset_group->cancelMerge();
 	}
+}
+
+void ItemSetGroup::cancelMerge() {
+	hasBeenUsed = false;
 }
 
 void ItemSetGroup::print() {

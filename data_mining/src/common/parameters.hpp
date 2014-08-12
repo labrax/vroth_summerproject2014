@@ -11,7 +11,8 @@
 //note: this is a dummy header
 
 
-#pragma once
+#ifndef __PARAMETERS_H_
+#define __PARAMETERS_H_
 
 //#include <iostream>
 #include <string>
@@ -32,6 +33,9 @@ class Parameters {
 		string output_file;
 		double min_support, max_support, confidence;
 		
+		bool itemset_filtering;
+		bool rules_filtering;
+		unsigned int maximum_iteration;
 	public:
 		Parameters(int argc, char * argv[]);
 		~Parameters();
@@ -39,10 +43,6 @@ class Parameters {
 		static bool verbose;
 		static bool debug;
 		static unsigned int thread_number;
-		
-		static bool itemset_filtering;
-		static bool rules_filtering;
-		static unsigned int maximum_iteration;
 		
 		static bool dont_append_ontologies;
 		static bool filter_results;
@@ -61,6 +61,12 @@ class Parameters {
 		const double & getMaxSupport();
 		
 		const double & getConfidence();
+		
+		const bool & useItemsetFiltering();
+		const bool & useRulesFiltering();
+		const unsigned int & getMaximumIteration();
 };
 
 void print_instructions();
+
+#endif

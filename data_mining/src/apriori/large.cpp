@@ -47,8 +47,7 @@ void LargeItemSet::removeSet(ItemSet * set) {
 	root->removeItemSet(set);
 }
 
-void LargeItemSet::filterSet(Ontology * ontologies) { //TODO: implement LargeItemSet::removeSet(Ontology * ontologies)
-	//cout << "not implemented LargeItemSet::filterSet(Ontology * ontologies)" << endl;
+void LargeItemSet::filterSet(Ontology * ontologies) { 
 	//problems: remove itemset from the Tree of data; otherwise it will be fine
 	
 	ItemSetGroup::ontologies = ontologies;
@@ -66,7 +65,7 @@ void LargeItemSet::filterSet(Ontology * ontologies) { //TODO: implement LargeIte
 				mergeTo = e;
 				//break;
 			}
-			//test if there is now another group that can be joined
+			//test now if there is another group that can be joined
 			else if(added == true && e->itemsetBelong(r)) {
 				mergeTo->mergeGroup(e);
 			}

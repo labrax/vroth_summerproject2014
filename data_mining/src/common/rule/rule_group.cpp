@@ -172,13 +172,28 @@ bool RuleGroup::wasUsed() {
 
 void RuleGroup::mergeGroup(RuleGroup * rule_group) {
 	if(rule_group->wasUsed() == false) {
+		bool ok = true;
 		for(auto & e : *(rule_group->getHeads())) {
-			if(addRule(e) == false) {
-				cout << "Error merging group. Probably error in logic." << endl;
+			if(ruleBelong(e) == false) {
+				ok = false;
+				break;
 			}
 		}
-		rule_group->getHeads()->clear();
+		if(ok == true) {
+			for(auto & e : *(rule_group->getHeads())) {
+				if(addRule(e) == false) {
+					cout << ">> Error merging group. Probably error in logic: " __FILE__ << " " << __LINE__ << endl;
+				}
+			}
+			rule_group->getHeads()->clear();
+		}
+		else
+			rule_group->cancelMerge();
 	}
+}
+
+void RuleGroup::cancelMerge() {
+	hasBeenUsed = false;
 }
 
 void RuleGroup::print() {

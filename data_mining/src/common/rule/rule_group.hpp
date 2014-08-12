@@ -37,6 +37,7 @@ class RuleGroup {
 		bool wasUsed();
 		
 		void mergeGroup(RuleGroup *);
+		void cancelMerge();
 		
 		void print();
 };

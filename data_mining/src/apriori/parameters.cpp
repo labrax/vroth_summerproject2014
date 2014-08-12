@@ -227,7 +227,11 @@ Parameters::Parameters(int argc, char * argv[]) {
 	
 	cerr << "rules-filtering: " << rules_filtering << endl;
 	cerr << "itemset-filtering: " << itemset_filtering << endl;
-	cerr << "maximum-iterations: " << maximum_iteration << endl;
+	cerr << "maximum-iterations: ";
+	if(maximum_iteration == 0)
+		cout << "no limit" << endl;
+	else
+		cout << maximum_iteration << endl;
 }
 
 Parameters::~Parameters() {
