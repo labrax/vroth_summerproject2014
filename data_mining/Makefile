@@ -2,7 +2,7 @@
 SRC_DIR := src/
 OBJ_DIR := obj/
 
-COMMON_OBJ := obj/common/database_normalized.o obj/common/itemset.o obj/common/itemset_tree.o obj/common/genNewTransaction.o obj/common/ontologies/ontology.o obj/common/ontologies/node_ontology.o obj/common/rule/rules.o obj/common/rule/rule_node.o obj/common/rule/rule_group.o
+COMMON_OBJ := obj/common/database_normalized.o obj/common/itemset/itemset.o obj/common/itemset/itemset_tree.o obj/common/itemset/itemset_group.o obj/common/genNewTransaction.o obj/common/ontologies/ontology.o obj/common/ontologies/node_ontology.o obj/common/rule/rules.o obj/common/rule/rule_node.o obj/common/rule/rule_group.o
 
 APRIORI_OBJ := obj/apriori/apriori.o obj/apriori/large.o obj/apriori/parameters.o obj/apriori/candidate_apriori/candidate.o obj/apriori/candidate_apriori/candidate_tree.o
 MMB_OBJ := obj/max_miner/mmb.o obj/max_miner/large.o obj/max_miner/parameters.o obj/max_miner/candidate_maxminer/candidate.o obj/max_miner/candidate_maxminer/candidate_struct.o
@@ -13,6 +13,7 @@ MAXMINER_CANDIDATE_FOLDER := obj/max_miner/candidate_maxminer/
 ONTOLOGY_FOLDER := obj/common/ontologies/
 RULE_FOLDER := obj/common/rule/
 NT_FOLDER := obj/common/new_transactions/
+ITEMSET_FOLDER := obj/common/itemset/
 
 OBJ_COMMON_DIR := obj/common/
 OBJ_APRIORI_DIR := obj/apriori/
@@ -62,10 +63,13 @@ $(OBJ_COMMON_DIR)rule/rule_group.o: $(SRC_DIR)common/rule/rule_group.cpp
 $(OBJ_COMMON_DIR)database_normalized.o: $(SRC_DIR)common/database_normalized.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
-$(OBJ_COMMON_DIR)itemset.o: $(SRC_DIR)common/itemset.cpp
+$(OBJ_COMMON_DIR)itemset/itemset.o: $(SRC_DIR)common/itemset/itemset.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
-$(OBJ_COMMON_DIR)itemset_tree.o: $(SRC_DIR)common/itemset_tree.cpp
+$(OBJ_COMMON_DIR)itemset/itemset_tree.o: $(SRC_DIR)common/itemset/itemset_tree.cpp
+	g++ $(CC_FLAGS) -c -o $@ $<
+
+$(OBJ_COMMON_DIR)itemset/itemset_group.o: $(SRC_DIR)common/itemset/itemset_group.cpp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 #APRIORI ONLY
@@ -112,7 +116,7 @@ $(OBJ_RULEAPPENDER_DIR)rule_appender.o: $(SRC_DIR)rule_appender/rule_appender.cp
 	g++ $(CC_FLAGS) -c -o $@ $<
 
 
-directories: $(APRIORI_CANDIDATE_FOLDER) $(MAXMINER_CANDIDATE_FOLDER) $(ONTOLOGY_FOLDER) $(RULE_FOLDER) $(NT_FOLDER) $(OBJ_COMMON_DIR) $(OBJ_APRIORI_DIR) $(OBJ_MAX_MINER_DIR) $(OBJ_RULEAPPENDER_DIR)
+directories: $(APRIORI_CANDIDATE_FOLDER) $(MAXMINER_CANDIDATE_FOLDER) $(ONTOLOGY_FOLDER) $(RULE_FOLDER) $(NT_FOLDER) $(ITEMSET_FOLDER) $(OBJ_COMMON_DIR) $(OBJ_APRIORI_DIR) $(OBJ_MAX_MINER_DIR) $(OBJ_RULEAPPENDER_DIR)
 
 $(APRIORI_CANDIDATE_FOLDER):
 	mkdir -p $@
@@ -127,6 +131,9 @@ $(RULE_FOLDER):
 	mkdir -p $@
 	
 $(NT_FOLDER):
+	mkdir -p $@
+
+$(ITEMSET_FOLDER):
 	mkdir -p $@
 
 $(OBJ_COMMON_DIR):

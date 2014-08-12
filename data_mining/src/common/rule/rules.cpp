@@ -160,13 +160,20 @@ void Rules::computeRules(unsigned int iteration) {
 	//!create the rules from the LargeItemSets
 	
 	//!get the support for every part of all rules
-	for(auto & r : *new_rules) {
+	for(unsigned int i=0; i < new_rules->size(); i++) {
+		RuleNode * r = new_rules->at(i);
+		
 		r->setNTransactionsAntecedent(getFrequency(r->getItemSetAntecedent())); //support for each side
 		r->setNTransactionsConsequent(getFrequency(r->getItemSetConsequent()));
 		
-		r->calculateConfidence(); //remaining variables
-		if(r->getConfidence() < confidence)
+		r->calculateConfidence(); //confidence
+		
+		if(r->getConfidence() < confidence) { //if the confidence is bellow value specified, remove the rule
+			delete(r);
+			new_rules->erase(new_rules->begin() + i);
+			i--;
 			continue;
+		}
 		r->calculateSupport(amount_transactions); //calculate the other data
 		r->calculateLift(amount_transactions);
 		r->calculateDepthHeight(ontologies);
@@ -188,7 +195,7 @@ void Rules::computeRules(unsigned int iteration) {
 		cout << "for iteration " << iteration << " size is " << (*new_rules).size() << endl;
 }
 
-void Rules::filterRules(unsigned int iteration) { //TODO: implement Rules::filterRules()
+void Rules::filterRules(unsigned int iteration) { //TODO: fix memory leak
 	if(iteration == 1)
 		return;
 	map<unsigned int, vector<RuleNode*>*>::iterator it = rulesIteration.find(iteration);
@@ -197,7 +204,9 @@ void Rules::filterRules(unsigned int iteration) { //TODO: implement Rules::filte
 		return;
 	}
 	else {
-		rule_group.clear(); //to clear for this step
+		RuleGroup::ontologies = ontologies;
+		
+		vector<RuleGroup *> rule_group; //used for filtering
 		
 		vector<RuleNode *> * rule_vector = it->second;
 		
@@ -205,8 +214,6 @@ void Rules::filterRules(unsigned int iteration) { //TODO: implement Rules::filte
 		
 		RuleGroup * mergeTo;
 		for(auto & r : *rule_vector) {
-			if(r->getConfidence() < confidence)
-				continue;
 			bool added = false;
 			for(auto & e : rule_group) {
 				if(added == false && e->wasUsed() == false && e->addRule(r) == true) {
@@ -219,19 +226,28 @@ void Rules::filterRules(unsigned int iteration) { //TODO: implement Rules::filte
 					mergeTo->mergeGroup(e);
 				}
 			}
+			
 			if(added == false) {
-				rule_group.insert(rule_group.end(), new RuleGroup(r, ontologies));
+				rule_group.insert(rule_group.end(), new RuleGroup(r));
 			}
 		}
 		
 		//!AT THIS POINT ALL THE RULES IN ruleIteration IN INDEX [iteration-1] HAVE INVALID REFERENCE, AND MUST BE IGNORED
 		rule_vector->clear();
 		//!AT THIS POINT ALL THE RULES IN ruleIteration IN INDEX [iteration-1] HAVE INVALID REFERENCE, AND MUST BE IGNORED
+	
+		if(Parameters::debug) {
+			for(auto & g: rule_group) {
+				g->print();
+			}
+		}
 		
 		//!now copy the rules that have not been pruned back
 		for(auto & i: rule_group) {
-			for(auto & b : *i->getHeads()) {
-				rule_vector->insert(rule_vector->end(), b);
+			if(i->wasUsed() == false) {
+				for(auto & b : *i->getHeads()) {
+					rule_vector->insert(rule_vector->end(), b);
+				}
 			}
 		}
 		//!now copy the rules that have not been pruned back
@@ -239,11 +255,9 @@ void Rules::filterRules(unsigned int iteration) { //TODO: implement Rules::filte
 		
 		if(Parameters::verbose)
 			cout << removed << " removed" << endl;
-	}
-	
-	if(Parameters::debug) {
-		for(auto & g: rule_group) {
-			g->print();
+			
+		for(auto & rg : rule_group) { //clear the vector that was used
+			delete(rg);
 		}
 	}
 }

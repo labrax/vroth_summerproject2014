@@ -241,7 +241,7 @@ void RuleAppender::readRules() { //TODO: implement RuleAppender::readRules()
 	rules = new Rules(rulesFile);
 	
 	//TODO: create removeRules
-	rules->filterRules();
+	//rules->filterRules(); //TODO: check filterRules from RuleAppender::readRules()
 	rules->print();
 }
 

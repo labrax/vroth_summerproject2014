@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../itemset.hpp"
+#include "../itemset/itemset.hpp"
 #include <cstdint>
 
 class RuleNode {

@@ -15,7 +15,9 @@
 using std::cout;
 using std::endl;
 
-RuleGroup::RuleGroup(RuleNode * rule, Ontology * ontologies) : ontologies(ontologies) { //initiate group, allocating proper memory
+Ontology * RuleGroup::ontologies = NULL;
+
+RuleGroup::RuleGroup(RuleNode * rule) { //initiate group, allocating proper memory
 	//RuleNode * new_rule = new RuleNode(*rule);
 	heads = new vector<RuleNode *>();
 	heads->insert(heads->end(), rule);
@@ -28,10 +30,11 @@ RuleGroup::~RuleGroup() {
 	for(auto & r: rules_added) {
 		delete(r);
 	}
-	/*
-	for(auto & r: *heads) { //the heads are going to be used somewhere else, so they dont need to be deleted
-		delete(r);
-	} */
+	if(hasBeenUsed == false) { //if they were not used, free
+		for(auto & r: *heads) {
+			delete(r);
+		}
+	}
 	delete(heads);
 	delete(ancestor_antecedent);
 	delete(ancestor_consequent);
@@ -85,7 +88,7 @@ bool RuleGroup::addRule(RuleNode * rule) {
 			}
 		}
 		for(auto & c : rule->getItemSetConsequent()->getItemSet()) {
-			for(auto & tc : ancestor_antecedent->getItemSet()) {
+			for(auto & tc : ancestor_consequent->getItemSet()) {
 				if(ontologies->checkSon(tc.first, c.first)) {
 					ancestor_consequent->remove(tc.first);
 					ancestor_consequent->insert(c.first);
@@ -94,9 +97,20 @@ bool RuleGroup::addRule(RuleNode * rule) {
 			}
 		}
 		
-		bool added = false;
-		bool may_be_head = false;
-		for(auto & h : *heads) { //check if the new rule is better than any of the heads
+		bool added = false; //check if the element was added
+		bool may_be_head = false; //check if the element can be head: to the verification, if a rule is in the same level of another one
+		
+		/**TODO: check if it is valid to add the following to RuleGroup:
+		 * may_be_head: a rule may be head from a group
+		 * may_not_be_head: a rule may not (it is a son-rule from another one)
+		 * 
+		 * right now in the 'heads' are only the better than actual ones and the 'match-ranking' ones
+		 * 
+		 * wouldn't it be better if in the head were also the ones that win in one element from any of the head?
+		 *       or only the ones that win in all?
+		**/
+		for(unsigned int i=0; i < heads->size(); i++) { //check if the new rule is better than any of the heads
+			auto & h = heads->at(i);
 			int rank = 0;
 			for(auto & t : rule->getItemSetAntecedent()->getItemSet()) {
 				for(auto & fh : h->getItemSetAntecedent()->getItemSet()) {
@@ -124,36 +138,16 @@ bool RuleGroup::addRule(RuleNode * rule) {
 					}
 				}
 			}
-			if(rank > 0) { //this ranking must be != 0, otherwise it is the same rule
+			if(rank > 0) { //TODO: modify heuristic for rules choosing? (any rule that beat on maiority is better right now)
 				rules_added.insert(rules_added.end(), h); //move the head rule to the other ones
-				for(unsigned int d = 0; d<heads->size(); d++) { //TODO: check if this does not corrupt the sequence
-					if((*heads)[d] == h) {
-						heads->erase(heads->begin() + d);
-						break;
-					}
-				}
+				
+				heads->erase(heads->begin() + i); //remove the rule from the head
+
 				heads->insert(heads->end(), rule); //add new head
 				added = true;
 				break;
 			}
-			/*
-			else if(rank == 0) { //this code is mostly an exception, there may be an element with the same ranking, however its hierarchy bellow him has a difference which makes it better...
-				cout << "sumHeight exception was reached" << endl; //TODO: is this code useful?
-				if(rule->getSumHeight() < h->getSumHeight()) {
-					rules_added.insert(rules_added.end(), h); //move the head rule to the other ones
-					for(unsigned int d = 0; d<heads->size(); d++) { //TODO: check if this does not corrupt the sequence
-						if((*heads)[d] == h) {
-							heads->erase(heads->begin() + d);
-							break;
-						}
-					}
-					heads->insert(heads->end(), rule); //add new head
-					added = true;
-					break;
-				}
-				may_be_head = true;
-			}*/
-			else if(rank == 0) {
+			else if(rank == 0) { //if there is a rule which is not whole parent of another it may be another head of the group
 				may_be_head = true;
 			}
 		}
@@ -167,9 +161,7 @@ bool RuleGroup::addRule(RuleNode * rule) {
 	return true;
 }
 
-vector<RuleNode *> * RuleGroup::getHeads() { //TODO:implement
-	//this function removes the head if it is contained in another and is ancestor //TODO: check, this will never happen?
-	//unite all the ones and return it
+vector<RuleNode *> * RuleGroup::getHeads() {
 	hasBeenUsed = true;
 	return heads;
 }
@@ -181,8 +173,11 @@ bool RuleGroup::wasUsed() {
 void RuleGroup::mergeGroup(RuleGroup * rule_group) {
 	if(rule_group->wasUsed() == false) {
 		for(auto & e : *(rule_group->getHeads())) {
-			addRule(e);
+			if(addRule(e) == false) {
+				cout << "Error merging group. Probably error in logic." << endl;
+			}
 		}
+		rule_group->getHeads()->clear();
 	}
 }
 

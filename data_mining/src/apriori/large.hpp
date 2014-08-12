@@ -13,10 +13,12 @@
 #ifndef _LARGE_H
 #define _LARGE_H
 
-#include "../common/itemset.hpp"
-#include "../common/itemset_tree.hpp"
-
+#include "../common/itemset/itemset.hpp"
+#include "../common/itemset/itemset_tree.hpp"
+#include "../common/itemset/itemset_group.hpp"
 #include "../common/ontologies/ontology.hpp"
+
+#include "../common/parameters.hpp"
 
 #include <vector>
 #include <mutex>
@@ -40,6 +42,7 @@ class LargeItemSet {
 		LargeItemSet(uint64_t);
 		~LargeItemSet();
 		void insertSet(ItemSet * set);
+		void removeSet(ItemSet * set);
 		void filterSet(Ontology * ontologies); //TODO: implement LargeItemSet::filterSet(Ontology * ontologies)
 		
 		vector<ItemSet *> & getItemSets();

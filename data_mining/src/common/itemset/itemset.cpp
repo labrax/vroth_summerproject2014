@@ -8,7 +8,7 @@
  */
  
 #include "itemset.hpp"
-#include "parameters.hpp"
+#include "../parameters.hpp"
 
 #include <iostream>
 

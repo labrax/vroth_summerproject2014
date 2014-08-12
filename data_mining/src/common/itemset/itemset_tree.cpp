@@ -46,11 +46,7 @@ type ItemSetTree::getType() {
 }
 
 void ItemSetTree::insertItemSet(ItemSet * a) {
-	if(tp == node) { //not initialized
-		tp = itemset_node;
-		cout << "some sort of bug " << __FILE__ << ":" << __LINE__ << endl;
-	}
-	else if(tp == itemset_node) { //itemset_node mode
+	if(tp == itemset_node) { //itemset_node mode
 		if(itemsets.size() <= BUCKET_THRESHOLD) { //stay itemset_node
 			itemsets.insert(itemsets.end(), a); //there is no need to check for duplicates (ref: algorithm)
 		}
@@ -81,6 +77,24 @@ void ItemSetTree::insertItemSet(ItemSet * a) {
 			ItemSetTree * child = new ItemSetTree(depth+1, a->getNthString(depth), this);
 			children.insert(pair<string, ItemSetTree*>(a->getNthString(depth), child));
 			child->insertItemSet(a);
+		}
+	}
+}
+
+void ItemSetTree::removeItemSet(ItemSet * a) { //TODO: test code
+	if(tp == itemset_node) { //itemset_node mode
+		for(unsigned int i=0; i < itemsets.size(); i++) {
+			if(itemsets.at(i) == a) { //delete element
+				delete(itemsets.at(i));
+				itemsets.erase(itemsets.begin() + i);
+				break;
+			}
+		}
+	}
+	else { //bucket_node mode
+		unordered_map<string, ItemSetTree*>::iterator find = children.find(a->getNthString(depth));
+		if(find != children.end()) { //if there is something on the hash destination
+			find->second->removeItemSet(a);
 		}
 	}
 }

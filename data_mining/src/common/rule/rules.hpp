@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../itemset.hpp"
+#include "../itemset/itemset.hpp"
 #include "../large.hpp"
 #include "../ontologies/ontology.hpp"
 #include "rule_node.hpp"
@@ -40,8 +40,6 @@ class Rules {
 		uint64_t amount_transactions;
 		double confidence;
 		std::map<string, uint64_t> itemset_1; //to calculate the amount of information
-		
-		vector<RuleGroup *> rule_group; //used for filtering
 		
 		char output_format[16];
 		bool try_ontology_name;

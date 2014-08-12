@@ -9,7 +9,7 @@
  
 #include "apriori.hpp"
 
-#include "../common/itemset.hpp"
+#include "../common/itemset/itemset.hpp"
 #include "candidate_apriori/candidate.hpp"
 #include "../common/rule/rules.hpp"
 

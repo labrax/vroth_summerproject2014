@@ -12,7 +12,7 @@
  
 #pragma once
 
-#include "ontologies/ontology.hpp"
+#include "../ontologies/ontology.hpp"
 
 #include <map>
 #include <string>

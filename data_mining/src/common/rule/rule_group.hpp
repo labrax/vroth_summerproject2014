@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../itemset.hpp"
+#include "../itemset/itemset.hpp"
 #include "rule_node.hpp"
 
 #include <vector>
@@ -17,9 +17,7 @@
 using std::vector;
 
 class RuleGroup {
-	private:
-		Ontology * ontologies;
-		
+	private:		
 		ItemSet * ancestor_antecedent;
 		ItemSet * ancestor_consequent;
 		
@@ -28,7 +26,8 @@ class RuleGroup {
 		
 		bool hasBeenUsed;
 	public:
-		RuleGroup(RuleNode *, Ontology *);
+		static Ontology * ontologies;
+		RuleGroup(RuleNode *);
 		~RuleGroup();
 		
 		bool ruleBelong(RuleNode *);

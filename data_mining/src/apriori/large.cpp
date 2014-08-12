@@ -31,18 +31,82 @@ LargeItemSet::~LargeItemSet() {
 
 void LargeItemSet::insertSet(ItemSet * set) {
 	large_lock.lock();
-	
 	itemset.insert(itemset.end(), set);
-	
-	ItemSet * e = new ItemSet(set);
-	root->insertItemSet(e);
-	
+	root->insertItemSet(new ItemSet(set));
 	large_lock.unlock();
 }
 
+void LargeItemSet::removeSet(ItemSet * set) {
+	for(unsigned int i=0; i<itemset.size(); i++) {
+		if(itemset.at(i) == set) {
+			delete(itemset.at(i));
+			itemset.erase(itemset.begin() + i);
+			break;
+		}
+	}
+	root->removeItemSet(set);
+}
+
 void LargeItemSet::filterSet(Ontology * ontologies) { //TODO: implement LargeItemSet::removeSet(Ontology * ontologies)
-	cout << "not implemented LargeItemSet::filterSet(Ontology * ontologies)" << endl;
+	//cout << "not implemented LargeItemSet::filterSet(Ontology * ontologies)" << endl;
 	//problems: remove itemset from the Tree of data; otherwise it will be fine
+	
+	ItemSetGroup::ontologies = ontologies;
+	
+	vector<ItemSetGroup *> itemset_group; //used for filtering
+	
+	unsigned int removed = itemset.size();
+	
+	ItemSetGroup * mergeTo;
+	for(auto & r : itemset) {
+		bool added = false;
+		for(auto & e : itemset_group) {
+			if(added == false && e->wasUsed() == false && e->addItemSet(r) == true) {
+				added=true;
+				mergeTo = e;
+				//break;
+			}
+			//test if there is now another group that can be joined
+			else if(added == true && e->itemsetBelong(r)) {
+				mergeTo->mergeGroup(e);
+			}
+		}
+		
+		if(added == false) {
+			itemset_group.insert(itemset_group.end(), new ItemSetGroup(r));
+		}
+	}
+	
+	//!AT THIS POINT ALL THE ITEMSETS IN HAVE INVALID REFERENCE, AND MUST BE IGNORED
+	itemset.clear();
+	delete(root);
+	root = new ItemSetTree(0, "", NULL);
+	//!AT THIS POINT ALL THE ITEMSETS IN HAVE INVALID REFERENCE, AND MUST BE IGNORED
+
+	if(Parameters::debug) {
+		for(auto & g: itemset_group) {
+			g->print();
+		}
+	}
+	
+	//!now copy the rules that have not been pruned back
+	for(auto & i: itemset_group) {
+		if(i->wasUsed() == false) {
+			for(auto & b : *i->getHeads()) {
+				itemset.insert(itemset.end(), b);
+				root->insertItemSet(new ItemSet(b));
+			}
+		}
+	}
+	//!now copy the rules that have not been pruned back
+	removed -= itemset.size();
+	
+	if(Parameters::verbose)
+		cout << removed << " removed" << endl;
+		
+	for(auto & rg : itemset_group) { //clear the vector that was used
+		delete(rg);
+	}
 }
 
 vector<ItemSet *> & LargeItemSet::getItemSets() {

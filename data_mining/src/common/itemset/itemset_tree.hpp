@@ -41,6 +41,7 @@ class ItemSetTree {
 		type getType();
 		
 		void insertItemSet(ItemSet *);
+		void removeItemSet(ItemSet *);
 		
 		unsigned int getDepth();
 		string & getIdentifier();
