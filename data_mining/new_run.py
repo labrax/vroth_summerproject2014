@@ -11,7 +11,7 @@ class AprioriRunner:
 		
 		to_run.append("-c")
 		to_run.append(str(confidence))
-			
+		
 		self.run(to_run)
 		
 	def run_range(self, min_support, max_support, step_support, min_confidence, max_confidence, step_confidence):
@@ -22,12 +22,14 @@ class AprioriRunner:
 			if(s > max_support):
 				s = min_support
 				c += step_confidence
-			if(c > max_confidence):
-				break
+				c = round(c, 2)
+				if(c > max_confidence):
+					break
 				
 			self.execute(s, c)
 			
 			s += step_support
+			s = round(s, 2)
 		
 	def run(self, parameters):
 		self.num += 1
@@ -47,7 +49,7 @@ class AprioriRunner:
 		t0 = time()	
 		call(parameters, stdout=stdout_file, stderr=stderr_file)
 		t1 = time()
-		self.info_file.write("%d\t%s\t%f\n" % (num, ' '.join(parameters), (t1-t0)))
+		self.info_file.write("%d\t%s\t%f\n" % (self.num, ' '.join(parameters), (t1-t0)))
 		
 		stderr_file.close()
 		stdout_file.close()
@@ -89,7 +91,7 @@ class AprioriRunner:
 			print "Could not open info.txt file! Exiting"
 			exit -1
 		gmttime = asctime( gmtime( time() ) )
-		self.info_file.write("starting at %s GMT"%gmttime)
+		self.info_file.write("starting at %s GMT\n"%gmttime)
 		
 	def __exit__(self):
 		info_file.close()
@@ -97,5 +99,5 @@ class AprioriRunner:
 		
 if __name__ == "__main__":
 	a = AprioriRunner("pp.txt", "mam.obo")
-	a.set_settings(False, False, True, True, 0, False, 0)
+	a.set_settings(False, False, True, True, 2, False, 0)
 	a.run_range(0.05, 0.5, 0.05, 0.5, 0.95, 0.05)
