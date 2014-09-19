@@ -29,14 +29,14 @@ RUN
 	---
 	use format:
 	-a	dont-append-ontologies: only use ontologies for semantic similarity
-	-r	filter-results: will remove rules in the format A+B=>C where A=>C exists and has higher support
+	-r	filter-results: DISABLED
 
 	-h	help: will print this instruction of use
 	-p	preprocessed: will not use 'sort -u' in the file before reading
 	-v	verbose: will print some information of execution
 	-d	debug: will print the sets information
 
-	-f	file <file>: 'transactions' input file
+	-f	transactions-file <file>: input file
 	-o	ontologies-file <file>: input file
 
 	-x	new-transactions-file <file>: create a new 'transactions' file using the rules
@@ -44,6 +44,10 @@ RUN
 	-c	confidence <number 0 to 1>: confidence value - default 0.8
 	-l	minsupport <number 0 to 1>: minimum support value - default 0.5
 	-u	maxsupport <number 0 to 1>: maximum support value - default 1
+
+	-R to enable rules-filtering
+	-I to enable itemset-filtering
+	-M <number> to limit the number of iterations
 
 	-t	thread <optional: number of threads>: to use parallelization
 
@@ -54,7 +58,6 @@ RUN
 	example of use: 
 	./apriori -f mousephenotypes.txt -o mammalian_phenotype.obo -t=20
 	./apriori mousephenotypes.txt mammalian_phenotype.obo -t -s 0.01 -c 0.3
-
 	---
 
 TEST MACHINE
