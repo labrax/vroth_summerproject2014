@@ -72,7 +72,7 @@ void DatabaseNormalized::processNormalizedTransactions() {
 	
 	if(file.is_open()) {
 		string line;
-		char first[32], second[32];
+		char first[64], second[128];
 		
 		while (getline(file, line)) {
 			first[0] = '\0';
