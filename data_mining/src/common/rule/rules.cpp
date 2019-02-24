@@ -17,6 +17,8 @@
 
 #include <iomanip>
 
+#include <cmath>
+
 using std::pair;
 
 using std::cout;
@@ -425,6 +427,10 @@ void Rules::calculateSemanticSimilaritySide(RuleNode * r) {
 	
 	for(auto & f : r->getItemSetAntecedent()->getItemSet()) { //get all the parent nodes from the 1st itemset (antecedent)
 		NodeOntology * search_1 = ontologies->getNode(f.first);
+		if(search_1 == NULL) {
+			cout << "!!! ERROR LOOKING FOR ONTOLOGY NODE !!!" << endl;
+			cout << "Check if the id \"" << f.first << "\" is in the ontology file" << endl;
+		}
 		map <string, bool> * result_first = search_1->returnOntologies();
 		if(result_first != NULL) {
 			if(first_ontologies == NULL)
@@ -441,6 +447,10 @@ void Rules::calculateSemanticSimilaritySide(RuleNode * r) {
 	}
 	for(auto & s : r->getItemSetConsequent()->getItemSet()) { //get all the parent nodes from the 2nd itemset (consequent)
 		NodeOntology * search_2 = ontologies->getNode(s.first);
+		if(search_2 == NULL) {
+			cout << "!!! ERROR LOOKING FOR ONTOLOGY NODE !!!" << endl;
+			cout << "Check if the id \"" << s.first << "\" is in the ontology file" << endl;
+		}
 		map <string, bool> * result_second = search_2->returnOntologies();
 		if(result_second != NULL) {
 			if(second_ontologies == NULL)
