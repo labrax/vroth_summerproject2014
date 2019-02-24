@@ -60,7 +60,7 @@ LargeItemSet * CandidateItemSet::apriori_genThreaded(LargeItemSet * a) {
 	
 	//cout << "transactions: " << a->getAmountTransactions() << endl;
 	
-	uint64_t block_init = 0, block_end;
+	uint64_t block_init = 0, block_end = 0;
 	while(threads.size() < concurentThreadsSupported-1 && block_init != last_large.size()) { //will get until before the last thread
 		block_end = block_init;
 		
