@@ -74,6 +74,7 @@ Available in the folder *sample_files*
 - other_transaction.txt
 
 Please note the spacing. The parser is hard-coded!
+**The transactions.txt file should be tab-separated**
 
 ### SAMPLE CASES
 
